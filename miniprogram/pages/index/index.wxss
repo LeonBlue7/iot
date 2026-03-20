@@ -1,0 +1,139 @@
+/* miniprogram/pages/index/index.wxss */
+.container {
+  padding: 20rpx;
+  padding-bottom: 140rpx;
+}
+
+.device-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.device-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.device-item.online {
+  border-left: 6rpx solid #52c41a;
+}
+
+.device-item.offline {
+  border-left: 6rpx solid #d9d9d9;
+}
+
+.device-info {
+  flex: 1;
+}
+
+.device-name {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 8rpx;
+}
+
+.device-id {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.device-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.status-indicator {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+}
+
+.status-indicator.on {
+  background-color: #52c41a;
+}
+
+.status-indicator.off {
+  background-color: #d9d9d9;
+}
+
+.status-text {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-image {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999999;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 0;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid #f0f0f0;
+  border-top-color: #1890ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: #999999;
+}
+
+.add-device-btn {
+  position: fixed;
+  bottom: 100rpx;
+  right: 40rpx;
+  width: 100rpx;
+  height: 100rpx;
+  background-color: #1890ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(24, 144, 255, 0.4);
+}
+
+.add-device-btn text {
+  font-size: 60rpx;
+  color: #ffffff;
+  font-weight: 300;
+}

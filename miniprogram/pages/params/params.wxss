@@ -1,0 +1,131 @@
+/* miniprogram/pages/params/params.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20rpx;
+  padding-bottom: 140rpx;
+}
+
+.params-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30rpx;
+}
+
+.params-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  padding: 30rpx;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.group-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #1890ff;
+  margin-bottom: 10rpx;
+}
+
+.param-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.param-item:last-child {
+  border-bottom: none;
+}
+
+.param-label {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.picker,
+input {
+  font-size: 28rpx;
+  color: #333333;
+  text-align: right;
+}
+
+input {
+  width: 200rpx;
+  padding: 10rpx;
+  border: 1rpx solid #e8e8e8;
+  border-radius: 4rpx;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx 0;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid #f0f0f0;
+  border-top-color: #1890ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: #999999;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999999;
+}
+
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 40rpx;
+  background-color: #ffffff;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.save-btn {
+  flex: 1;
+  background-color: #1890ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 30rpx;
+}
+
+.back-btn {
+  flex: 1;
+  background-color: #f0f0f0;
+  color: #666666;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 30rpx;
+}

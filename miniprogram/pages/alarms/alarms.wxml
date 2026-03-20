@@ -1,0 +1,40 @@
+<!-- miniprogram/pages/alarms/alarms.wxml -->
+<view class="container">
+  <view class="alarms-list" wx:if="{{loading}}">
+    <view class="loading-state">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+
+  <view class="alarms-list" wx:elif="{{alarms.length > 0}}">
+    <view
+      wx:for="{{alarms}}"
+      wx:key="id"
+      class="alarm-item {{item.status === 0 ? 'unacknowledged' : 'acknowledged'}}"
+    >
+      <view class="alarm-info">
+        <view class="alarm-device">{{item.deviceId}}</view>
+        <view class="alarm-type">{{item.alarmType}}</view>
+        <view class="alarm-time">{{item.createdAt}}</view>
+      </view>
+      <view class="alarm-status">
+        <text wx:if="{{item.status === 0}}" class="status-badge unacknowledged">未确认</text>
+        <text wx:else class="status-badge acknowledged">已确认</text>
+        <button wx:if="{{item.status === 0}}" class="ack-btn" bindtap="onAcknowledge" data-id="{{item.id}}">确认</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <text class="empty-text">暂无告警</text>
+  </view>
+
+  <view class="total-info">
+    <text>共 {{total}} 条告警</text>
+  </view>
+
+  <view class="back-btn" bindtap="onBack">
+    <text>返回</text>
+  </view>
+</view>

@@ -1,0 +1,20 @@
+<!-- miniprogram/pages/control/control.wxml -->
+<view class="container">
+  <view class="control-panel">
+    <view class="control-item">
+      <text class="control-label">电源控制</text>
+      <button class="control-btn" bindtap="onPowerToggle">
+        {{ data.controlType === 'power' ? '开启/关闭' : '开启' }}
+      </button>
+    </view>
+
+    <view class="control-item">
+      <text class="control-label">设备复位</text>
+      <button class="control-btn reset" bindtap="onReset">复位</button>
+    </view>
+  </view>
+
+  <view class="back-btn" bindtap="onBack">
+    <text>返回</text>
+  </view>
+</view>

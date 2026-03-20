@@ -1,0 +1,39 @@
+<!--miniprogram/pages/index/index.wxml-->
+<view class="container">
+  <!-- 设备列表 -->
+  <view class="device-list">
+    <view
+      wx:for="{{deviceList}}"
+      wx:key="id"
+      class="device-item {{item.online ? 'online' : 'offline'}}"
+      data-device-id="{{item.id}}"
+      bindtap="onDeviceTap"
+    >
+      <view class="device-info">
+        <view class="device-name">{{item.name}}</view>
+        <view class="device-id">{{item.id}}</view>
+      </view>
+      <view class="device-status">
+        <view class="status-indicator {{item.online ? 'on' : 'off'}}"></view>
+        <text class="status-text">{{item.online ? '在线' : '离线'}}</text>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{deviceList.length === 0 && !loading}}" class="empty-state">
+      <image src="/assets/empty.png" class="empty-image" />
+      <text class="empty-text">暂无设备</text>
+    </view>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading-state">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+
+  <!-- 添加设备按钮 -->
+  <view class="add-device-btn" bindtap="onAddDevice">
+    <text>+</text>
+  </view>
+</view>

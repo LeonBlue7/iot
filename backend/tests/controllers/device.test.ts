@@ -1,0 +1,201 @@
+// tests/controllers/device.test.ts
+import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+
+describe('Device Controller', () => {
+  let mockRequest: any;
+  let mockResponse: any;
+  let deviceController: any;
+
+  const mockDeviceService = {
+    findAll: jest.fn(),
+    findById: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    getLatestData: jest.fn(),
+    getHistoryData: jest.fn(),
+    controlDevice: jest.fn(),
+    getParams: jest.fn(),
+    updateParams: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+
+    mockRequest = {
+      params: {},
+      query: {},
+      body: {},
+    };
+
+    mockResponse = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    jest.mock('../../src/services/device/index.js', () => ({
+      deviceService: mockDeviceService,
+    }));
+
+    const controller = await import('../../src/controllers/deviceController.js');
+    deviceController = controller;
+  });
+
+  describe('getDevices', () => {
+    it('should return all devices with success response', async () => {
+      const mockDevices = [
+        { id: 'device1', name: 'Device 1', online: true },
+        { id: 'device2', name: 'Device 2', online: false },
+      ];
+
+      (mockDeviceService.findAll as jest.Mock).mockResolvedValue(mockDevices);
+
+      await deviceController.getDevices(mockRequest, mockResponse);
+
+      expect(mockDeviceService.findAll).toHaveBeenCalled();
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          data: mockDevices,
+        })
+      );
+    });
+  });
+
+  describe('getDeviceById', () => {
+    it('should return device by id', async () => {
+      const mockDevice = { id: 'device1', name: 'Device 1', online: true };
+
+      mockRequest.params.id = 'device1';
+      (mockDeviceService.findById as jest.Mock).mockResolvedValue(mockDevice);
+
+      await deviceController.getDeviceById(mockRequest, mockResponse);
+
+      expect(mockDeviceService.findById).toHaveBeenCalledWith('device1');
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          data: mockDevice,
+        })
+      );
+    });
+  });
+
+  describe('updateDevice', () => {
+    it('should update device', async () => {
+      const mockDevice = { id: 'device1', name: 'Updated Name', online: true };
+
+      mockRequest.params.id = 'device1';
+      mockRequest.body = { name: 'Updated Name' };
+      (mockDeviceService.update as jest.Mock).mockResolvedValue(mockDevice);
+
+      await deviceController.updateDevice(mockRequest, mockResponse);
+
+      expect(mockDeviceService.update).toHaveBeenCalledWith('device1', { name: 'Updated Name' });
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          message: 'Device updated',
+        })
+      );
+    });
+  });
+
+  describe('controlDevice', () => {
+    it('should send control command', async () => {
+      mockRequest.params.id = 'device1';
+      mockRequest.body = { action: 'on' };
+      (mockDeviceService.controlDevice as jest.Mock).mockResolvedValue(null);
+
+      await deviceController.controlDevice(mockRequest, mockResponse);
+
+      expect(mockDeviceService.controlDevice).toHaveBeenCalledWith('device1', 'on', 'user');
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+        })
+      );
+    });
+  });
+
+  describe('getRealtimeData', () => {
+    it('should return realtime data', async () => {
+      const mockData = { temperature: 25.5, humidity: 60 };
+
+      mockRequest.params.id = 'device1';
+      (mockDeviceService.getLatestData as jest.Mock).mockResolvedValue(mockData);
+
+      await deviceController.getRealtimeData(mockRequest, mockResponse);
+
+      expect(mockDeviceService.getLatestData).toHaveBeenCalledWith('device1');
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          data: mockData,
+        })
+      );
+    });
+  });
+
+  describe('getHistoryData', () => {
+    it('should return history data', async () => {
+      const mockData = [{ temperature: 25.5, recordedAt: new Date() }];
+
+      mockRequest.params.id = 'device1';
+      mockRequest.query = {
+        startTime: '2024-01-01T00:00:00Z',
+        endTime: '2024-01-01T23:59:59Z',
+      };
+      (mockDeviceService.getHistoryData as jest.Mock).mockResolvedValue(mockData);
+
+      await deviceController.getHistoryData(mockRequest, mockResponse);
+
+      expect(mockDeviceService.getHistoryData).toHaveBeenCalled();
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          data: mockData,
+        })
+      );
+    });
+  });
+
+  describe('getDeviceParams', () => {
+    it('should return device params', async () => {
+      const mockParams = { mode: 1, tempHighLimit: 30 };
+
+      mockRequest.params.id = 'device1';
+      (mockDeviceService.getParams as jest.Mock).mockResolvedValue(mockParams);
+
+      await deviceController.getDeviceParams(mockRequest, mockResponse);
+
+      expect(mockDeviceService.getParams).toHaveBeenCalledWith('device1');
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          data: mockParams,
+        })
+      );
+    });
+  });
+
+  describe('updateDeviceParams', () => {
+    it('should update device params', async () => {
+      const mockParams = { mode: 1, tempHighLimit: 30 };
+
+      mockRequest.params.id = 'device1';
+      mockRequest.body = { tempHighLimit: 30 };
+      (mockDeviceService.updateParams as jest.Mock).mockResolvedValue(mockParams);
+
+      await deviceController.updateDeviceParams(mockRequest, mockResponse);
+
+      expect(mockDeviceService.updateParams).toHaveBeenCalledWith('device1', mockRequest.body);
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          message: 'Parameters updated',
+        })
+      );
+    });
+  });
+});

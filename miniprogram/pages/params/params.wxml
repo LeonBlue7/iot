@@ -1,0 +1,89 @@
+<!-- miniprogram/pages/params/params.wxml -->
+<view class="container">
+  <view class="params-form" wx:if="{{loading}}">
+    <view class="loading-state">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+
+  <view class="params-form" wx:elif="{{params}}">
+    <view class="params-group">
+      <text class="group-title">基本参数</text>
+
+      <view class="param-item">
+        <text class="param-label">运行模式</text>
+        <picker mode="selector" range="{{['手动', '自动']}}" value="{{params.mode}}" bindchange="onModeChange">
+          <view class="picker">{{['手动', '自动'][params.mode]}}</view>
+        </picker>
+      </view>
+
+      <view class="param-item">
+        <text class="param-label">夏季开机温度</text>
+        <input type="number" value="{{params.summerTempOn}}" data-key="summerTempOn" bindblur="onParamInput" />
+      </view>
+
+      <view class="param-item">
+        <text class="param-label">夏季设置温度</text>
+        <input type="number" value="{{params.summerTempSet}}" data-key="summerTempSet" bindblur="onParamInput" />
+      </view>
+
+      <view class="param-item">
+        <text class="param-label">夏季关机温度</text>
+        <input type="number" value="{{params.summerTempOff}}" data-key="summerTempOff" bindblur="onParamInput" />
+      </view>
+    </view>
+
+    <view class="params-group">
+      <text class="group-title">冬季参数</text>
+
+      <view class="param-item">
+        <text class="param-label">冬季开机温度</text>
+        <input type="number" value="{{params.winterTempOn}}" data-key="winterTempOn" bindblur="onParamInput" />
+      </view>
+
+      <view class="param-item">
+        <text class="param-label">冬季设置温度</text>
+        <input type="number" value="{{params.winterTempSet}}" data-key="winterTempSet" bindblur="onParamInput" />
+      </view>
+
+      <view class="param-item">
+        <text class="param-label">冬季关机温度</text>
+        <input type="number" value="{{params.winterTempOff}}" data-key="winterTempOff" bindblur="onParamInput" />
+      </view>
+    </view>
+
+    <view class="params-group">
+      <text class="group-title">告警参数</text>
+
+      <view class="param-item">
+        <text class="param-label">温度上限</text>
+        <input type="number" value="{{params.tempHighLimit}}" data-key="tempHighLimit" bindblur="onParamInput" />
+      </view>
+
+      <view class="param-item">
+        <text class="param-label">温度下限</text>
+        <input type="number" value="{{params.tempLowLimit}}" data-key="tempLowLimit" bindblur="onParamInput" />
+      </view>
+
+      <view class="param-item">
+        <text class="param-label">湿度上限</text>
+        <input type="number" value="{{params.humiHighLimit}}" data-key="humiHighLimit" bindblur="onParamInput" />
+      </view>
+
+      <view class="param-item">
+        <text class="param-label">湿度下限</text>
+        <input type="number" value="{{params.humiLowLimit}}" data-key="humiLowLimit" bindblur="onParamInput" />
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <text class="empty-text">无参数配置</text>
+  </view>
+
+  <view class="action-bar">
+    <button class="save-btn" bindtap="onSave">保存</button>
+    <button class="back-btn" bindtap="onBack">返回</button>
+  </view>
+</view>

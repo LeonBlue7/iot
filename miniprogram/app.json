@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/device/device",
+    "pages/control/control",
+    "pages/params/params",
+    "pages/alarms/alarms",
+    "pages/stats/stats"
+  ],
+  "window": {
+    "navigationBarTitleText": "智能空调控制",
+    "navigationBarBackgroundColor": "#1890ff",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1890ff",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "设备",
+        "iconPath": "assets/icons/device.png",
+        "selectedIconPath": "assets/icons/device-active.png"
+      },
+      {
+        "pagePath": "pages/alarms/alarms",
+        "text": "告警",
+        "iconPath": "assets/icons/alarm.png",
+        "selectedIconPath": "assets/icons/alarm-active.png"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "统计",
+        "iconPath": "assets/icons/stats.png",
+        "selectedIconPath": "assets/icons/stats-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

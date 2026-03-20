@@ -1,0 +1,151 @@
+/* miniprogram/pages/alarms/alarms.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20rpx;
+  padding-bottom: 140rpx;
+}
+
+.alarms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.alarm-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  border-left: 6rpx solid #d9d9d9;
+}
+
+.alarm-item.unacknowledged {
+  border-left-color: #ff4d4f;
+}
+
+.alarm-item.acknowledged {
+  border-left-color: #52c41a;
+}
+
+.alarm-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.alarm-device {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333333;
+}
+
+.alarm-type {
+  font-size: 26rpx;
+  color: #666666;
+  text-transform: capitalize;
+}
+
+.alarm-time {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.alarm-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.status-badge {
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+}
+
+.status-badge.unacknowledged {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+}
+
+.status-badge.acknowledged {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.ack-btn {
+  background-color: #1890ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 4rpx;
+  padding: 10rpx 30rpx;
+  font-size: 24rpx;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx 0;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid #f0f0f0;
+  border-top-color: #1890ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: #999999;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999999;
+}
+
+.total-info {
+  text-align: center;
+  padding: 20rpx;
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.back-btn {
+  position: fixed;
+  bottom: 100rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f0f0f0;
+  padding: 20rpx 60rpx;
+  border-radius: 30rpx;
+  text-align: center;
+}
+
+.back-btn text {
+  color: #666666;
+  font-size: 28rpx;
+}

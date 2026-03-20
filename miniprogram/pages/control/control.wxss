@@ -1,0 +1,59 @@
+/* miniprogram/pages/control/control.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 40rpx;
+  padding-bottom: 140rpx;
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 30rpx;
+  margin-bottom: 40rpx;
+}
+
+.control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  padding: 30rpx;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.control-label {
+  font-size: 32rpx;
+  color: #333333;
+  font-weight: 500;
+}
+
+.control-btn {
+  background-color: #1890ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 8rpx;
+  padding: 20rpx 40rpx;
+  font-size: 30rpx;
+}
+
+.control-btn.reset {
+  background-color: #ff4d4f;
+}
+
+.back-btn {
+  position: fixed;
+  bottom: 100rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f0f0f0;
+  padding: 20rpx 60rpx;
+  border-radius: 30rpx;
+  text-align: center;
+}
+
+.back-btn text {
+  color: #666666;
+  font-size: 28rpx;
+}
