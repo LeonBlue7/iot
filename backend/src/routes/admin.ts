@@ -1,12 +1,13 @@
 // src/routes/admin.ts
 import { Router } from 'express';
-import { login, getMe } from '../controllers/admin/auth.controller.js';
+import { login, getMe, refreshToken } from '../controllers/admin/auth.controller.js';
 import { authenticate, requirePermissions } from '../middleware/admin/auth.js';
 
 const router = Router();
 
 // Public routes
 router.post('/auth/login', login);
+router.post('/auth/refresh', refreshToken);
 
 // Protected routes
 // eslint-disable-next-line @typescript-eslint/no-misused-promises

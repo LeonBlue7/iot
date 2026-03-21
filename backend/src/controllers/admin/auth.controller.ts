@@ -1,6 +1,6 @@
 // src/controllers/admin/auth.controller.ts
 import { Request, Response } from 'express';
-import { verifyPassword, generateToken } from '../../services/admin/auth.service.js';
+import { verifyPassword, generateToken, verifyRefreshToken } from '../../services/admin/auth.service.js';
 import { getUserPermissions } from '../../services/admin/rbac.service.js';
 import { createAuditLog } from '../../services/admin/audit.service.js';
 import prisma from '../../utils/database.js';
@@ -164,4 +164,69 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
     ...adminUser,
     permissions,
   }));
+});
+
+/**
+ * 刷新 token
+ * 使用刷新 token 获取新的访问 token
+ */
+export const refreshToken = asyncHandler(async (req: Request, res: Response) => {
+  const { refreshToken: refreshToken } = req.body as Record<string, unknown>;
+
+  if (!refreshToken) {
+    logger.warn('Refresh token request missing token', { ip: req.ip });
+    res.status(400).json(errorResponse('Refresh token is required'));
+    return;
+  }
+
+  try {
+    // 验证刷新 token
+    const payload = await verifyRefreshToken(refreshToken as string);
+
+    // 从数据库中获取用户信息
+    const adminUser = await prisma.adminUser.findUnique({
+      where: { id: payload.jti ? parseInt(payload.jti, 10) : 0 },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        roleIds: true,
+        enabled: true,
+      },
+    });
+
+    if (!adminUser || !adminUser.enabled) {
+      logger.security('Refresh token failed - user not found or disabled', { ip: req.ip });
+      res.status(401).json(errorResponse('Invalid refresh token'));
+      return;
+    }
+
+    // 获取最新权限
+    const permissions = await getUserPermissions(adminUser.id);
+
+    // 生成新的访问 token
+    const newToken = await generateToken({
+      id: adminUser.id,
+      username: adminUser.username,
+      email: adminUser.email,
+      roleIds: adminUser.roleIds,
+      permissions,
+    });
+
+    logger.info('Token refreshed successfully', {
+      adminUserId: adminUser.id,
+      username: adminUser.username,
+      ip: req.ip
+    });
+
+    res.json(successResponse({
+      token: newToken,
+    }));
+  } catch (error) {
+    logger.security('Refresh token failed - invalid token', {
+      ip: req.ip,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+    res.status(401).json(errorResponse('Invalid refresh token'));
+  }
 });

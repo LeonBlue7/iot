@@ -78,14 +78,14 @@ describe('Admin Auth Service', () => {
   });
 
   describe('generateRefreshToken', () => {
-    it('should generate random refresh token', () => {
+    it('should generate valid JWT refresh token', () => {
       const token1 = generateRefreshToken();
       const token2 = generateRefreshToken();
 
       expect(token1).toBeDefined();
       expect(token2).toBeDefined();
       expect(token1).not.toBe(token2);
-      expect(token1.length).toBe(64); // 32 bytes = 64 hex chars
+      expect(token1.split('.')).toHaveLength(3); // JWT format
     });
   });
 });
