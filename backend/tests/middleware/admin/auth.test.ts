@@ -18,7 +18,7 @@ import { hasAllPermissions } from '../../../src/services/admin/rbac.service.js';
 describe('Admin Auth Middleware', () => {
   describe('authenticate', () => {
     it('should reject requests without Authorization header', async () => {
-      const mockReq = { headers: {} };
+      const mockReq = { headers: {}, path: '/api/admin/me', method: 'GET', ip: '127.0.0.1' };
       const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
       const mockNext = jest.fn();
 
@@ -32,7 +32,7 @@ describe('Admin Auth Middleware', () => {
     });
 
     it('should reject invalid token', async () => {
-      const mockReq = { headers: { authorization: 'Bearer invalid_token' } };
+      const mockReq = { headers: { authorization: 'Bearer invalid_token' }, path: '/api/admin/me', method: 'GET', ip: '127.0.0.1' };
       const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
       const mockNext = jest.fn();
 
@@ -47,6 +47,9 @@ describe('Admin Auth Middleware', () => {
     it('should call next with valid token', async () => {
       const mockReq = {
         headers: { authorization: 'Bearer valid_token' },
+        path: '/api/admin/me',
+        method: 'GET',
+        ip: '127.0.0.1',
         adminUser: null,
       };
       const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
@@ -77,6 +80,9 @@ describe('Admin Auth Middleware', () => {
           username: 'admin',
           permissions: ['device:read', 'device:write'],
         },
+        path: '/api/admin/devices',
+        method: 'POST',
+        ip: '127.0.0.1',
       };
       const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
       const mockNext = jest.fn();
@@ -96,6 +102,9 @@ describe('Admin Auth Middleware', () => {
           username: 'admin',
           permissions: ['device:read'],
         },
+        path: '/api/admin/users',
+        method: 'POST',
+        ip: '127.0.0.1',
       };
       const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
       const mockNext = jest.fn();
@@ -116,6 +125,9 @@ describe('Admin Auth Middleware', () => {
           username: 'admin',
           permissions: ['*'],
         },
+        path: '/api/admin/users',
+        method: 'POST',
+        ip: '127.0.0.1',
       };
       const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
       const mockNext = jest.fn();

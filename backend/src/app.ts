@@ -31,6 +31,16 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/', apiLimiter);
 
+// Stricter rate limiting for login endpoint (prevent brute force)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 login attempts per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'RATE_LIMIT_EXCEEDED', message: '登录尝试过于频繁，请 15 分钟后重试' },
+});
+app.use('/api/admin/auth/login', loginLimiter);
+
 // Body parsing
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));

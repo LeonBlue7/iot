@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../../services/admin/auth.service.js';
 import { hasAllPermissions, getUserPermissions } from '../../services/admin/rbac.service.js';
+import { logger } from '../../utils/logger.js';
 
 export interface AdminUser {
   id: number;
@@ -28,6 +29,11 @@ export async function authenticate(
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      logger.security('Authentication failed - missing token', {
+        path: req.path,
+        method: req.method,
+        ip: req.ip
+      });
       res.status(401).json({
         success: false,
         error: 'Missing or invalid Authorization header',
@@ -47,13 +53,25 @@ export async function authenticate(
         permissions: payload.permissions,
       };
       next();
-    } catch {
+    } catch (error) {
+      logger.security('Authentication failed - invalid token', {
+        path: req.path,
+        method: req.method,
+        ip: req.ip,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
       res.status(401).json({
         success: false,
         error: 'Invalid or expired token',
       });
     }
-  } catch {
+  } catch (error) {
+    logger.error('Authentication middleware error', {
+      path: req.path,
+      method: req.method,
+      ip: req.ip,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
     res.status(500).json({
       success: false,
       error: 'Authentication failed',
@@ -68,6 +86,11 @@ export function requirePermissions(...requiredPermissions: string[]) {
   return async (req: AdminRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.adminUser) {
+        logger.security('Permission check failed - not authenticated', {
+          path: req.path,
+          method: req.method,
+          ip: req.ip
+        });
         res.status(401).json({
           success: false,
           error: 'Not authenticated',
@@ -88,12 +111,27 @@ export function requirePermissions(...requiredPermissions: string[]) {
       if (hasAllPermissions(effectivePermissions, requiredPermissions)) {
         next();
       } else {
+        logger.security('Permission denied', {
+          adminUserId: req.adminUser.id,
+          username: req.adminUser.username,
+          path: req.path,
+          method: req.method,
+          ip: req.ip,
+          requiredPermissions: requiredPermissions
+        });
         res.status(403).json({
           success: false,
           error: 'Insufficient permissions',
         });
       }
-    } catch {
+    } catch (error) {
+      logger.error('Permission check failed', {
+        adminUserId: req.adminUser?.id,
+        path: req.path,
+        method: req.method,
+        ip: req.ip,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
       res.status(500).json({
         success: false,
         error: 'Permission check failed',
