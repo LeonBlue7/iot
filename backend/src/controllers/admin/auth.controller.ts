@@ -8,15 +8,17 @@ import { asyncHandler } from '../../utils/response.js';
 import { successResponse, errorResponse } from '../../utils/response.js';
 import type { AdminRequest } from '../../middleware/admin/auth.js';
 import { logger } from '../../utils/logger.js';
+import { getClientIp, sanitizeForLogging } from '../../utils/sanitizer.js';
 
 /**
  * 管理员登录
  */
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { username, password } = req.body as Record<string, unknown>;
+  const clientIp = getClientIp(req);
 
   if (!username || !password) {
-    logger.warn('Login attempt with missing credentials', { username, ip: req.ip });
+    logger.warn('Login attempt with missing credentials', sanitizeForLogging({ username, ip: clientIp }));
     res.status(400).json(errorResponse('Username and password are required'));
     return;
   }
@@ -27,13 +29,13 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (!adminUser) {
-    logger.security('Login failed - user not found', { username, ip: req.ip });
+    logger.security('Login failed - user not found', sanitizeForLogging({ username, ip: clientIp }));
     await createAuditLog({
       adminUserId: 0, // Unknown user
       action: 'LOGIN_FAILED',
       resource: 'ADMIN_AUTH',
       details: { username: username as string, reason: 'USER_NOT_FOUND' },
-      ipAddress: req.ip,
+      ipAddress: clientIp,
       userAgent: req.headers['user-agent'],
     });
     res.status(401).json(errorResponse('Invalid credentials'));
@@ -42,17 +44,17 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   // 检查账户是否启用
   if (!adminUser.enabled) {
-    logger.security('Login failed - account disabled', {
+    logger.security('Login failed - account disabled', sanitizeForLogging({
       adminUserId: adminUser.id,
       username: adminUser.username,
-      ip: req.ip
-    });
+      ip: clientIp
+    }));
     await createAuditLog({
       adminUserId: adminUser.id,
       action: 'LOGIN_FAILED',
       resource: 'ADMIN_AUTH',
       details: { username: adminUser.username, reason: 'ACCOUNT_DISABLED' },
-      ipAddress: req.ip,
+      ipAddress: clientIp,
       userAgent: req.headers['user-agent'],
     });
     res.status(403).json(errorResponse('Account is disabled'));
@@ -62,17 +64,17 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   // 验证密码
   const isValid = await verifyPassword(password as string, adminUser.passwordHash);
   if (!isValid) {
-    logger.security('Login failed - invalid password', {
+    logger.security('Login failed - invalid password', sanitizeForLogging({
       adminUserId: adminUser.id,
       username: adminUser.username,
-      ip: req.ip
-    });
+      ip: clientIp
+    }));
     await createAuditLog({
       adminUserId: adminUser.id,
       action: 'LOGIN_FAILED',
       resource: 'ADMIN_AUTH',
       details: { username: adminUser.username, reason: 'INVALID_PASSWORD' },
-      ipAddress: req.ip,
+      ipAddress: clientIp,
       userAgent: req.headers['user-agent'],
     });
     res.status(401).json(errorResponse('Invalid credentials'));
@@ -96,7 +98,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     where: { id: adminUser.id },
     data: {
       lastLoginAt: new Date(),
-      lastLoginIp: req.ip,
+      lastLoginIp: clientIp,
     },
   });
 
@@ -105,16 +107,16 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     adminUserId: adminUser.id,
     action: 'LOGIN_SUCCESS',
     resource: 'ADMIN_AUTH',
-    details: { username: adminUser.username },
-    ipAddress: req.ip,
+    details: sanitizeForLogging({ username: adminUser.username }),
+    ipAddress: clientIp,
     userAgent: req.headers['user-agent'],
   });
 
-  logger.info('Login successful', {
+  logger.info('Login successful', sanitizeForLogging({
     adminUserId: adminUser.id,
     username: adminUser.username,
-    ip: req.ip
-  });
+    ip: clientIp
+  }));
 
   res.json(successResponse({
     token,
@@ -171,17 +173,18 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
  * 使用刷新 token 获取新的访问 token
  */
 export const refreshToken = asyncHandler(async (req: Request, res: Response) => {
-  const { refreshToken: refreshToken } = req.body as Record<string, unknown>;
+  const { refreshToken: refreshTokenStr } = req.body as Record<string, unknown>;
+  const clientIp = getClientIp(req);
 
-  if (!refreshToken) {
-    logger.warn('Refresh token request missing token', { ip: req.ip });
+  if (!refreshTokenStr) {
+    logger.warn('Refresh token request missing token', sanitizeForLogging({ ip: clientIp }));
     res.status(400).json(errorResponse('Refresh token is required'));
     return;
   }
 
   try {
     // 验证刷新 token
-    const payload = await verifyRefreshToken(refreshToken as string);
+    const payload = await verifyRefreshToken(refreshTokenStr as string);
 
     // 从数据库中获取用户信息
     const adminUser = await prisma.adminUser.findUnique({
@@ -196,7 +199,7 @@ export const refreshToken = asyncHandler(async (req: Request, res: Response) => 
     });
 
     if (!adminUser || !adminUser.enabled) {
-      logger.security('Refresh token failed - user not found or disabled', { ip: req.ip });
+      logger.security('Refresh token failed - user not found or disabled', sanitizeForLogging({ ip: clientIp }));
       res.status(401).json(errorResponse('Invalid refresh token'));
       return;
     }
@@ -213,20 +216,20 @@ export const refreshToken = asyncHandler(async (req: Request, res: Response) => 
       permissions,
     });
 
-    logger.info('Token refreshed successfully', {
+    logger.info('Token refreshed successfully', sanitizeForLogging({
       adminUserId: adminUser.id,
       username: adminUser.username,
-      ip: req.ip
-    });
+      ip: clientIp
+    }));
 
     res.json(successResponse({
       token: newToken,
     }));
   } catch (error) {
-    logger.security('Refresh token failed - invalid token', {
-      ip: req.ip,
+    logger.security('Refresh token failed - invalid token', sanitizeForLogging({
+      ip: clientIp,
       error: error instanceof Error ? error.message : 'Unknown error'
-    });
+    }));
     res.status(401).json(errorResponse('Invalid refresh token'));
   }
 });

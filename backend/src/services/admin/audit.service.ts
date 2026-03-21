@@ -1,5 +1,6 @@
 // src/services/admin/audit.service.ts
 import prisma from '../../utils/database.js';
+import { sanitizeForLogging } from '../../utils/sanitizer.js';
 
 export interface CreateAuditLogInput {
   adminUserId: number;
@@ -7,7 +8,7 @@ export interface CreateAuditLogInput {
   resource: string;
   resourceId?: string;
   resourceIdInt?: number;
-  details?: Record<string, unknown>;
+  details?: unknown;
   ipAddress?: string;
   userAgent?: string;
 }
@@ -44,6 +45,8 @@ export interface AuditLogWithUser {
  * 创建审计日志
  */
 export async function createAuditLog(input: CreateAuditLogInput): Promise<unknown> {
+  const detailsValue = input.details ? JSON.stringify(sanitizeForLogging(input.details)) : null;
+
   return prisma.auditLog.create({
     data: {
       adminUserId: input.adminUserId,
@@ -51,7 +54,8 @@ export async function createAuditLog(input: CreateAuditLogInput): Promise<unknow
       resource: input.resource,
       resourceId: input.resourceId,
       resourceIdInt: input.resourceIdInt,
-      details: input.details as unknown,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      details: detailsValue === null ? null : detailsValue,
       ipAddress: input.ipAddress,
       userAgent: input.userAgent,
     },
@@ -87,12 +91,12 @@ export async function getAuditLogs(options: GetAuditLogsOptions = {}): Promise<{
   }
 
   if (startDate || endDate) {
-    where.createdAt = {};
+    where.createdAt = {} as Record<string, Date>;
     if (startDate) {
-      Object.assign(where.createdAt, { gte: startDate });
+      (where.createdAt as Record<string, Date>).gte = startDate;
     }
     if (endDate) {
-      Object.assign(where.createdAt, { lte: endDate });
+      (where.createdAt as Record<string, Date>).lte = endDate;
     }
   }
 

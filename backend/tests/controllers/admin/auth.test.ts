@@ -1,7 +1,7 @@
 // tests/controllers/admin/auth.test.ts
 import { describe, it, expect } from '@jest/globals';
-import { login, getMe } from '../../src/controllers/admin/auth.controller.js';
-import { hashPassword, verifyPassword, generateToken } from '../../src/services/admin/auth.service.js';
+import { login, getMe } from '../../../src/controllers/admin/auth.controller.js';
+import { hashPassword, verifyPassword, generateToken } from '../../../src/services/admin/auth.service.js';
 
 describe('Admin Auth Controller - Unit Tests', () => {
   describe('login input validation', () => {
