@@ -11,76 +11,44 @@ import { logger } from '../../utils/logger.js';
 import { getClientIp, sanitizeForLogging } from '../../utils/sanitizer.js';
 
 /**
- * 管理员登录
+ * 登录失败处理
  */
-export const login = asyncHandler(async (req: Request, res: Response) => {
-  const { username, password } = req.body as Record<string, unknown>;
-  const clientIp = getClientIp(req);
-
-  if (!username || !password) {
-    logger.warn('Login attempt with missing credentials', sanitizeForLogging({ username, ip: clientIp }));
-    res.status(400).json(errorResponse('Username and password are required'));
-    return;
+async function handleLoginFailure(
+  adminUserId: number,
+  username: string,
+  reason: string,
+  clientIp: string,
+  userAgent: string | undefined,
+  logLevel: 'warn' | 'security' = 'security'
+): Promise<void> {
+  if (logLevel === 'warn') {
+    logger.warn(`Login failed: ${reason}`, sanitizeForLogging({ username, ip: clientIp }));
+  } else {
+    logger.security(`Login failed - ${reason}`, sanitizeForLogging({
+      adminUserId: adminUserId || 0,
+      username,
+      ip: clientIp
+    }));
   }
 
-  // 查找管理员用户
-  const adminUser = await prisma.adminUser.findUnique({
-    where: { username: username as string },
+  await createAuditLog({
+    adminUserId: adminUserId || 0,
+    action: 'LOGIN_FAILED',
+    resource: 'ADMIN_AUTH',
+    details: { username, reason },
+    ipAddress: clientIp,
+    userAgent,
   });
+}
 
-  if (!adminUser) {
-    logger.security('Login failed - user not found', sanitizeForLogging({ username, ip: clientIp }));
-    await createAuditLog({
-      adminUserId: 0, // Unknown user
-      action: 'LOGIN_FAILED',
-      resource: 'ADMIN_AUTH',
-      details: { username: username as string, reason: 'USER_NOT_FOUND' },
-      ipAddress: clientIp,
-      userAgent: req.headers['user-agent'],
-    });
-    res.status(401).json(errorResponse('Invalid credentials'));
-    return;
-  }
-
-  // 检查账户是否启用
-  if (!adminUser.enabled) {
-    logger.security('Login failed - account disabled', sanitizeForLogging({
-      adminUserId: adminUser.id,
-      username: adminUser.username,
-      ip: clientIp
-    }));
-    await createAuditLog({
-      adminUserId: adminUser.id,
-      action: 'LOGIN_FAILED',
-      resource: 'ADMIN_AUTH',
-      details: { username: adminUser.username, reason: 'ACCOUNT_DISABLED' },
-      ipAddress: clientIp,
-      userAgent: req.headers['user-agent'],
-    });
-    res.status(403).json(errorResponse('Account is disabled'));
-    return;
-  }
-
-  // 验证密码
-  const isValid = await verifyPassword(password as string, adminUser.passwordHash);
-  if (!isValid) {
-    logger.security('Login failed - invalid password', sanitizeForLogging({
-      adminUserId: adminUser.id,
-      username: adminUser.username,
-      ip: clientIp
-    }));
-    await createAuditLog({
-      adminUserId: adminUser.id,
-      action: 'LOGIN_FAILED',
-      resource: 'ADMIN_AUTH',
-      details: { username: adminUser.username, reason: 'INVALID_PASSWORD' },
-      ipAddress: clientIp,
-      userAgent: req.headers['user-agent'],
-    });
-    res.status(401).json(errorResponse('Invalid credentials'));
-    return;
-  }
-
+/**
+ * 登录成功处理
+ */
+async function handleLoginSuccess(
+  adminUser: { id: number; username: string; email: string; roleIds: number[] },
+  clientIp: string,
+  userAgent: string | undefined
+): Promise<{ token: string; user: unknown }> {
   // 获取用户权限
   const permissions = await getUserPermissions(adminUser.id);
 
@@ -107,9 +75,9 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     adminUserId: adminUser.id,
     action: 'LOGIN_SUCCESS',
     resource: 'ADMIN_AUTH',
-    details: sanitizeForLogging({ username: adminUser.username }),
+    details: { username: adminUser.username },
     ipAddress: clientIp,
-    userAgent: req.headers['user-agent'],
+    userAgent,
   });
 
   logger.info('Login successful', sanitizeForLogging({
@@ -118,16 +86,76 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     ip: clientIp
   }));
 
-  res.json(successResponse({
+  return {
     token,
     user: {
       id: adminUser.id,
       username: adminUser.username,
       email: adminUser.email,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       name: adminUser.name,
       permissions,
     },
-  }));
+  };
+}
+
+/**
+ * 管理员登录
+ */
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  const { username, password } = req.body as Record<string, unknown>;
+  const clientIp = getClientIp(req);
+  const userAgent = req.headers['user-agent'];
+
+  // 验证输入
+  if (!username || !password) {
+    await handleLoginFailure(0, username as string || '', 'MISSING_CREDENTIALS', clientIp, userAgent, 'warn');
+    res.status(400).json(errorResponse('Username and password are required'));
+    return;
+  }
+
+  // 查找管理员用户
+  const adminUser = await prisma.adminUser.findUnique({
+    where: { username: username as string },
+  });
+
+  // 用户不存在
+  if (!adminUser) {
+    await handleLoginFailure(0, username as string, 'USER_NOT_FOUND', clientIp, userAgent);
+    res.status(401).json(errorResponse('Invalid credentials'));
+    return;
+  }
+
+  // 检查账户是否启用
+  if (!adminUser.enabled) {
+    await handleLoginFailure(
+      adminUser.id,
+      adminUser.username,
+      'ACCOUNT_DISABLED',
+      clientIp,
+      userAgent
+    );
+    res.status(403).json(errorResponse('Account is disabled'));
+    return;
+  }
+
+  // 验证密码
+  const isValid = await verifyPassword(password as string, adminUser.passwordHash);
+  if (!isValid) {
+    await handleLoginFailure(
+      adminUser.id,
+      adminUser.username,
+      'INVALID_PASSWORD',
+      clientIp,
+      userAgent
+    );
+    res.status(401).json(errorResponse('Invalid credentials'));
+    return;
+  }
+
+  // 登录成功
+  const result = await handleLoginSuccess(adminUser, clientIp, userAgent);
+  res.json(successResponse(result));
 });
 
 /**
