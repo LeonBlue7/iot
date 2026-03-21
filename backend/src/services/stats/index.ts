@@ -48,7 +48,7 @@ export async function getTrendData(
     orderBy: { recordedAt: 'asc' },
   });
 
-  return data.map((item: any) => ({
+  return data.map((item) => ({
     time: item.recordedAt!,
     value:
       metric === 'temperature'

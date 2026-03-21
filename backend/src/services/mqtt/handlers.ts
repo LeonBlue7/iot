@@ -1,67 +1,214 @@
 // src/services/mqtt/handlers.ts
 import prisma from '../../utils/database.js';
 import redis, { CacheKeys, CacheTTL } from '../../utils/redis.js';
+import { z } from 'zod';
 
-interface LoginMessage {
-  IMEI: string;
-  ICCID?: string;
-}
+// ====================
+// Zod 验证 Schema
+// ====================
 
-interface SensorDataMessage {
-  temp?: number;
-  humi?: number;
-  curr?: number;
-  sig?: number;
-  acState?: number;
-  acErr?: number;
-  tempAlm?: number;
-  humiAlm?: number;
-  ts?: number;
-}
+/**
+ * 设备登录消息验证
+ * IMEI 必须为 15 位数字 (标准 IMEI 格式)
+ * ICCID 为 19-20 位数字 (SIM 卡标识)
+ */
+const loginSchema = z.object({
+  IMEI: z.string().regex(/^\d{15}$/, 'IMEI 必须为 15 位数字'),
+  ICCID: z.string().regex(/^\d{19,20}$/, 'ICCID 格式错误').optional(),
+});
 
-interface ParameterMessage {
-  mode?: number;
-  summerTempOn?: number;
-  summerTempSet?: number;
-  summerTempOff?: number;
-  winterTempOn?: number;
-  winterTempSet?: number;
-  winterTempOff?: number;
-  winterStart?: number;
-  winterEnd?: number;
-  acOffInterval?: number;
-  workTime?: string;
-  overtime1?: string;
-  overtime2?: string;
-  overtime3?: string;
-  acCode?: number;
-  acMode?: number;
-  acFanSpeed?: number;
-  acDirection?: number;
-  acLight?: number;
-  minCurrent?: number;
-  alarmEnabled?: number;
-  tempHighLimit?: number;
-  tempLowLimit?: number;
-  humiHighLimit?: number;
-  humiLowLimit?: number;
-  uploadInterval?: number;
-  version?: number;
-  resetTimes?: number;
-}
+/**
+ * 传感器数据消息验证
+ * 所有传感器值都有合理的范围限制
+ */
+const sensorDataSchema = z.object({
+  temp: z.number().min(-50).max(100).optional(), // 温度：-50°C 到 100°C
+  humi: z.number().min(0).max(100).optional(), // 湿度：0% 到 100%
+  curr: z.number().min(0).max(10000).optional(), // 电流：0 到 10000mA
+  sig: z.number().min(0).max(100).optional(), // 信号强度：0 到 100
+  acState: z.number().min(0).max(1).optional(), // 空调状态：0 或 1
+  acErr: z.number().min(0).max(255).optional(), // 空调故障码：0-255
+  tempAlm: z.number().min(0).max(1).optional(), // 温度告警：0 或 1
+  humiAlm: z.number().min(0).max(1).optional(), // 湿度告警：0 或 1
+  ts: z.number().positive().optional(), // 时间戳：正数
+});
 
+/**
+ * 设备参数消息验证
+ * 所有参数都有合理的范围限制
+ */
+const parameterSchema = z.object({
+  mode: z.number().min(0).max(1).optional(), // 模式：0 手动/1 自动
+  summerTempOn: z.number().min(0).max(50).optional().nullable(), // 夏季开启温度
+  summerTempSet: z.number().min(0).max(50).optional().nullable(), // 夏季设定温度
+  summerTempOff: z.number().min(0).max(50).optional().nullable(), // 夏季关闭温度
+  winterTempOn: z.number().min(0).max(50).optional().nullable(), // 冬季开启温度
+  winterTempSet: z.number().min(0).max(50).optional().nullable(), // 冬季设定温度
+  winterTempOff: z.number().min(0).max(50).optional().nullable(), // 冬季关闭温度
+  winterStart: z.number().min(1).max(12).optional().nullable(), // 冬季开始月份
+  winterEnd: z.number().min(1).max(12).optional().nullable(), // 冬季结束月份
+  acOffInterval: z.number().min(0).max(3600).optional().nullable(), // 空调关闭间隔 (秒)
+  workTime: z.string().max(50).optional().nullable(), // 工作时间段
+  overtime1: z.string().max(50).optional().nullable(), // 加班时间 1
+  overtime2: z.string().max(50).optional().nullable(), // 加班时间 2
+  overtime3: z.string().max(50).optional().nullable(), // 加班时间 3
+  acCode: z.number().min(0).max(255).optional().nullable(), // 空调码
+  acMode: z.number().min(0).max(255).optional().nullable(), // 空调模式
+  acFanSpeed: z.number().min(0).max(255).optional().nullable(), // 空调风速
+  acDirection: z.number().min(0).max(255).optional().nullable(), // 空调风向
+  acLight: z.number().min(0).max(1).optional().nullable(), // 空调灯光
+  minCurrent: z.number().min(0).max(10000).optional().nullable(), // 最小电流
+  alarmEnabled: z.number().min(0).max(1).optional().nullable(), // 告警使能
+  tempHighLimit: z.number().min(-50).max(100).optional().nullable(), // 温度上限
+  tempLowLimit: z.number().min(-50).max(100).optional().nullable(), // 温度下限
+  humiHighLimit: z.number().min(0).max(100).optional().nullable(), // 湿度上限
+  humiLowLimit: z.number().min(0).max(100).optional().nullable(), // 湿度下限
+  uploadInterval: z.number().min(1).max(3600).optional().nullable(), // 上传间隔 (秒)
+  version: z.number().min(0).optional().nullable(), // 版本号
+  resetTimes: z.number().min(0).optional().nullable(), // 重置次数
+});
+
+// ====================
+// 类型导出
+// ====================
+
+export type LoginData = z.infer<typeof loginSchema>;
+export type SensorData = z.infer<typeof sensorDataSchema>;
+export type ParameterData = z.infer<typeof parameterSchema>;
+
+// ====================
+// 辅助函数
+// ====================
+
+/**
+ * 解析 MQTT 主题
+ * 期望格式：/up/{deviceId}/{action}
+ */
 function parseTopic(topic: string): { deviceId: string; action: string } | null {
   const parts = topic.split('/');
   if (parts.length !== 4 || parts[0] !== '' || parts[1] !== 'up') {
     return null;
   }
-  return { deviceId: parts[2] as string, action: parts[3] as string };
+  const deviceId = parts[2];
+  const action = parts[3];
+
+  if (!deviceId || !/^\d{15}$/.test(deviceId)) {
+    console.warn(`Invalid deviceId format: ${deviceId}`);
+    return null;
+  }
+
+  if (!action) {
+    console.warn(`Missing action in topic: ${topic}`);
+    return null;
+  }
+
+  return { deviceId, action };
 }
 
-export async function handleLogin(deviceId: string, payload: string): Promise<void> {
-  try {
-    const data: LoginMessage = JSON.parse(payload);
+/**
+ * 创建告警记录
+ */
+async function createAlarm(
+  deviceId: string,
+  type: string,
+  value: number,
+  threshold: number
+): Promise<void> {
+  await prisma.alarmRecord.create({
+    data: {
+      deviceId,
+      alarmType: type,
+      alarmValue: value,
+      threshold,
+    },
+  });
+  // eslint-disable-next-line no-console
+  console.log(`[ALARM] Created for ${deviceId}: ${type} (value=${value}, threshold=${threshold})`);
+}
 
+/**
+ * 检查传感器数据是否触发告警
+ */
+async function checkAlarms(deviceId: string, data: SensorData): Promise<void> {
+  const params = await prisma.deviceParam.findUnique({
+    where: { deviceId },
+    select: {
+      alarmEnabled: true,
+      tempHighLimit: true,
+      tempLowLimit: true,
+      humiHighLimit: true,
+      humiLowLimit: true,
+    },
+  });
+
+  if (!params || params.alarmEnabled !== 1) {
+    return;
+  }
+
+  // 温度告警检查
+  if (data.temp !== undefined && data.temp !== null) {
+    if (params.tempHighLimit && data.temp > params.tempHighLimit) {
+      await createAlarm(deviceId, 'TEMP_HIGH', data.temp, params.tempHighLimit);
+    }
+    if (params.tempLowLimit && data.temp < params.tempLowLimit) {
+      await createAlarm(deviceId, 'TEMP_LOW', data.temp, params.tempLowLimit);
+    }
+  }
+
+  // 湿度告警检查
+  if (data.humi !== undefined && data.humi !== null) {
+    if (params.humiHighLimit && data.humi > params.humiHighLimit) {
+      await createAlarm(deviceId, 'HUMI_HIGH', data.humi, params.humiHighLimit);
+    }
+    if (params.humiLowLimit && data.humi < params.humiLowLimit) {
+      await createAlarm(deviceId, 'HUMI_LOW', data.humi, params.humiLowLimit);
+    }
+  }
+}
+
+// ====================
+// MQTT 消息处理器
+// ====================
+
+/**
+ * 处理设备登录消息
+ *
+ * 验证 IMEI/ICCID 格式，更新设备在线状态
+ * 如果 deviceId 与 IMEI 不匹配，记录警告但不拒绝
+ */
+export async function handleLogin(deviceId: string, payload: string): Promise<void> {
+  let data: LoginData;
+
+  try {
+    const parsed: unknown = JSON.parse(payload);
+    const result = loginSchema.safeParse(parsed);
+
+    if (!result.success) {
+      // eslint-disable-next-line no-console
+      console.warn(`[MQTT] Login validation failed for ${deviceId}: ${result.error.errors.map(e => e.message).join(', ')}`);
+      return;
+    }
+
+    data = result.data;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      // eslint-disable-next-line no-console
+      console.warn(`[MQTT] Invalid JSON in login payload from ${deviceId}`);
+      return;
+    }
+    // eslint-disable-next-line no-console
+    console.error(`[MQTT] Error parsing login payload for ${deviceId}:`, error);
+    return;
+  }
+
+  // 验证 deviceId 与 IMEI 匹配
+  if (deviceId !== data.IMEI) {
+    // eslint-disable-next-line no-console
+    console.warn(`[MQTT] Device ID mismatch: topic=${deviceId}, IMEI=${data.IMEI}`);
+    // 继续处理，但记录警告
+  }
+
+  try {
     await prisma.device.upsert({
       where: { id: deviceId },
       update: {
@@ -78,16 +225,45 @@ export async function handleLogin(deviceId: string, payload: string): Promise<vo
     });
 
     await redis.set(CacheKeys.deviceOnline(deviceId), '1', 'EX', CacheTTL.deviceOnline);
-    console.log(`Device ${deviceId} logged in`);
+    // eslint-disable-next-line no-console
+    console.log(`[MQTT] Device ${deviceId} logged in successfully`);
   } catch (error) {
-    console.error(`Error handling login for ${deviceId}:`, error);
+    console.error(`[MQTT] Database error handling login for ${deviceId}:`, error);
+    throw error; // 重新抛出以便上层处理
   }
 }
 
+/**
+ * 处理设备数据上传消息
+ *
+ * 验证传感器数据范围，存储到数据库，检查告警
+ */
 export async function handleDataUpload(deviceId: string, payload: string): Promise<void> {
-  try {
-    const data: SensorDataMessage = JSON.parse(payload);
+  let data: SensorData;
 
+  try {
+    const parsed: unknown = JSON.parse(payload);
+    const result = sensorDataSchema.safeParse(parsed);
+
+    if (!result.success) {
+      // eslint-disable-next-line no-console
+      console.warn(`[MQTT] Data validation failed for ${deviceId}: ${result.error.errors.map(e => e.message).join(', ')}`);
+      return;
+    }
+
+    data = result.data;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      // eslint-disable-next-line no-console
+      console.warn(`[MQTT] Invalid JSON in data payload from ${deviceId}`);
+      return;
+    }
+    // eslint-disable-next-line no-console
+    console.error(`[MQTT] Error parsing data payload for ${deviceId}:`, error);
+    return;
+  }
+
+  try {
     const sensorData = await prisma.sensorData.create({
       data: {
         deviceId,
@@ -115,17 +291,51 @@ export async function handleDataUpload(deviceId: string, payload: string): Promi
       CacheTTL.deviceData
     );
 
-    await checkAlarms(deviceId, data);
-    console.log(`Data received from ${deviceId}`);
+    // 异步检查告警（不阻塞主流程）
+    checkAlarms(deviceId, data).catch(err => {
+      // eslint-disable-next-line no-console
+      console.error(`[MQTT] Error checking alarms for ${deviceId}:`, err);
+    });
+
+    // eslint-disable-next-line no-console
+    console.log(`[MQTT] Data received from ${deviceId}: temp=${data.temp}, humi=${data.humi}`);
   } catch (error) {
-    console.error(`Error handling data from ${deviceId}:`, error);
+    // eslint-disable-next-line no-console
+    console.error(`[MQTT] Database error handling data from ${deviceId}:`, error);
+    throw error; // 重新抛出以便上层处理
   }
 }
 
+/**
+ * 处理设备参数上传消息
+ *
+ * 验证参数范围，存储到数据库和缓存
+ */
 export async function handleParameterUpload(deviceId: string, payload: string): Promise<void> {
-  try {
-    const data: ParameterMessage = JSON.parse(payload);
+  let data: ParameterData;
 
+  try {
+    const parsed: unknown = JSON.parse(payload);
+    const result = parameterSchema.safeParse(parsed);
+
+    if (!result.success) {
+      console.warn(`[MQTT] Parameter validation failed for ${deviceId}: ${result.error.errors.map(e => e.message).join(', ')}`);
+      return;
+    }
+
+    data = result.data;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      // eslint-disable-next-line no-console
+      console.warn(`[MQTT] Invalid JSON in parameter payload from ${deviceId}`);
+      return;
+    }
+    // eslint-disable-next-line no-console
+    console.error(`[MQTT] Error parsing parameter payload for ${deviceId}:`, error);
+    return;
+  }
+
+  try {
     const params = await prisma.deviceParam.upsert({
       where: { deviceId },
       update: {
@@ -155,7 +365,7 @@ export async function handleParameterUpload(deviceId: string, payload: string): 
         humiHighLimit: data.humiHighLimit,
         humiLowLimit: data.humiLowLimit,
         uploadInterval: data.uploadInterval,
-        version: data.version,
+        version: data.version ?? 0,
         resetTimes: data.resetTimes,
       },
       create: {
@@ -198,87 +408,60 @@ export async function handleParameterUpload(deviceId: string, payload: string): 
       CacheTTL.deviceParams
     );
 
-    console.log(`Parameters received from ${deviceId}`);
+    // eslint-disable-next-line no-console
+    console.log(`[MQTT] Parameters received from ${deviceId}: version=${params.version}`);
   } catch (error) {
-    console.error(`Error handling parameters from ${deviceId}:`, error);
+    // eslint-disable-next-line no-console
+    console.error(`[MQTT] Database error handling parameters from ${deviceId}:`, error);
+    throw error; // 重新抛出以便上层处理
   }
 }
 
-async function checkAlarms(deviceId: string, data: SensorDataMessage): Promise<void> {
-  const params = await prisma.deviceParam.findUnique({
-    where: { deviceId },
-  });
-
-  if (!params || params.alarmEnabled !== 1) {
-    return;
-  }
-
-  if (data.temp !== undefined && data.temp !== null) {
-    if (params.tempHighLimit && data.temp > params.tempHighLimit) {
-      await createAlarm(deviceId, 'TEMP_HIGH', data.temp, params.tempHighLimit);
-    }
-    if (params.tempLowLimit && data.temp < params.tempLowLimit) {
-      await createAlarm(deviceId, 'TEMP_LOW', data.temp, params.tempLowLimit);
-    }
-  }
-
-  if (data.humi !== undefined && data.humi !== null) {
-    if (params.humiHighLimit && data.humi > params.humiHighLimit) {
-      await createAlarm(deviceId, 'HUMI_HIGH', data.humi, params.humiHighLimit);
-    }
-    if (params.humiLowLimit && data.humi < params.humiLowLimit) {
-      await createAlarm(deviceId, 'HUMI_LOW', data.humi, params.humiLowLimit);
-    }
-  }
-}
-
-async function createAlarm(
-  deviceId: string,
-  type: string,
-  value: number,
-  threshold: number
-): Promise<void> {
-  await prisma.alarmRecord.create({
-    data: {
-      deviceId,
-      alarmType: type,
-      alarmValue: value,
-      threshold,
-    },
-  });
-  console.log(`Alarm created for ${deviceId}: ${type}`);
-}
-
+/**
+ * MQTT 消息分发处理器
+ *
+ * 解析主题，验证格式，分发到对应的处理器
+ */
 export function handleMessage(topic: string, payload: Buffer): void {
   const parsed = parseTopic(topic);
   if (!parsed) {
-    console.warn(`Invalid topic format: ${topic}`);
+    // eslint-disable-next-line no-console
+    console.warn(`[MQTT] Invalid topic format: ${topic}`);
     return;
   }
 
   const { deviceId, action } = parsed;
   const payloadStr = payload.toString();
 
-  console.log(`Message received: ${topic}`);
+  // eslint-disable-next-line no-console
+  console.log(`[MQTT] Message received: ${topic} from ${deviceId}`);
 
   switch (action) {
     case 'login':
-      handleLogin(deviceId, payloadStr);
+      handleLogin(deviceId, payloadStr).catch(err => {
+        console.error(`[MQTT] Unhandled login error for ${deviceId}:`, err);
+      });
       break;
     case 'datas':
     case 'getdatas_reply':
-      handleDataUpload(deviceId, payloadStr);
+      handleDataUpload(deviceId, payloadStr).catch(err => {
+        console.error(`[MQTT] Unhandled data error for ${deviceId}:`, err);
+      });
       break;
     case 'parameter':
     case 'getparam_reply':
-      handleParameterUpload(deviceId, payloadStr);
+      handleParameterUpload(deviceId, payloadStr).catch(err => {
+        console.error(`[MQTT] Unhandled parameter error for ${deviceId}:`, err);
+      });
       break;
     case 'ctr_reply':
     case 'set_reply':
     case 'ntp_reply':
-      console.log(`Response from ${deviceId}: ${action}`);
+      // eslint-disable-next-line no-console
+      console.log(`[MQTT] Response from ${deviceId}: ${action}`);
       break;
     default:
-      console.warn(`Unknown action: ${action}`);
+      // eslint-disable-next-line no-console
+      console.warn(`[MQTT] Unknown action: ${action} from ${deviceId}`);
   }
 }

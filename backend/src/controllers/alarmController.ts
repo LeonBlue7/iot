@@ -15,27 +15,60 @@ export const getAlarmsHandler = asyncHandler(async (req: Request, res: Response)
     offset: offset ? parseInt(offset as string, 10) : 0,
   });
 
-  res.json(successResponse(result.data));
+  // 设置响应头必须在 res.json() 之前
   res.setHeader('X-Total-Count', result.total);
+  res.json(successResponse(result.data));
 });
 
 export const acknowledgeAlarmHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const id = req.params.id as string;
-    const operator = (req.body?.operator as string) ?? 'user';
-    const alarm = await acknowledgeAlarm(
-      parseInt(id, 10),
-      operator
-    );
+    const idParam = req.params.id;
+    const id = parseInt(idParam ?? '', 10);
+
+    // 验证 ID 有效性
+    if (!idParam || isNaN(id)) {
+      res.status(404).json({
+        success: false,
+        error: 'NOT_FOUND',
+        message: `Alarm ${req.params.id} not found`,
+      });
+      return;
+    }
+
+    const operator = getOperatorFromBody((req.body as Record<string, unknown>)?.operator);
+    const alarm = await acknowledgeAlarm(id, operator);
     res.json(successResponse(alarm, 'Alarm acknowledged'));
   }
 );
 
 export const resolveAlarmHandler = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const id = req.params.id as string;
-    const operator = (req.body?.operator as string) ?? 'user';
-    const alarm = await resolveAlarm(parseInt(id, 10), operator);
+    const idParam = req.params.id;
+    const id = parseInt(idParam ?? '', 10);
+
+    // 验证 ID 有效性
+    if (!idParam || isNaN(id)) {
+      res.status(404).json({
+        success: false,
+        error: 'NOT_FOUND',
+        message: `Alarm ${req.params.id} not found`,
+      });
+      return;
+    }
+
+    const operator = getOperatorFromBody((req.body as Record<string, unknown>)?.operator);
+    const alarm = await resolveAlarm(id, operator);
     res.json(successResponse(alarm, 'Alarm resolved'));
   }
 );
+
+/**
+ * 从请求体中获取操作者名称
+ * 如果未提供则返回默认值'user'
+ */
+function getOperatorFromBody(operator: unknown): string {
+  if (typeof operator === 'string' && operator.length > 0) {
+    return operator;
+  }
+  return 'user';
+}

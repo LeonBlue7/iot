@@ -11,6 +11,21 @@ import cors from 'cors';
 jest.mock('../../src/utils/database');
 jest.mock('../../src/utils/redis');
 
+// Mock 认证中间件 - 测试环境跳过认证
+jest.mock('../../src/middleware/auth', () => ({
+  authenticate: (req: any, _res: any, next: any) => {
+    req.userId = 'test-user';
+    req.role = 'admin';
+    next();
+  },
+  optionalAuth: (req: any, _res: any, next: any) => {
+    req.userId = 'test-user';
+    req.role = 'user';
+    next();
+  },
+  authorize: (..._roles: string[]) => () => (_req: any, _res: any, next: any) => next(),
+}));
+
 // Mock 整个 services 模块
 jest.mock('../../src/services/device', () => {
   return {

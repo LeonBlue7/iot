@@ -4,10 +4,21 @@ import { NotFoundError } from '../../utils/errors.js';
 import type { IDeviceService } from './types.js';
 import type { Device, CreateDeviceInput, UpdateDeviceInput, SensorData, DeviceParam } from '../../types/index.js';
 
+interface FindAllOptions {
+  page?: number;
+  limit?: number;
+  online?: boolean;
+}
+
 class DeviceService implements IDeviceService {
-  async findAll(): Promise<Device[]> {
+  async findAll(options: FindAllOptions = {}): Promise<Device[]> {
+    const { page = 1, limit = 1000, online } = options;
+
     return prisma.device.findMany({
+      where: online !== undefined ? { online } : undefined,
       orderBy: { createdAt: 'desc' },
+      take: Math.min(limit, 1000), // 最大 1000 条
+      skip: (page - 1) * limit,
       include: { params: true },
     });
   }
@@ -90,7 +101,7 @@ class DeviceService implements IDeviceService {
         },
       },
       orderBy: { recordedAt: 'desc' },
-      take: limit,
+      take: Math.min(limit, 1000), // 最大 1000 条
     });
   }
 

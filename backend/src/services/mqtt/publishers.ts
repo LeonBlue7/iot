@@ -13,6 +13,7 @@ function getDownTopic(deviceId: string, action: string): string {
 export async function sendLoginReply(deviceId: string, result: number = 0): Promise<void> {
   const topic = getDownTopic(deviceId, 'login_reply');
   await mqttClient.publish(topic, { result });
+  // eslint-disable-next-line no-console
   console.log(`Login reply sent to ${deviceId}`);
 }
 
@@ -24,12 +25,14 @@ export async function sendDataReply(deviceId: string, result: number = 0): Promi
 export async function requestToDevice(deviceId: string): Promise<void> {
   const topic = getDownTopic(deviceId, 'getdatas');
   await mqttClient.publish(topic, {});
+  // eslint-disable-next-line no-console
   console.log(`Data request sent to ${deviceId}`);
 }
 
 export async function requestParameters(deviceId: string): Promise<void> {
   const topic = getDownTopic(deviceId, 'getparam');
   await mqttClient.publish(topic, {});
+  // eslint-disable-next-line no-console
   console.log(`Parameter request sent to ${deviceId}`);
 }
 
@@ -50,6 +53,7 @@ export async function sendControlCommand(
     },
   });
 
+  // eslint-disable-next-line no-console
   console.log(`Control command sent to ${deviceId}: ${action}`);
 }
 
@@ -59,6 +63,7 @@ export async function setDeviceParameters(
 ): Promise<void> {
   const topic = getDownTopic(deviceId, 'set');
   await mqttClient.publish(topic, params);
+  // eslint-disable-next-line no-console
   console.log(`Set parameters sent to ${deviceId}`);
 }
 
@@ -66,6 +71,7 @@ export async function sendNtpCommand(deviceId: string): Promise<void> {
   const topic = getDownTopic(deviceId, 'ntp');
   const timestamp = Math.floor(Date.now() / 1000);
   await mqttClient.publish(topic, { time: timestamp });
+  // eslint-disable-next-line no-console
   console.log(`NTP command sent to ${deviceId}`);
 }
 
@@ -77,6 +83,7 @@ export async function initMQTTService(): Promise<void> {
     handleMessage(topic, payload);
   });
 
+  // eslint-disable-next-line no-console
   console.log('MQTT service initialized');
 }
 

@@ -32,6 +32,7 @@ interface Config {
     username: string;
     password: string;
     clientId: string;
+    caCertPath?: string;
   };
   jwt: {
     secret: string;
@@ -59,6 +60,7 @@ const config: Config = {
     username: process.env.MQTT_USERNAME ?? '',
     password: process.env.MQTT_PASSWORD ?? '',
     clientId: process.env.MQTT_CLIENT_ID ?? 'iot_server_',
+    caCertPath: process.env.MQTT_CA_CERT_PATH,
   },
   jwt: {
     secret: process.env.JWT_SECRET ?? generateDefaultSecret(),

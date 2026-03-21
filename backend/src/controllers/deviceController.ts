@@ -19,9 +19,31 @@ const historyQuerySchema = z.object({
   limit: z.string().transform((v) => parseInt(v, 10)).optional(),
 });
 
-export const getDevices = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
-  const devices = await deviceService.findAll();
-  res.json(successResponse(devices));
+const listQuerySchema = z.object({
+  page: z.string().transform((v) => parseInt(v, 10)).optional().default('1'),
+  limit: z.string().transform((v) => parseInt(v, 10)).optional().default('50'),
+  online: z.string().transform((v) => v === 'true').optional(),
+});
+
+export const getDevices = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const query = listQuerySchema.parse(req.query);
+
+  const page = Math.max(1, query.page);
+  const limit = Math.min(100, Math.max(1, query.limit));
+
+  const devices = await deviceService.findAll({
+    page,
+    limit,
+    online: query.online,
+  });
+
+  res.json({
+    success: true,
+    data: devices,
+    page,
+    limit,
+    total: devices.length,
+  });
 });
 
 export const getDeviceById = asyncHandler(async (req: Request, res: Response): Promise<void> => {
@@ -69,7 +91,7 @@ export const getDeviceParams = asyncHandler(async (req: Request, res: Response):
 export const updateDeviceParams = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const id = req.params.id as string;
-    const params = await deviceService.updateParams(id, req.body);
+    const params = await deviceService.updateParams(id, req.body as Record<string, unknown>);
     res.json(successResponse(params, 'Parameters updated'));
   }
 );

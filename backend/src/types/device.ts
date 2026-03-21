@@ -15,7 +15,7 @@ export interface UpdateDeviceInput {
   productId?: string | null;
 }
 
-export type SensorData = Prisma.SensorDataGetPayload<{}>;
+export type SensorData = Prisma.SensorDataGetPayload<Record<string, never>>;
 
 export interface CreateSensorDataInput {
   deviceId: string;
@@ -30,7 +30,7 @@ export interface CreateSensorDataInput {
   recordedAt?: Date | null;
 }
 
-export type DeviceParam = Prisma.DeviceParamGetPayload<{}>;
+export type DeviceParam = Prisma.DeviceParamGetPayload<Record<string, never>>;
 
 export interface AlarmRecord {
   id: number;

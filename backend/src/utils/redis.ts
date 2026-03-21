@@ -8,6 +8,7 @@ const redis = new Redis({
   password: config.redis.password || undefined,
   retryStrategy: (times: number): number | null => {
     if (times > 3) {
+      // eslint-disable-next-line no-console
       console.error('Redis connection failed after 3 retries');
       return null;
     }
@@ -16,10 +17,12 @@ const redis = new Redis({
 });
 
 redis.on('connect', () => {
+  // eslint-disable-next-line no-console
   console.log('Redis connected');
 });
 
 redis.on('error', (err) => {
+  // eslint-disable-next-line no-console
   console.error('Redis error:', err);
 });
 
