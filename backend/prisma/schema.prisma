@@ -137,3 +137,77 @@ model ControlLog {
   @@index([createdAt])
   @@map("control_logs")
 }
+
+// ============== 管理后台模块 ==============
+
+// 管理员用户表
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @map("username") @db.VarChar(50)
+  email        String   @unique @map("email") @db.VarChar(100)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  name         String?  @db.VarChar(100)
+  enabled      Boolean  @default(true)
+  roleIds      Int[]    @map("role_ids") @default([])
+  lastLoginAt  DateTime? @map("last_login_at")
+  lastLoginIp  String?  @map("last_login_ip") @db.VarChar(45)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  auditLogs AuditLog[]
+
+  @@index([username])
+  @@index([email])
+  @@map("admin_users")
+}
+
+// 管理员角色表
+model AdminRole {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @map("name") @db.VarChar(50)
+  description String?  @db.VarChar(200)
+  permissions String[] @db.VarChar(50)
+  isSystem    Boolean  @default(false) // 系统内置角色不可删除
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([name])
+  @@map("admin_roles")
+}
+
+// 审计日志表
+model AuditLog {
+  id            Int      @id @default(autoincrement())
+  adminUserId   Int      @map("admin_user_id") @db.Integer
+  action        String   @map("action") @db.VarChar(50) // 操作类型
+  resource      String   @map("resource") @db.VarChar(50) // 资源类型
+  resourceId    String?  @map("resource_id") @db.VarChar(100) // 资源 ID
+  resourceIdInt Int?     @map("resource_id_int") @db.Integer // 资源 ID (数字)
+  details       Json?    @db.JsonB // 详细信息
+  ipAddress     String?  @map("ip_address") @db.VarChar(45)
+  userAgent     String?  @map("user_agent") @db.VarChar(500)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relations
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id])
+
+  @@index([adminUserId])
+  @@index([action])
+  @@index([resource])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// 系统配置表
+model SystemConfig {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique @map("key") @db.VarChar(100)
+  value       Json     @db.JsonB
+  description String?  @db.VarChar(500)
+  isPublic    Boolean  @default(false) // 是否公开配置
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([key])
+  @@map("system_configs")
+}
