@@ -136,12 +136,13 @@ describe('Alarms Page', () => {
       // @ts-ignore - Mock return value
       mockGetAlarms.mockResolvedValue({ data: [], total: 0 });
 
-      // Call onPullDownRefresh and wait for the promise chain
+      // onPullDownRefresh calls this.loadAlarms().then(() => wx.stopPullDownRefresh())
+      // The function returns the loadAlarms promise, not the .then() chain
       const promise = pageInstance.onPullDownRefresh();
       await promise;
 
-      // Give the .then() callback time to execute
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      // Wait for the .then() callback to execute (microtask)
+      await Promise.resolve();
 
       expect(mockGetAlarms).toHaveBeenCalled();
       expect(mockWx.stopPullDownRefresh).toHaveBeenCalled();

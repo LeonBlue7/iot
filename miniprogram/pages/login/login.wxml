@@ -1,0 +1,39 @@
+<!--miniprogram/pages/login/login.wxml-->
+<view class="login-container">
+  <view class="login-header">
+    <text class="login-title">智能空调控制系统</text>
+    <text class="login-subtitle">请登录您的账号</text>
+  </view>
+
+  <view class="login-form">
+    <view class="form-item">
+      <text class="form-label">用户名</text>
+      <input
+        class="form-input"
+        type="text"
+        placeholder="请输入用户名"
+        value="{{username}}"
+        bindinput="onUsernameInput"
+        name="username"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">密码</text>
+      <input
+        class="form-input"
+        type="password"
+        placeholder="请输入密码"
+        value="{{password}}"
+        bindinput="onPasswordInput"
+        name="password"
+      />
+    </view>
+
+    <button class="login-btn" type="primary" formType="submit">登录</button>
+  </view>
+
+  <view class="login-footer">
+    <text class="login-tip">登录即代表您同意我们的服务协议</text>
+  </view>
+</view>
