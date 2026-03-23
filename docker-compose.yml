@@ -40,7 +40,7 @@ services:
 
   # EMQX MQTT Broker
   emqx:
-    image: emqx:5.21
+    image: emqx/emqx:5.0.22
     container_name: iot-emqx
     environment:
       EMQX_DASHBOARD__DEFAULT_USERNAME: ${EMQX_USERNAME:-admin}

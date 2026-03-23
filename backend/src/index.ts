@@ -9,23 +9,30 @@ const PORT = config.port;
 
 async function startServer(): Promise<void> {
   try {
+    // eslint-disable-next-line no-console
+    console.log('Starting database connection...');
     // Test database connection
     await prisma.$connect();
     // eslint-disable-next-line no-console
     console.log('Database connected');
 
+    // eslint-disable-next-line no-console
+    console.log('Starting Redis ping...');
     // Test Redis connection
     await redis.ping();
     // eslint-disable-next-line no-console
-    console.log('Redis connected');
+    console.log('Redis ping response received');
 
-    // Initialize MQTT service
-    await initMQTTService();
-
-    // Start Express server
+    // Start Express server first (before MQTT)
     const server = app.listen(PORT, () => {
       // eslint-disable-next-line no-console
       console.log(`Server running on port ${PORT} in ${config.nodeEnv} mode`);
+    });
+
+    // Initialize MQTT service asynchronously (non-blocking)
+    initMQTTService().catch((err: unknown) => {
+      // eslint-disable-next-line no-console
+      console.warn('MQTT service initialization failed (running in degraded mode):', err instanceof Error ? err.message : String(err));
     });
 
     // Graceful shutdown
