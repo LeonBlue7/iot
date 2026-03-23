@@ -1,6 +1,7 @@
 // src/services/admin/audit.service.ts
 import prisma from '../../utils/database.js';
 import { sanitizeForLogging } from '../../utils/sanitizer.js';
+import { Prisma } from '@prisma/client';
 
 export interface CreateAuditLogInput {
   adminUserId: number;
@@ -8,7 +9,7 @@ export interface CreateAuditLogInput {
   resource: string;
   resourceId?: string;
   resourceIdInt?: number;
-  details?: unknown;
+  details?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
 }
@@ -45,7 +46,7 @@ export interface AuditLogWithUser {
  * 创建审计日志
  */
 export async function createAuditLog(input: CreateAuditLogInput): Promise<unknown> {
-  const detailsValue = input.details ? JSON.stringify(sanitizeForLogging(input.details)) : null;
+  const sanitizedDetails = input.details ? sanitizeForLogging(input.details) : null;
 
   return prisma.auditLog.create({
     data: {
@@ -55,7 +56,7 @@ export async function createAuditLog(input: CreateAuditLogInput): Promise<unknow
       resourceId: input.resourceId,
       resourceIdInt: input.resourceIdInt,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      details: detailsValue === null ? null : detailsValue,
+      details: sanitizedDetails === null ? Prisma.JsonNull : (sanitizedDetails as Prisma.InputJsonValue),
       ipAddress: input.ipAddress,
       userAgent: input.userAgent,
     },
@@ -111,5 +112,5 @@ export async function getAuditLogs(options: GetAuditLogsOptions = {}): Promise<{
     prisma.auditLog.count({ where }),
   ]);
 
-  return { data, total };
+  return { data: data as unknown as AuditLogWithUser[], total };
 }

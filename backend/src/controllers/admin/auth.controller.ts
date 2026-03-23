@@ -45,7 +45,7 @@ async function handleLoginFailure(
  * 登录成功处理
  */
 async function handleLoginSuccess(
-  adminUser: { id: number; username: string; email: string; roleIds: number[] },
+  adminUser: { id: number; username: string; email: string; name: string | null; roleIds: number[] },
   clientIp: string,
   userAgent: string | undefined
 ): Promise<{ token: string; user: unknown }> {
