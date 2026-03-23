@@ -1,0 +1,6 @@
+# 数据库备份 cron 配置
+# 每天凌晨 2 点执行备份
+0 2 * * * /opt/iot/scripts/backup.sh /opt/iot/backups >> /var/log/iot-backup.log 2>&1
+
+# 每周日凌晨 3 点执行完整备份验证（可选）
+# 0 3 * * 0 /opt/iot/scripts/verify-backup.sh >> /var/log/iot-backup-verify.log 2>&1

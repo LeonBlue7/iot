@@ -1,0 +1,94 @@
+# Prometheus 告警规则
+groups:
+  - name: iot-alerts
+    interval: 30s
+    rules:
+      # 后端服务宕机告警
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "后端服务宕机"
+          description: "后端服务 ({{ $labels.instance }}) 已宕机超过 1 分钟"
+
+      # 数据库宕机告警
+      - alert: PostgresDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL 数据库宕机"
+          description: "PostgreSQL 数据库 ({{ $labels.instance }}) 已宕机超过 1 分钟"
+
+      # Redis 宕机告警
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis 宕机"
+          description: "Redis ({{ $labels.instance }}) 已宕机超过 1 分钟"
+
+      # MQTT Broker 宕机告警
+      - alert: EmqxDown
+        expr: up{job="emqx"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "EMQX MQTT Broker 宕机"
+          description: "EMQX Broker ({{ $labels.instance }}) 已宕机超过 1 分钟"
+
+      # CPU 使用率过高
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU 使用率过高"
+          description: "{{ $labels.instance }} CPU 使用率超过 80% (当前值：{{ $value }}%)"
+
+      # 内存使用率过高
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "内存使用率过高"
+          description: "{{ $labels.instance }} 内存使用率超过 85% (当前值：{{ $value }}%)"
+
+      # 磁盘使用率过高
+      - alert: HighDiskUsage
+        expr: (1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "磁盘使用率过高"
+          description: "{{ $labels.instance }} 磁盘使用率超过 85% (当前值：{{ $value }}%)"
+
+      # Redis 内存使用率过高
+      - alert: RedisHighMemory
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis 内存使用率过高"
+          description: "Redis ({{ $labels.instance }}) 内存使用率超过 90%"
+
+      # 后端响应时间过长
+      - alert: BackendSlowResponse
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="backend"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "后端响应时间过长"
+          description: "后端服务 95% 请求响应时间超过 2 秒 (当前值：{{ $value }}s)"

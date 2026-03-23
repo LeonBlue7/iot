@@ -1,0 +1,62 @@
+# Prometheus 主配置
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    environment: 'production'
+    project: 'iot-system'
+
+# Alertmanager 配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# 规则文件
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+# 抓取配置
+scrape_configs:
+  # Prometheus 自监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          instance: 'prometheus'
+
+  # Node Exporter - 服务器指标
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          instance: 'iot-server'
+
+  # Redis Exporter - Redis 指标
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          instance: 'iot-redis'
+
+  # 后端服务指标
+  - job_name: 'backend'
+    static_configs:
+      - targets: ['backend:3000']
+        labels:
+          instance: 'iot-backend'
+    metrics_path: '/metrics'
+
+  # EMQX MQTT Broker 指标
+  - job_name: 'emqx'
+    static_configs:
+      - targets: ['emqx:8083']
+        labels:
+          instance: 'iot-emqx'
+
+  # PostgreSQL 监控（需要 postgres_exporter）
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          instance: 'iot-postgres'

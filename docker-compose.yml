@@ -83,6 +83,18 @@ services:
       - iot-network
     restart: unless-stopped
 
+  # 管理后台前端
+  admin-web:
+    build:
+      context: ./admin-web
+      dockerfile: Dockerfile
+    container_name: iot-admin-web
+    depends_on:
+      - backend
+    networks:
+      - iot-network
+    restart: unless-stopped
+
   # Nginx 反向代理
   nginx:
     image: nginx:alpine
@@ -95,6 +107,7 @@ services:
       - ./nginx/ssl:/etc/nginx/ssl:ro
     depends_on:
       - backend
+      - admin-web
     networks:
       - iot-network
     restart: unless-stopped

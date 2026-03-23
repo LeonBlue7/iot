@@ -1,0 +1,105 @@
+{
+  "dashboard": {
+    "title": "IoT 系统概览",
+    "tags": ["iot"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "panels": [
+      {
+        "id": 1,
+        "title": "系统运行状态",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"backend\"}",
+            "legendFormat": "后端服务"
+          },
+          {
+            "expr": "up{job=\"postgres\"}",
+            "legendFormat": "数据库"
+          },
+          {
+            "expr": "up{job=\"redis\"}",
+            "legendFormat": "Redis"
+          },
+          {
+            "expr": "up{job=\"emqx\"}",
+            "legendFormat": "MQTT Broker"
+          }
+        ],
+        "gridPos": { "h": 6, "w": 24, "x": 0, "y": 0 },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "center"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              { "type": "value", "options": { "0": { "text": "离线", "color": "red" } } },
+              { "type": "value", "options": { "1": { "text": "在线", "color": "green" } } }
+            ]
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "CPU 使用率",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+        "yAxes": [{ "min": 0, "max": 100, "format": "percent" }]
+      },
+      {
+        "id": 3,
+        "title": "内存使用率",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+        "yAxes": [{ "min": 0, "max": 100, "format": "percent" }]
+      },
+      {
+        "id": 4,
+        "title": "磁盘使用率",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "(1 - (node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"})) * 100",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+        "yAxes": [{ "min": 0, "max": 100, "format": "percent" }]
+      },
+      {
+        "id": 5,
+        "title": "Redis 内存使用",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "redis_memory_used_bytes",
+            "legendFormat": "已用内存"
+          },
+          {
+            "expr": "redis_memory_max_bytes",
+            "legendFormat": "最大内存"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 }
+      }
+    ],
+    "refresh": "30s",
+    "time": { "from": "now-1h", "to": "now" }
+  }
+}
