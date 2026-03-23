@@ -14,14 +14,47 @@ const controlSchema = z.object({
 });
 
 const historyQuerySchema = z.object({
-  startTime: z.string().transform((v) => new Date(v)),
-  endTime: z.string().transform((v) => new Date(v)),
-  limit: z.string().transform((v) => parseInt(v, 10)).optional(),
+  startTime: z.string().transform((v) => new Date(v)).optional(),
+  endTime: z.string().transform((v) => new Date(v)).optional(),
+  limit: z
+    .string()
+    .transform((v) => {
+      const parsed = parseInt(v, 10);
+      if (Number.isNaN(parsed)) {
+        throw new Error('limit must be a valid integer');
+      }
+      return parsed;
+    })
+    .refine((v) => v >= 1 && v <= 1000, 'limit must be between 1 and 1000')
+    .optional()
+    .default('100'),
 });
 
 const listQuerySchema = z.object({
-  page: z.string().transform((v) => parseInt(v, 10)).optional().default('1'),
-  limit: z.string().transform((v) => parseInt(v, 10)).optional().default('50'),
+  page: z
+    .string()
+    .transform((v) => {
+      const parsed = parseInt(v, 10);
+      if (Number.isNaN(parsed)) {
+        throw new Error('page must be a valid integer');
+      }
+      return parsed;
+    })
+    .refine((v) => v >= 1, 'page must be greater than or equal to 1')
+    .optional()
+    .default('1'),
+  limit: z
+    .string()
+    .transform((v) => {
+      const parsed = parseInt(v, 10);
+      if (Number.isNaN(parsed)) {
+        throw new Error('limit must be a valid integer');
+      }
+      return parsed;
+    })
+    .refine((v) => v >= 1 && v <= 100, 'limit must be between 1 and 100')
+    .optional()
+    .default('50'),
   online: z.string().transform((v) => v === 'true').optional(),
 });
 
@@ -64,7 +97,16 @@ export const getRealtimeData = asyncHandler(async (req: Request, res: Response):
 export const getHistoryData = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const id = req.params.id as string;
   const query = historyQuerySchema.parse(req.query);
-  const data = await deviceService.getHistoryData(id, query.startTime, query.endTime, query.limit ?? 100);
+
+  // 如果没有提供时间范围，默认查询最近 1 小时
+  const now = new Date();
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+
+  const startTime = query.startTime || oneHourAgo;
+  const endTime = query.endTime || now;
+  const limit = query.limit || 100;
+
+  const data = await deviceService.getHistoryData(id, startTime, endTime, limit);
   res.json(successResponse(data));
 });
 
