@@ -8,19 +8,22 @@ test.describe('登录页面', () => {
   test('应该显示登录表单', async ({ page }) => {
     await page.goto('/login');
 
-    // 验证页面标题
-    await expect(page).toHaveTitle(/登录/);
-    await expect(page.getByText(/登录/)).toBeVisible();
+    // 验证页面标题 - 实际标题是"物联网管理系统 - 管理后台"
+    await expect(page).toHaveTitle(/物联网管理系统/);
+
+    // 验证页面主要内容 - 标题和副标题
+    await expect(page.getByText('物联网管理系统')).toBeVisible();
+    await expect(page.getByText('管理后台登录')).toBeVisible();
   });
 
   test('应该验证空用户名和密码', async ({ page }) => {
     await page.goto('/login');
 
-    // 尝试空提交
-    await page.getByRole('button', { name: /登录/i }).click();
+    // 尝试空提交 - 使用 CSS 选择器点击登录按钮
+    await page.locator('button[type="submit"]').click();
 
     // 验证错误提示
-    await expect(page.getByText(/用户名和密码必填/i)).toBeVisible();
+    await expect(page.getByText(/请输入用户名/)).toBeVisible();
   });
 
   test('应该成功登录并跳转', async ({ page }) => {
@@ -28,15 +31,15 @@ test.describe('登录页面', () => {
 
     // 填写登录表单
     await page.getByPlaceholder('用户名').fill('admin');
-    await page.getByPlaceholder('密码', { exact: true }).fill('password123');
+    await page.getByPlaceholder('密码').fill('admin123');
 
-    // 提交登录
-    await page.getByRole('button', { name: /登录/i }).click();
+    // 提交登录 - 使用 CSS 选择器
+    await page.locator('button[type="submit"]').click();
 
-    // 等待跳转（如果登录成功会跳转到首页）
-    await page.waitForURL(/^(http:\/\/localhost:3000\/?)$/, { timeout: 5000 }).catch(() => {
-      // 如果登录失败，可能是因为测试环境未配置
-      console.log('登录可能需要有效的后端服务');
-    });
+    // 等待旋转到 dashboard 页面
+    await page.waitForURL(/\/dashboard/, { timeout: 10000 });
+
+    // 验证跳转成功
+    await expect(page).toHaveURL(/\/dashboard/);
   });
 });

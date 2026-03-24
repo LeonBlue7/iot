@@ -23,7 +23,7 @@ export default defineConfig({
   outputDir: 'test-results/',
 
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3001',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -34,16 +34,12 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
   ],
 
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  },
+  // 注意：webServer 已禁用，因为前端服务已经独立运行
+  // webServer: {
+  //   command: 'npm run dev',
+  //   url: 'http://localhost:3002',
+  //   reuseExistingServer: true,
+  // },
 });

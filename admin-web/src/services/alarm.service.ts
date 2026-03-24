@@ -1,6 +1,6 @@
 import type { AlarmRecord } from '../types/alarm'
 import type { ApiResponse } from '../types/api'
-import axios from 'axios'
+import axios from '../utils/axios'
 
 export interface AlarmListParams {
   page?: number

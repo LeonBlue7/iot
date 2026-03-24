@@ -16,12 +16,17 @@ async function startServer(): Promise<void> {
     // eslint-disable-next-line no-console
     console.log('Database connected');
 
-    // eslint-disable-next-line no-console
-    console.log('Starting Redis ping...');
-    // Test Redis connection
-    await redis.ping();
-    // eslint-disable-next-line no-console
-    console.log('Redis ping response received');
+    // Test Redis connection (optional)
+    try {
+      // eslint-disable-next-line no-console
+      console.log('Pinging Redis...');
+      await redis.ping();
+      // eslint-disable-next-line no-console
+      console.log('Redis connected');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('Redis not available, running in degraded mode');
+    }
 
     // Start Express server first (before MQTT)
     const server = app.listen(PORT, () => {

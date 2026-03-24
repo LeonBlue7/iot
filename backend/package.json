@@ -4,7 +4,7 @@
   "description": "物联网管理系统后端服务",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "tsx watch src/app.ts",
+    "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/app.js",
     "test": "jest",

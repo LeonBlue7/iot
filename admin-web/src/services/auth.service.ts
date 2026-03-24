@@ -1,8 +1,6 @@
-import axios from 'axios'
+import axios from '../utils/axios'
 import type { LoginCredentials, UserInfo } from '../types/auth'
 import type { ApiResponse } from '../types/api'
-
-const API_BASE_URL = '/api'
 
 export interface LoginResponse {
   token: string
@@ -15,7 +13,7 @@ export const authApi = {
    */
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     const response = await axios.post<ApiResponse<LoginResponse>>(
-      `${API_BASE_URL}/admin/auth/login`,
+      '/admin/auth/login',
       credentials,
     )
 
@@ -31,7 +29,7 @@ export const authApi = {
    */
   async getMe(): Promise<UserInfo> {
     const response = await axios.get<ApiResponse<UserInfo>>(
-      `${API_BASE_URL}/admin/me`,
+      '/admin/me',
     )
 
     if (!response.data.success) {

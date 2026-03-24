@@ -70,3 +70,4 @@ redis_data/
 
 # ODT 文档（二进制文件）
 *.odt
+*.tsbuildinfo

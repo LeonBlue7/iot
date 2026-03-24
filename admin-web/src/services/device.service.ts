@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '../utils/axios'
 import type { ApiResponse } from '../types/api'
 import type { Device, DeviceParams, SensorData, ControlAction } from '../types/device'
 

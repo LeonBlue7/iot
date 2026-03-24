@@ -24,7 +24,7 @@ app.use(
 // Rate limiting - stricter for control endpoints
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // 30 requests per 15 minutes
+  max: config.nodeEnv === 'production' ? 30 : 1000, // 1000 requests per 15 minutes in dev
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: 'RATE_LIMIT_EXCEEDED', message: '请求过于频繁，请稍后重试' },
@@ -34,7 +34,7 @@ app.use('/api/', apiLimiter);
 // Stricter rate limiting for login endpoint (prevent brute force)
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // 10 login attempts per 15 minutes
+  max: config.nodeEnv === 'production' ? 10 : 100, // 100 login attempts per 15 minutes in dev
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: 'RATE_LIMIT_EXCEEDED', message: '登录尝试过于频繁，请 15 分钟后重试' },
