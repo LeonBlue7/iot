@@ -30,7 +30,32 @@
       />
     </view>
 
-    <button class="login-btn" type="primary" formType="submit">登录</button>
+    <!-- 记住密码开关 -->
+    <view class="form-item remember-row">
+      <switch
+        checked="{{rememberPassword}}"
+        bindchange="onRememberToggle"
+        color="#1890ff"
+      />
+      <text class="remember-text">记住密码</text>
+    </view>
+
+    <button class="login-btn" type="primary" formType="submit" loading="{{isLoading}}">
+      登录
+    </button>
+
+    <!-- 分割线 -->
+    <view class="divider">
+      <view class="divider-line"></view>
+      <text class="divider-text">或</text>
+      <view class="divider-line"></view>
+    </view>
+
+    <!-- 微信登录按钮 -->
+    <button class="wechat-login-btn" open-type="getPhoneNumber" bindgetphonenumber="onWechatLogin">
+      <image class="wechat-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZmZmZiI+PHBhdGggZD0iTTE2LjUgNmMtLjI1IDAtLjUuMDItLjc1LjA1QzE0LjUgNC41IDEyLjUgMy41IDEwLjUgMy41Yy0zLjUgMC02LjUgMi41LTYuNSA1LjUgMCAxIC4yNSAyIC43IDIuN0wzIDE0bDIuNS0uNWMuOC41IDEuOC43IDIuOC43LjI1IDAgLjUtLjAyLjc1LS4wNSAxLjI1IDEuNSAzLjI1IDIuNSA1LjI1IDIuNSAzLjUgMCA2LjUtMi41IDYuNS01LjUgMC0zLTIuNS01LjUtNi01LjV6bS04IDYuNWMtLjUgMC0xLS41LTEtMXMuNS0xIDEtMSAxIC41IDEgMS0uNSAxLTEgMXptNSAwYy0uNSAwLTEtLjUtMS0xcy41LTEgMS0xIDEgLjUgMSAxLS41IDEtMSAxeiIvPjwvc3ZnPg==" mode="aspectFit"></image>
+      <text>微信一键登录</text>
+    </button>
   </view>
 
   <view class="login-footer">

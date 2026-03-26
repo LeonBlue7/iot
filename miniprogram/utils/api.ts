@@ -1,5 +1,15 @@
 // miniprogram/utils/api.ts
-const BASE_URL = 'https://www.jxbonner.cloud/api';
+// 根据小程序环境版本选择API基础URL
+// develop: 开发版, trial: 体验版, release: 正式版
+const BASE_URL = (() => {
+  const envVersion = __wxConfig.envVersion;
+  if (envVersion === 'develop') {
+    // 开发环境 - 可根据需要修改为开发服务器地址
+    return 'https://www.jxbonner.cloud/api';
+  }
+  // 体验版和正式版使用生产服务器
+  return 'https://www.jxbonner.cloud/api';
+})();
 
 interface ApiResponse<T> {
   success: boolean;
@@ -99,7 +109,7 @@ export async function getHistoryData(
   endTime: Date,
   limit?: number
 ): Promise<SensorData[]> {
-  const result = await request<SensorData[]>('/devices/${id}/history', 'GET', {
+  const result = await request<SensorData[]>(`/devices/${id}/history`, 'GET', {
     startTime: startTime.toISOString(),
     endTime: endTime.toISOString(),
     limit,

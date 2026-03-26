@@ -37,32 +37,28 @@ export interface UserInfo {
 }
 
 /**
+ * 记住的凭证
+ */
+export interface RememberedCredentials {
+  username: string;
+  password: string;
+}
+
+/**
  * Token 存储键名
  */
 const TOKEN_STORAGE_KEY = 'auth_token';
 const USER_STORAGE_KEY = 'user_info';
 const TOKEN_EXPIRY_KEY = 'token_expiry';
+const REMEMBERED_CREDENTIALS_KEY = 'remembered_credentials';
 
-/**
- * 简单的 Base64 编码/解码（用于防止明文显示）
- * 注意：这不是加密，只是避免明文暴露
- */
-function encodeToken(token: string): string {
-  try {
-    return wx.base64Encode(token);
-  } catch {
-    // 降级处理：直接返回（部分基础库可能不支持）
-    return token;
-  }
+// 简单的编码/解码函数（非加密，仅用于混淆）
+function encode(str: string): string {
+  return Buffer.from(str).toString('base64');
 }
 
-function decodeToken(encodedToken: string): string | null {
-  try {
-    return wx.base64Decode(encodedToken);
-  } catch {
-    // 降级处理：尝试直接使用原值
-    return encodedToken;
-  }
+function decode(str: string): string {
+  return Buffer.from(str, 'base64').toString('utf-8');
 }
 
 /**
@@ -84,8 +80,8 @@ export async function login(params: LoginParams): Promise<LoginResponse> {
     throw new Error(result.error || 'Login failed');
   }
 
-  // 存储 token（编码后）和用户信息
-  wx.setStorageSync(TOKEN_STORAGE_KEY, encodeToken(result.data.token));
+  // 存储 token 和用户信息
+  wx.setStorageSync(TOKEN_STORAGE_KEY, result.data.token);
   wx.setStorageSync(USER_STORAGE_KEY, result.data.user);
 
   // 计算过期时间（假设 token 有效期为 24 小时）
@@ -105,15 +101,15 @@ export function logout(): void {
 }
 
 /**
- * 获取存储的 token（解码后）
+ * 获取存储的 token
  */
 export function getToken(): string | null {
   try {
-    const encodedToken = wx.getStorageSync(TOKEN_STORAGE_KEY);
-    if (!encodedToken) {
+    const token = wx.getStorageSync(TOKEN_STORAGE_KEY);
+    if (!token) {
       return null;
     }
-    return decodeToken(encodedToken);
+    return token;
   } catch {
     return null;
   }
@@ -159,4 +155,116 @@ export function isLoggedIn(): boolean {
     return false;
   }
   return true;
+}
+
+// ============================================
+// 微信登录功能
+// ============================================
+
+/**
+ * 微信登录响应
+ */
+export interface WechatLoginResponse {
+  token: string;
+  user: UserInfo;
+}
+
+/**
+ * 微信登录
+ * 使用 wx.login 获取 code，然后发送到后端验证
+ */
+export async function wechatLogin(code: string): Promise<WechatLoginResponse> {
+  if (!code) {
+    throw new Error('微信登录 code 不能为空');
+  }
+
+  const result = await request<WechatLoginResponse>('/admin/auth/wechat-login', 'POST', {
+    code,
+  });
+
+  if (!result.success || !result.data) {
+    throw new Error(result.error || '微信登录失败');
+  }
+
+  // 存储 token 和用户信息
+  wx.setStorageSync(TOKEN_STORAGE_KEY, result.data.token);
+  wx.setStorageSync(USER_STORAGE_KEY, result.data.user);
+
+  // 计算过期时间（假设 token 有效期为 24 小时）
+  const expiryTime = Date.now() + 24 * 60 * 60 * 1000;
+  wx.setStorageSync(TOKEN_EXPIRY_KEY, expiryTime);
+
+  return result.data;
+}
+
+// ============================================
+// 记住密码功能
+// ============================================
+
+/**
+ * 保存记住的凭证
+ * 注意：密码以 base64 编码存储，不是加密，仅用于便利性
+ */
+export function saveRememberedCredentials(credentials: RememberedCredentials): void {
+  const encoded = {
+    username: encode(credentials.username),
+    password: encode(credentials.password),
+  };
+  wx.setStorageSync(REMEMBERED_CREDENTIALS_KEY, JSON.stringify(encoded));
+}
+
+/**
+ * 加载记住的凭证
+ */
+export function loadRememberedCredentials(): RememberedCredentials | null {
+  try {
+    const stored = wx.getStorageSync(REMEMBERED_CREDENTIALS_KEY);
+    if (!stored) {
+      return null;
+    }
+
+    const encoded = JSON.parse(stored);
+    return {
+      username: decode(encoded.username),
+      password: decode(encoded.password),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 清除记住的凭证
+ */
+export function clearRememberedCredentials(): void {
+  wx.removeStorageSync(REMEMBERED_CREDENTIALS_KEY);
+}
+
+/**
+ * 检查是否有记住的凭证
+ */
+export function hasRememberedCredentials(): boolean {
+  try {
+    const stored = wx.getStorageSync(REMEMBERED_CREDENTIALS_KEY);
+    return !!stored;
+  } catch {
+    return false;
+  }
+}
+
+// ============================================
+// 自动登录功能
+// ============================================
+
+/**
+ * 自动登录
+ * 使用记住的凭证进行登录
+ */
+export async function autoLogin(): Promise<LoginResponse> {
+  const credentials = loadRememberedCredentials();
+  if (!credentials) {
+    throw new Error('没有保存的凭证');
+  }
+
+  return login(credentials);
 }

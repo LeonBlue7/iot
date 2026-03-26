@@ -78,3 +78,58 @@
   font-size: 24rpx;
   color: #999;
 }
+
+/* 记住密码样式 */
+.remember-row {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-bottom: 30rpx;
+}
+
+.remember-text {
+  font-size: 28rpx;
+  color: #666;
+  margin-left: 16rpx;
+}
+
+/* 分割线样式 */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 40rpx 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1rpx;
+  background-color: #e8e8e8;
+}
+
+.divider-text {
+  font-size: 26rpx;
+  color: #999;
+  padding: 0 24rpx;
+}
+
+/* 微信登录按钮样式 */
+.wechat-login-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background-color: #07c160;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wechat-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 16rpx;
+}
