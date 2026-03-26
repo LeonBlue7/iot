@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-本文件为 Claude Code (claude.ai/code) 在此仓库工作时提供指导。
+本文件为 Claude Code (claude.ai/code) 在此仓库工作时提供指导，全程使用中文交互。
 
 ## 项目概述
 
@@ -10,7 +10,10 @@
 - **后端**：Node.js + Express + TypeScript
 - **数据库**：PostgreSQL + Redis
 - **MQTT Broker**：EMQX 5.21
-- **前端**：微信小程序
+- **前端**：
+  - 微信小程序（移动端用户界面）
+  - React + Vite + Ant Design（管理后台）
+  - **容器化部署**：Docker+dockercompose
 
 ## 常用命令
 
@@ -31,6 +34,18 @@ npx prisma migrate dev    # 创建并运行迁移
 npx prisma generate       # 生成Prisma Client
 ```
 
+### 管理后台前端
+```bash
+cd admin-web
+npm install          # 安装依赖
+npm run dev          # 开发模式启动
+npm run build        # 构建生产版本
+npm run preview      # 预览生产构建
+npm run lint         # 代码检查
+npm run test         # 运行单元测试
+npm run test:coverage # 运行测试并生成覆盖率报告
+```
+
 ## 项目结构
 
 ```
@@ -49,6 +64,21 @@ npx prisma generate       # 生成Prisma Client
 │   │   └── app.ts            # 应用入口
 │   ├── prisma/                # 数据库迁移
 │   └── tests/                 # 测试文件
+├── admin-web/                  # 管理后台前端
+│   ├── src/
+│   │   ├── components/        # 通用组件
+│   │   ├── pages/             # 页面组件
+│   │   │   ├── Dashboard/    # 仪表盘
+│   │   │   ├── Devices/      # 设备管理
+│   │   │   ├── Alarms/       # 告警管理
+│   │   │   ├── Stats/        # 数据统计
+│   │   │   └── Login/        # 登录页面
+│   │   ├── services/          # API服务
+│   │   ├── store/             # 状态管理(Zustand)
+│   │   ├── hooks/             # 自定义Hooks
+│   │   └── types/             # TypeScript类型定义
+│   ├── e2e/                   # E2E测试
+│   └── dist/                  # 构建输出
 ├── miniprogram/               # 微信小程序
 │   ├── pages/                 # 页面
 │   ├── components/            # 组件
