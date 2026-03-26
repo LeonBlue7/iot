@@ -9,19 +9,19 @@ datasource db {
 
 // 设备表
 model Device {
-  id          String    @id @db.VarChar(20) // IMEI号
-  productId   String?   @map("product_id") @db.VarChar(50)
-  name        String?   @db.VarChar(100)
-  simCard     String?   @map("sim_card") @db.VarChar(20)
-  online      Boolean   @default(false)
-  lastSeenAt  DateTime? @map("last_seen_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
+  id         String    @id @db.VarChar(20) // IMEI号
+  productId  String?   @map("product_id") @db.VarChar(50)
+  name       String?   @db.VarChar(100)
+  simCard    String?   @map("sim_card") @db.VarChar(20)
+  online     Boolean   @default(false)
+  lastSeenAt DateTime? @map("last_seen_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
 
   // Relations
-  sensorData     SensorData[]
-  params         DeviceParam?
-  alarms         AlarmRecord[]
-  controlLogs    ControlLog[]
+  sensorData  SensorData[]
+  params      DeviceParam?
+  alarms      AlarmRecord[]
+  controlLogs ControlLog[]
 
   @@map("devices")
 }
@@ -32,7 +32,7 @@ model SensorData {
   deviceId       String    @map("device_id") @db.VarChar(20)
   temperature    Decimal?  @db.Decimal(4, 1) // 温度
   humidity       Decimal?  @db.Decimal(4, 1) // 湿度
-  current        Int?      // 电流值
+  current        Int? // 电流值
   signalStrength Decimal?  @map("signal_strength") @db.Decimal(4, 1) // 信号强度
   acState        Int?      @map("ac_state") // 空调状态
   acError        Int?      @map("ac_error") // 空调故障码
@@ -51,41 +51,41 @@ model SensorData {
 
 // 设备参数表
 model DeviceParam {
-  id             Int      @id @default(autoincrement())
-  deviceId       String   @unique @map("device_id") @db.VarChar(20)
+  id       Int    @id @default(autoincrement())
+  deviceId String @unique @map("device_id") @db.VarChar(20)
 
   // 自动控制参数
-  mode           Int      @default(0) // 0手动/1自动
-  summerTempOn   Decimal? @map("summer_temp_on") @db.Decimal(4, 1)
-  summerTempSet  Decimal? @map("summer_temp_set") @db.Decimal(4, 1)
-  summerTempOff  Decimal? @map("summer_temp_off") @db.Decimal(4, 1)
-  winterTempOn   Decimal? @map("winter_temp_on") @db.Decimal(4, 1)
-  winterTempSet  Decimal? @map("winter_temp_set") @db.Decimal(4, 1)
-  winterTempOff  Decimal? @map("winter_temp_off") @db.Decimal(4, 1)
-  winterStart    Int?     @map("winter_start")
-  winterEnd      Int?     @map("winter_end")
-  acOffInterval  Int?     @map("ac_off_interval")
+  mode          Int      @default(0) // 0手动/1自动
+  summerTempOn  Decimal? @map("summer_temp_on") @db.Decimal(4, 1)
+  summerTempSet Decimal? @map("summer_temp_set") @db.Decimal(4, 1)
+  summerTempOff Decimal? @map("summer_temp_off") @db.Decimal(4, 1)
+  winterTempOn  Decimal? @map("winter_temp_on") @db.Decimal(4, 1)
+  winterTempSet Decimal? @map("winter_temp_set") @db.Decimal(4, 1)
+  winterTempOff Decimal? @map("winter_temp_off") @db.Decimal(4, 1)
+  winterStart   Int?     @map("winter_start")
+  winterEnd     Int?     @map("winter_end")
+  acOffInterval Int?     @map("ac_off_interval")
 
   // 时间段参数
-  workTime       String?  @map("work_time") @db.VarChar(50)
-  overtime1      String?  @map("overtime_1") @db.VarChar(50)
-  overtime2      String?  @map("overtime_2") @db.VarChar(50)
-  overtime3      String?  @map("overtime_3") @db.VarChar(50)
+  workTime  String? @map("work_time") @db.VarChar(50)
+  overtime1 String? @map("overtime_1") @db.VarChar(50)
+  overtime2 String? @map("overtime_2") @db.VarChar(50)
+  overtime3 String? @map("overtime_3") @db.VarChar(50)
 
   // 空调参数
-  acCode         Int?     @map("ac_code")
-  acMode         Int?     @map("ac_mode")
-  acFanSpeed     Int?     @map("ac_fan_speed")
-  acDirection    Int?     @map("ac_direction")
-  acLight        Int?     @map("ac_light")
-  minCurrent     Int?     @map("min_current")
+  acCode      Int? @map("ac_code")
+  acMode      Int? @map("ac_mode")
+  acFanSpeed  Int? @map("ac_fan_speed")
+  acDirection Int? @map("ac_direction")
+  acLight     Int? @map("ac_light")
+  minCurrent  Int? @map("min_current")
 
   // 告警参数
-  alarmEnabled   Int?     @map("alarm_enabled")
-  tempHighLimit  Int?     @map("temp_high_limit")
-  tempLowLimit   Int?     @map("temp_low_limit")
-  humiHighLimit  Int?     @map("humi_high_limit")
-  humiLowLimit   Int?     @map("humi_low_limit")
+  alarmEnabled  Int? @map("alarm_enabled")
+  tempHighLimit Int? @map("temp_high_limit")
+  tempLowLimit  Int? @map("temp_low_limit")
+  humiHighLimit Int? @map("humi_high_limit")
+  humiLowLimit  Int? @map("humi_low_limit")
 
   // 其他
   uploadInterval Int?     @map("upload_interval")
@@ -125,8 +125,8 @@ model ControlLog {
   id        Int      @id @default(autoincrement())
   deviceId  String   @map("device_id") @db.VarChar(20)
   action    String   @db.VarChar(20)
-  value     Json?    // 操作参数
-  result    Int?     // 结果码
+  value     Json? // 操作参数
+  result    Int? // 结果码
   operator  String?  @db.VarChar(50)
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -142,17 +142,18 @@ model ControlLog {
 
 // 管理员用户表
 model AdminUser {
-  id           Int      @id @default(autoincrement())
-  username     String   @unique @map("username") @db.VarChar(50)
-  email        String   @unique @map("email") @db.VarChar(100)
-  passwordHash String   @map("password_hash") @db.VarChar(255)
-  name         String?  @db.VarChar(100)
-  enabled      Boolean  @default(true)
-  roleIds      Int[]    @map("role_ids") @default([])
-  lastLoginAt  DateTime? @map("last_login_at")
-  lastLoginIp  String?  @map("last_login_ip") @db.VarChar(45)
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id                 Int       @id @default(autoincrement())
+  username           String    @unique @map("username") @db.VarChar(50)
+  email              String    @unique @map("email") @db.VarChar(100)
+  passwordHash       String    @map("password_hash") @db.VarChar(255)
+  name               String?   @db.VarChar(100)
+  enabled            Boolean   @default(true)
+  roleIds            Int[]     @default([]) @map("role_ids")
+  mustChangePassword Boolean   @default(true) @map("must_change_password")
+  lastLoginAt        DateTime? @map("last_login_at")
+  lastLoginIp        String?   @map("last_login_ip") @db.VarChar(45)
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
 
   // Relations
   auditLogs AuditLog[]
