@@ -1,6 +1,7 @@
 // src/utils/redis.ts
 import Redis from 'ioredis';
 import config from '../config/index.js';
+import logger from './logger.js';
 
 const redis = new Redis({
   host: config.redis.host,
@@ -8,8 +9,7 @@ const redis = new Redis({
   password: config.redis.password || undefined,
   retryStrategy: (times: number): number | null => {
     if (times > 3) {
-      // eslint-disable-next-line no-console
-      console.error('Redis connection failed after 3 retries');
+      logger.error('Redis connection failed after 3 retries');
       return null;
     }
     return Math.min(times * 100, 2000);
@@ -17,13 +17,11 @@ const redis = new Redis({
 });
 
 redis.on('connect', () => {
-  // eslint-disable-next-line no-console
-  console.log('Redis connected');
+  logger.info('Redis connected');
 });
 
 redis.on('error', (err) => {
-  // eslint-disable-next-line no-console
-  console.error('Redis error:', err);
+  logger.error('Redis error', { error: err.message });
 });
 
 export default redis;

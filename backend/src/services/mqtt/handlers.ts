@@ -1,6 +1,7 @@
 // src/services/mqtt/handlers.ts
 import prisma from '../../utils/database.js';
 import redis, { CacheKeys, CacheTTL } from '../../utils/redis.js';
+import logger from '../../utils/logger.js';
 import { z } from 'zod';
 
 // ====================
@@ -93,12 +94,12 @@ function parseTopic(topic: string): { deviceId: string; action: string } | null 
   const action = parts[3];
 
   if (!deviceId || !/^\d{15}$/.test(deviceId)) {
-    console.warn(`Invalid deviceId format: ${deviceId}`);
+    logger.warn(`Invalid deviceId format: ${deviceId}`);
     return null;
   }
 
   if (!action) {
-    console.warn(`Missing action in topic: ${topic}`);
+    logger.warn(`Missing action in topic: ${topic}`);
     return null;
   }
 
@@ -122,8 +123,7 @@ async function createAlarm(
       threshold,
     },
   });
-  // eslint-disable-next-line no-console
-  console.log(`[ALARM] Created for ${deviceId}: ${type} (value=${value}, threshold=${threshold})`);
+  logger.info(`Alarm created for device`, { deviceId, type, value, threshold });
 }
 
 /**
@@ -184,27 +184,27 @@ export async function handleLogin(deviceId: string, payload: string): Promise<vo
     const result = loginSchema.safeParse(parsed);
 
     if (!result.success) {
-      // eslint-disable-next-line no-console
-      console.warn(`[MQTT] Login validation failed for ${deviceId}: ${result.error.errors.map(e => e.message).join(', ')}`);
+      logger.warn(`Login validation failed for ${deviceId}`, {
+        errors: result.error.errors.map(e => e.message).join(', '),
+      });
       return;
     }
 
     data = result.data;
   } catch (error) {
     if (error instanceof SyntaxError) {
-      // eslint-disable-next-line no-console
-      console.warn(`[MQTT] Invalid JSON in login payload from ${deviceId}`);
+      logger.warn(`Invalid JSON in login payload from ${deviceId}`);
       return;
     }
-    // eslint-disable-next-line no-console
-    console.error(`[MQTT] Error parsing login payload for ${deviceId}:`, error);
+    logger.error(`Error parsing login payload for ${deviceId}`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return;
   }
 
   // 验证 deviceId 与 IMEI 匹配
   if (deviceId !== data.IMEI) {
-    // eslint-disable-next-line no-console
-    console.warn(`[MQTT] Device ID mismatch: topic=${deviceId}, IMEI=${data.IMEI}`);
+    logger.warn(`Device ID mismatch: topic=${deviceId}, IMEI=${data.IMEI}`);
     // 继续处理，但记录警告
   }
 
@@ -225,10 +225,11 @@ export async function handleLogin(deviceId: string, payload: string): Promise<vo
     });
 
     await redis.set(CacheKeys.deviceOnline(deviceId), '1', 'EX', CacheTTL.deviceOnline);
-    // eslint-disable-next-line no-console
-    console.log(`[MQTT] Device ${deviceId} logged in successfully`);
+    logger.info(`Device logged in successfully`, { deviceId });
   } catch (error) {
-    console.error(`[MQTT] Database error handling login for ${deviceId}:`, error);
+    logger.error(`Database error handling login for ${deviceId}`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error; // 重新抛出以便上层处理
   }
 }
@@ -246,20 +247,21 @@ export async function handleDataUpload(deviceId: string, payload: string): Promi
     const result = sensorDataSchema.safeParse(parsed);
 
     if (!result.success) {
-      // eslint-disable-next-line no-console
-      console.warn(`[MQTT] Data validation failed for ${deviceId}: ${result.error.errors.map(e => e.message).join(', ')}`);
+      logger.warn(`Data validation failed for ${deviceId}`, {
+        errors: result.error.errors.map(e => e.message).join(', '),
+      });
       return;
     }
 
     data = result.data;
   } catch (error) {
     if (error instanceof SyntaxError) {
-      // eslint-disable-next-line no-console
-      console.warn(`[MQTT] Invalid JSON in data payload from ${deviceId}`);
+      logger.warn(`Invalid JSON in data payload from ${deviceId}`);
       return;
     }
-    // eslint-disable-next-line no-console
-    console.error(`[MQTT] Error parsing data payload for ${deviceId}:`, error);
+    logger.error(`Error parsing data payload for ${deviceId}`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return;
   }
 
@@ -293,15 +295,16 @@ export async function handleDataUpload(deviceId: string, payload: string): Promi
 
     // 异步检查告警（不阻塞主流程）
     checkAlarms(deviceId, data).catch(err => {
-      // eslint-disable-next-line no-console
-      console.error(`[MQTT] Error checking alarms for ${deviceId}:`, err);
+      logger.error(`Error checking alarms for ${deviceId}`, {
+        error: err instanceof Error ? err.message : String(err),
+      });
     });
 
-    // eslint-disable-next-line no-console
-    console.log(`[MQTT] Data received from ${deviceId}: temp=${data.temp}, humi=${data.humi}`);
+    logger.debug(`Data received from device`, { deviceId, temp: data.temp, humi: data.humi });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(`[MQTT] Database error handling data from ${deviceId}:`, error);
+    logger.error(`Database error handling data from ${deviceId}`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error; // 重新抛出以便上层处理
   }
 }
@@ -319,19 +322,21 @@ export async function handleParameterUpload(deviceId: string, payload: string): 
     const result = parameterSchema.safeParse(parsed);
 
     if (!result.success) {
-      console.warn(`[MQTT] Parameter validation failed for ${deviceId}: ${result.error.errors.map(e => e.message).join(', ')}`);
+      logger.warn(`Parameter validation failed for ${deviceId}`, {
+        errors: result.error.errors.map(e => e.message).join(', '),
+      });
       return;
     }
 
     data = result.data;
   } catch (error) {
     if (error instanceof SyntaxError) {
-      // eslint-disable-next-line no-console
-      console.warn(`[MQTT] Invalid JSON in parameter payload from ${deviceId}`);
+      logger.warn(`Invalid JSON in parameter payload from ${deviceId}`);
       return;
     }
-    // eslint-disable-next-line no-console
-    console.error(`[MQTT] Error parsing parameter payload for ${deviceId}:`, error);
+    logger.error(`Error parsing parameter payload for ${deviceId}`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return;
   }
 
@@ -408,11 +413,11 @@ export async function handleParameterUpload(deviceId: string, payload: string): 
       CacheTTL.deviceParams
     );
 
-    // eslint-disable-next-line no-console
-    console.log(`[MQTT] Parameters received from ${deviceId}: version=${params.version}`);
+    logger.debug(`Parameters received from device`, { deviceId, version: params.version });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(`[MQTT] Database error handling parameters from ${deviceId}:`, error);
+    logger.error(`Database error handling parameters from ${deviceId}`, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     throw error; // 重新抛出以便上层处理
   }
 }
@@ -425,43 +430,45 @@ export async function handleParameterUpload(deviceId: string, payload: string): 
 export function handleMessage(topic: string, payload: Buffer): void {
   const parsed = parseTopic(topic);
   if (!parsed) {
-    // eslint-disable-next-line no-console
-    console.warn(`[MQTT] Invalid topic format: ${topic}`);
+    logger.warn(`Invalid topic format: ${topic}`);
     return;
   }
 
   const { deviceId, action } = parsed;
   const payloadStr = payload.toString();
 
-  // eslint-disable-next-line no-console
-  console.log(`[MQTT] Message received: ${topic} from ${deviceId}`);
+  logger.debug(`Message received`, { topic, deviceId, action });
 
   switch (action) {
     case 'login':
       handleLogin(deviceId, payloadStr).catch(err => {
-        console.error(`[MQTT] Unhandled login error for ${deviceId}:`, err);
+        logger.error(`Unhandled login error for ${deviceId}`, {
+          error: err instanceof Error ? err.message : String(err),
+        });
       });
       break;
     case 'datas':
     case 'getdatas_reply':
       handleDataUpload(deviceId, payloadStr).catch(err => {
-        console.error(`[MQTT] Unhandled data error for ${deviceId}:`, err);
+        logger.error(`Unhandled data error for ${deviceId}`, {
+          error: err instanceof Error ? err.message : String(err),
+        });
       });
       break;
     case 'parameter':
     case 'getparam_reply':
       handleParameterUpload(deviceId, payloadStr).catch(err => {
-        console.error(`[MQTT] Unhandled parameter error for ${deviceId}:`, err);
+        logger.error(`Unhandled parameter error for ${deviceId}`, {
+          error: err instanceof Error ? err.message : String(err),
+        });
       });
       break;
     case 'ctr_reply':
     case 'set_reply':
     case 'ntp_reply':
-      // eslint-disable-next-line no-console
-      console.log(`[MQTT] Response from ${deviceId}: ${action}`);
+      logger.debug(`Response from device`, { deviceId, action });
       break;
     default:
-      // eslint-disable-next-line no-console
-      console.warn(`[MQTT] Unknown action: ${action} from ${deviceId}`);
+      logger.warn(`Unknown action from device`, { deviceId, action });
   }
 }

@@ -4,69 +4,61 @@ import config from './config/index.js';
 import { initMQTTService, mqttClient } from './services/mqtt/index.js';
 import prisma from './utils/database.js';
 import redis from './utils/redis.js';
+import logger from './utils/logger.js';
 
 const PORT = config.port;
 
 async function startServer(): Promise<void> {
   try {
-    // eslint-disable-next-line no-console
-    console.log('Starting database connection...');
+    logger.info('Starting database connection...');
     // Test database connection
     await prisma.$connect();
-    // eslint-disable-next-line no-console
-    console.log('Database connected');
+    logger.info('Database connected');
 
     // Test Redis connection (optional)
     try {
-      // eslint-disable-next-line no-console
-      console.log('Pinging Redis...');
+      logger.debug('Pinging Redis...');
       await redis.ping();
-      // eslint-disable-next-line no-console
-      console.log('Redis connected');
+      logger.info('Redis connected');
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.warn('Redis not available, running in degraded mode');
+      logger.warn('Redis not available, running in degraded mode');
     }
 
     // Start Express server first (before MQTT)
     const server = app.listen(PORT, () => {
-      // eslint-disable-next-line no-console
-      console.log(`Server running on port ${PORT} in ${config.nodeEnv} mode`);
+      logger.info(`Server running on port ${PORT} in ${config.nodeEnv} mode`);
     });
 
     // Initialize MQTT service asynchronously (non-blocking)
     initMQTTService().catch((err: unknown) => {
-      // eslint-disable-next-line no-console
-      console.warn('MQTT service initialization failed (running in degraded mode):', err instanceof Error ? err.message : String(err));
+      logger.warn('MQTT service initialization failed (running in degraded mode)', {
+        error: err instanceof Error ? err.message : String(err),
+      });
     });
 
     // Graceful shutdown
     const shutdown = (): void => {
-      // eslint-disable-next-line no-console
-      console.log('Shutting down gracefully...');
+      logger.info('Shutting down gracefully...');
 
       server.close(() => {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         (async (): Promise<void> => {
           try {
             await prisma.$disconnect();
-            // eslint-disable-next-line no-console
-            console.log('Database disconnected');
+            logger.info('Database disconnected');
 
             redis.disconnect();
-            // eslint-disable-next-line no-console
-            console.log('Redis disconnected');
+            logger.info('Redis disconnected');
 
             await mqttClient.end();
-            // eslint-disable-next-line no-console
-            console.log('MQTT client disconnected');
+            logger.info('MQTT client disconnected');
 
-            // eslint-disable-next-line no-console
-            console.log('Process terminated');
+            logger.info('Process terminated');
             process.exit(0);
           } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error('Error during shutdown:', error);
+            logger.error('Error during shutdown', {
+              error: error instanceof Error ? error.message : String(error),
+            });
             process.exit(1);
           }
         })();
@@ -74,8 +66,7 @@ async function startServer(): Promise<void> {
 
       // Force close after 10s
       setTimeout(() => {
-        // eslint-disable-next-line no-console
-        console.error('Forced shutdown');
+        logger.error('Forced shutdown');
         process.exit(1);
       }, 10000);
     };
@@ -83,8 +74,9 @@ async function startServer(): Promise<void> {
     process.on('SIGTERM', () => shutdown());
     process.on('SIGINT', () => shutdown());
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Failed to start server:', error);
+    logger.error('Failed to start server', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     process.exit(1);
   }
 }

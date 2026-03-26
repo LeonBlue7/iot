@@ -1,6 +1,7 @@
 // src/utils/response.ts
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from './errors.js';
+import logger from './logger.js';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -44,6 +45,6 @@ export function errorHandler(
     return;
   }
 
-  console.error('Unhandled error:', err);
+  logger.error('Unhandled error', { error: err.message, stack: err.stack });
   res.status(500).json(errorResponse('Internal Server Error'));
 }

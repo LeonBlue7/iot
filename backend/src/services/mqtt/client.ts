@@ -2,6 +2,7 @@
 import mqtt, { MqttClient } from 'mqtt';
 import fs from 'fs';
 import config from '../../config/index.js';
+import logger from '../../utils/logger.js';
 
 interface MQTTConfig {
   brokerUrl: string;
@@ -37,11 +38,12 @@ class MQTTClient {
       if (caCertPath) {
         try {
           options.ca = fs.readFileSync(caCertPath);
-          // eslint-disable-next-line no-console
-          console.log('Loaded MQTT CA certificate from:', caCertPath);
+          logger.info('Loaded MQTT CA certificate', { path: caCertPath });
         } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to load MQTT CA certificate:', error);
+          logger.error('Failed to load MQTT CA certificate', {
+            path: caCertPath,
+            error: error instanceof Error ? error.message : String(error),
+          });
           if (config.nodeEnv === 'production') {
             reject(new Error(`Failed to load MQTT CA certificate from ${caCertPath}`));
             return;
@@ -52,15 +54,13 @@ class MQTTClient {
       this.client = mqtt.connect(config.mqtt.brokerUrl, options);
 
       this.client.on('connect', () => {
-        // eslint-disable-next-line no-console
-        console.log('MQTT connected to', config.mqtt.brokerUrl);
+        logger.info('MQTT connected', { broker: config.mqtt.brokerUrl });
         this.reconnectAttempts = 0;
         resolve(this.client!);
       });
 
       this.client.on('error', (err) => {
-        // eslint-disable-next-line no-console
-        console.error('MQTT connection error:', err.message);
+        logger.error('MQTT connection error', { error: err.message });
         if (this.reconnectAttempts === 0) {
           reject(err);
         }
@@ -68,23 +68,19 @@ class MQTTClient {
 
       this.client.on('reconnect', () => {
         this.reconnectAttempts++;
-        // eslint-disable-next-line no-console
-        console.log(`MQTT reconnecting... attempt ${this.reconnectAttempts}`);
+        logger.warn('MQTT reconnecting', { attempt: this.reconnectAttempts });
         if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-          // eslint-disable-next-line no-console
-          console.error('MQTT max reconnect attempts reached');
+          logger.error('MQTT max reconnect attempts reached');
           this.client?.end();
         }
       });
 
       this.client.on('close', () => {
-        // eslint-disable-next-line no-console
-        console.log('MQTT connection closed');
+        logger.info('MQTT connection closed');
       });
 
       this.client.on('offline', () => {
-        // eslint-disable-next-line no-console
-        console.log('MQTT offline');
+        logger.warn('MQTT offline');
       });
     });
   }
@@ -102,8 +98,7 @@ class MQTTClient {
         if (err) {
           reject(err);
         } else {
-          // eslint-disable-next-line no-console
-          console.log(`Subscribed to: ${topic}`);
+          logger.debug('Subscribed to topic', { topic });
           resolve();
         }
       });
@@ -116,8 +111,7 @@ class MQTTClient {
         if (err) {
           reject(err);
         } else {
-          // eslint-disable-next-line no-console
-          console.log(`Unsubscribed from: ${topic}`);
+          logger.debug('Unsubscribed from topic', { topic });
           resolve();
         }
       });
@@ -140,8 +134,7 @@ class MQTTClient {
   async end(): Promise<void> {
     return new Promise((resolve) => {
       this.client?.end(false, undefined, () => {
-        // eslint-disable-next-line no-console
-        console.log('MQTT client ended');
+        logger.info('MQTT client ended');
         resolve();
       });
     });
