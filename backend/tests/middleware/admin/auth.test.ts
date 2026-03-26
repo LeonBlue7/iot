@@ -11,9 +11,9 @@ jest.mock('../../../src/services/admin/rbac.service.js', () => ({
   getUserPermissions: jest.fn(),
 }));
 
-import { authenticate, requirePermissions } from '../../../src/middleware/admin/auth.js';
+import { authenticate, requirePermissions, optionalAuth } from '../../../src/middleware/admin/auth.js';
 import { verifyToken } from '../../../src/services/admin/auth.service.js';
-import { hasAllPermissions } from '../../../src/services/admin/rbac.service.js';
+import { hasAllPermissions, getUserPermissions } from '../../../src/services/admin/rbac.service.js';
 
 describe('Admin Auth Middleware', () => {
   describe('authenticate', () => {
@@ -69,6 +69,17 @@ describe('Admin Auth Middleware', () => {
 
       expect(mockReq.adminUser).toEqual(mockPayload);
       expect(mockNext).toHaveBeenCalled();
+    });
+
+    it('should reject requests with malformed authorization header', async () => {
+      const mockReq = { headers: { authorization: 'Basic credentials' }, path: '/api/admin/me', method: 'GET', ip: '127.0.0.1' };
+      const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+      const mockNext = jest.fn();
+
+      await authenticate(mockReq as any, mockRes as any, mockNext);
+
+      expect(mockRes.status).toHaveBeenCalledWith(401);
+      expect(mockNext).not.toHaveBeenCalled();
     });
   });
 
@@ -134,6 +145,111 @@ describe('Admin Auth Middleware', () => {
 
       const middleware = requirePermissions('user:write');
       await middleware(mockReq as any, mockRes as any, mockNext);
+
+      expect(mockNext).toHaveBeenCalled();
+    });
+
+    it('should deny access when not authenticated', async () => {
+      const mockReq = {
+        path: '/api/admin/users',
+        method: 'POST',
+        ip: '127.0.0.1',
+      };
+      const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+      const mockNext = jest.fn();
+
+      const middleware = requirePermissions('user:write');
+      await middleware(mockReq as any, mockRes as any, mockNext);
+
+      expect(mockRes.status).toHaveBeenCalledWith(401);
+      expect(mockNext).not.toHaveBeenCalled();
+    });
+
+    it('should fetch permissions from database if not in token', async () => {
+      const mockReq = {
+        adminUser: {
+          id: 1,
+          username: 'admin',
+        },
+        path: '/api/admin/devices',
+        method: 'GET',
+        ip: '127.0.0.1',
+      };
+      const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+      const mockNext = jest.fn();
+
+      (getUserPermissions as jest.Mock).mockResolvedValue(['device:read']);
+      (hasAllPermissions as jest.Mock).mockReturnValue(true);
+
+      const middleware = requirePermissions('device:read');
+      await middleware(mockReq as any, mockRes as any, mockNext);
+
+      expect(getUserPermissions).toHaveBeenCalledWith(1);
+      expect(mockNext).toHaveBeenCalled();
+    });
+  });
+
+  describe('optionalAuth', () => {
+    it('should continue without auth when no token provided', async () => {
+      const mockReq = { headers: {}, adminUser: undefined } as any;
+      const mockRes = {};
+      const mockNext = jest.fn();
+
+      await optionalAuth(mockReq, mockRes as any, mockNext);
+
+      expect(mockNext).toHaveBeenCalled();
+      expect(mockReq.adminUser).toBeUndefined();
+    });
+
+    it('should attach user when valid token provided', async () => {
+      const mockReq = {
+        headers: { authorization: 'Bearer valid_token' },
+        adminUser: undefined,
+      } as any;
+      const mockRes = {};
+      const mockNext = jest.fn();
+
+      const mockPayload = {
+        id: 1,
+        username: 'admin',
+        email: 'admin@example.com',
+        roleIds: [1],
+        permissions: ['device:read'],
+      };
+
+      (verifyToken as jest.Mock).mockResolvedValue(mockPayload);
+
+      await optionalAuth(mockReq, mockRes as any, mockNext);
+
+      expect(mockReq.adminUser).toEqual(mockPayload);
+      expect(mockNext).toHaveBeenCalled();
+    });
+
+    it('should continue without auth when token is invalid', async () => {
+      const mockReq = {
+        headers: { authorization: 'Bearer invalid_token' },
+        adminUser: undefined,
+      } as any;
+      const mockRes = {};
+      const mockNext = jest.fn();
+
+      (verifyToken as jest.Mock).mockRejectedValue(new Error('Invalid token'));
+
+      await optionalAuth(mockReq, mockRes as any, mockNext);
+
+      expect(mockNext).toHaveBeenCalled();
+      expect(mockReq.adminUser).toBeUndefined();
+    });
+
+    it('should continue without auth when header is malformed', async () => {
+      const mockReq = {
+        headers: { authorization: 'Basic credentials' },
+        adminUser: undefined,
+      } as any;
+      const mockRes = {};
+      const mockNext = jest.fn();
+
+      await optionalAuth(mockReq, mockRes as any, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
     });

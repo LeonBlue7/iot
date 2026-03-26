@@ -108,7 +108,13 @@ describe('errorHandler', () => {
 
     errorHandler(error, {} as Request, mockRes, mockNext);
 
-    expect(consoleSpy).toHaveBeenCalledWith('Unhandled error:', error);
+    // logger.error calls console.error with formatted message
+    expect(consoleSpy).toHaveBeenCalled();
+    const calls = consoleSpy.mock.calls;
+    expect(calls.length).toBeGreaterThan(0);
+    const callArgs = calls[0] as string[];
+    expect(callArgs[0]).toContain('Unhandled error');
+    expect(callArgs[0]).toContain('Unexpected error');
 
     consoleSpy.mockRestore();
   });
