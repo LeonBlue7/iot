@@ -79,11 +79,14 @@ export default function Login() {
           </Form.Item>
         </Form>
 
-        <div style={{ textAlign: 'center', marginTop: 16 }}>
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-            默认账号：admin / admin123
-          </Typography.Text>
-        </div>
+        {/* 开发环境提示 - 生产环境不显示默认账号 */}
+        {import.meta.env.DEV && (
+          <div style={{ textAlign: 'center', marginTop: 16 }}>
+            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+              开发环境默认账号请查看项目文档
+            </Typography.Text>
+          </div>
+        )}
       </Card>
     </div>
   )

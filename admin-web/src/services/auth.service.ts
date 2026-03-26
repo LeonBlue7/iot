@@ -1,10 +1,17 @@
 import axios from '../utils/axios'
 import type { LoginCredentials, UserInfo } from '../types/auth'
-import type { ApiResponse } from '../types/api'
+import type { ApiResponse, ApiErrorResponse } from '../types/api'
 
 export interface LoginResponse {
   token: string
   user: UserInfo
+}
+
+function getErrorMessage(response: ApiResponse<LoginResponse>): string {
+  if (!response.success) {
+    return (response as ApiErrorResponse).error || '操作失败'
+  }
+  return '操作失败'
 }
 
 export const authApi = {
@@ -18,7 +25,7 @@ export const authApi = {
     )
 
     if (!response.data.success) {
-      throw new Error((response.data as any).error || '登录失败')
+      throw new Error(getErrorMessage(response.data))
     }
 
     return response.data.data
@@ -33,7 +40,7 @@ export const authApi = {
     )
 
     if (!response.data.success) {
-      throw new Error((response.data as any).error || '获取用户信息失败')
+      throw new Error(getErrorMessage(response.data))
     }
 
     return response.data.data
