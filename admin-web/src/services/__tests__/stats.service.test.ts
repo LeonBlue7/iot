@@ -1,9 +1,17 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { statsApi } from '../stats.service'
-import axios from 'axios'
 
-vi.mock('axios')
-const mockedAxios = vi.mocked(axios, true)
+// Use vi.hoisted to define mock before vi.mock is hoisted
+const mockAxios = vi.hoisted(() => ({
+  get: vi.fn(),
+  post: vi.fn(),
+  put: vi.fn(),
+  delete: vi.fn(),
+}))
+
+vi.mock('../../utils/axios', () => ({
+  default: mockAxios,
+}))
 
 describe('statsApi', () => {
   beforeEach(() => {
@@ -20,17 +28,17 @@ describe('statsApi', () => {
         unacknowledgedAlarms: 3,
       }
       const mockResponse = { success: true as const, data: mockStats }
-      mockedAxios.get.mockResolvedValue({ data: mockResponse } as any)
+      mockAxios.get.mockResolvedValue({ data: mockResponse } as any)
 
       const result = await statsApi.getOverview()
 
-      expect(mockedAxios.get).toHaveBeenCalledWith('/api/stats/overview')
+      expect(mockAxios.get).toHaveBeenCalledWith('/api/stats/overview')
       expect(result).toEqual(mockStats)
     })
 
     it('should throw error on failed request', async () => {
       const mockResponse = { success: false as const, error: 'Stats Error' }
-      mockedAxios.get.mockResolvedValue({ data: mockResponse } as any)
+      mockAxios.get.mockResolvedValue({ data: mockResponse } as any)
 
       await expect(statsApi.getOverview()).rejects.toThrow('Stats Error')
     })

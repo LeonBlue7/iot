@@ -1,9 +1,17 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { authApi } from '../auth.service'
-import axios from 'axios'
 
-vi.mock('axios')
-const mockedAxios = vi.mocked(axios, true)
+// Use vi.hoisted to define mock before vi.mock is hoisted
+const mockAxios = vi.hoisted(() => ({
+  get: vi.fn(),
+  post: vi.fn(),
+  put: vi.fn(),
+  delete: vi.fn(),
+}))
+
+vi.mock('../../utils/axios', () => ({
+  default: mockAxios,
+}))
 
 describe('authApi', () => {
   beforeEach(() => {
@@ -26,11 +34,11 @@ describe('authApi', () => {
         },
       }
 
-      mockedAxios.post.mockResolvedValue({ data: mockResponse } as any)
+      mockAxios.post.mockResolvedValue({ data: mockResponse } as any)
 
       const result = await authApi.login({ username: 'admin', password: 'admin123' })
 
-      expect(mockedAxios.post).toHaveBeenCalledWith('/api/admin/auth/login', {
+      expect(mockAxios.post).toHaveBeenCalledWith('/admin/auth/login', {
         username: 'admin',
         password: 'admin123',
       })
@@ -44,7 +52,7 @@ describe('authApi', () => {
         error: 'Invalid credentials',
       }
 
-      mockedAxios.post.mockResolvedValue({ data: mockResponse } as any)
+      mockAxios.post.mockResolvedValue({ data: mockResponse } as any)
 
       await expect(
         authApi.login({ username: 'admin', password: 'wrong' }),
@@ -65,11 +73,11 @@ describe('authApi', () => {
         },
       }
 
-      mockedAxios.get.mockResolvedValue({ data: mockResponse } as any)
+      mockAxios.get.mockResolvedValue({ data: mockResponse } as any)
 
       const result = await authApi.getMe()
 
-      expect(mockedAxios.get).toHaveBeenCalledWith('/api/admin/me')
+      expect(mockAxios.get).toHaveBeenCalledWith('/admin/me')
       expect(result.username).toBe('admin')
     })
 
@@ -79,7 +87,7 @@ describe('authApi', () => {
         error: 'Unauthorized',
       }
 
-      mockedAxios.get.mockResolvedValue({ data: mockResponse } as any)
+      mockAxios.get.mockResolvedValue({ data: mockResponse } as any)
 
       await expect(authApi.getMe()).rejects.toThrow('Unauthorized')
     })
