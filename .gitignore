@@ -52,10 +52,12 @@ tmp/
 temp/
 .cache/
 
-# 测试覆盖率
+# 测试
 coverage/
 *.lcov
 .nyc_output/
+playwright-report/
+test-results/
 
 # Prisma
 prisma/migrations/
