@@ -1,0 +1,37 @@
+<!--miniprogram/pages/groups/groups.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">设备分组</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:elif="{{groups.length === 0}}" class="empty">
+    <text>暂无分组</text>
+  </view>
+
+  <view wx:else class="group-list">
+    <view
+      class="group-item"
+      wx:for="{{groups}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      data-name="{{item.name}}"
+      bindtap="onGroupTap"
+    >
+      <view class="group-info">
+        <view class="group-name">{{item.name}}</view>
+        <view class="group-desc" wx:if="{{item.description}}">{{item.description}}</view>
+      </view>
+      <view class="group-meta">
+        <view class="device-count">
+          <text>{{item._count.devices || 0}}</text>
+          <text class="unit">台设备</text>
+        </view>
+        <view class="arrow">›</view>
+      </view>
+    </view>
+  </view>
+</view>

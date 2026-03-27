@@ -2,6 +2,7 @@
   "pages": [
     "pages/login/login",
     "pages/index/index",
+    "pages/groups/groups",
     "pages/device/device",
     "pages/control/control",
     "pages/params/params",

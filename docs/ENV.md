@@ -52,10 +52,11 @@ openssl rand -base64 32
 
 | 变量 | 必需 | 默认值 | 描述 | 示例 |
 |------|------|--------|------|------|
-| `JWT_SECRET` | 是 | - | JWT 签名密钥 | `openssl rand -base64 64` |
-| `JWT_EXPIRES_IN` | 否 | `24h` | Token 有效期 | `24h`, `7d`, `30d` |
+| `JWT_SECRET` | 生产必需 | 随机生成 | JWT 签名密钥 | `openssl rand -base64 64` |
+| `JWT_EXPIRES_IN` | 否 | `7d` | Token 有效期 | `24h`, `7d`, `30d` |
 
 **⚠️ 安全警告**:
+- 生产环境必须设置 `JWT_SECRET`（不设置将导致每次重启服务后 Token 失效）
 - 生产环境必须使用随机生成的 64 字符密钥
 - 不要使用示例代码中的默认值
 - 定期轮换密钥

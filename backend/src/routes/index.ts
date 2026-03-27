@@ -2,5 +2,6 @@
 import deviceRoutes from './deviceRoutes.js';
 import alarmRoutes from './alarmRoutes.js';
 import statsRoutes from './statsRoutes.js';
+import groupRoutes from './groupRoutes.js';
 
-export { deviceRoutes, alarmRoutes, statsRoutes };
+export { deviceRoutes, alarmRoutes, statsRoutes, groupRoutes };

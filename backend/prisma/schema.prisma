@@ -7,6 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// 设备分组表
+model DeviceGroup {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  description String?  @db.VarChar(500)
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  devices Device[]
+
+  @@index([name])
+  @@map("device_groups")
+}
+
 // 设备表
 model Device {
   id         String    @id @db.VarChar(20) // IMEI号
@@ -16,13 +32,16 @@ model Device {
   online     Boolean   @default(false)
   lastSeenAt DateTime? @map("last_seen_at")
   createdAt  DateTime  @default(now()) @map("created_at")
+  groupId    Int?      @map("group_id")
 
   // Relations
+  group       DeviceGroup?  @relation(fields: [groupId], references: [id])
   sensorData  SensorData[]
   params      DeviceParam?
   alarms      AlarmRecord[]
   controlLogs ControlLog[]
 
+  @@index([groupId])
   @@map("devices")
 }
 

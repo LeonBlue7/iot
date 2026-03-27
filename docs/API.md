@@ -345,6 +345,265 @@ PUT /api/devices/:id/params
 
 ---
 
+## 认证 API
+
+### 管理员登录
+
+```http
+POST /api/admin/auth/login
+```
+
+**请求体**:
+
+```json
+{
+  "username": "admin",
+  "password": "password123"
+}
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIs...",
+    "user": {
+      "id": 1,
+      "username": "admin",
+      "name": "管理员",
+      "email": "admin@example.com",
+      "roleIds": [1]
+    }
+  }
+}
+```
+
+---
+
+### 获取当前用户信息
+
+```http
+GET /api/admin/auth/me
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "username": "admin",
+    "name": "管理员",
+    "email": "admin@example.com",
+    "roleIds": [1]
+  }
+}
+```
+
+---
+
+### 登出
+
+```http
+POST /api/admin/auth/logout
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "message": "登出成功"
+}
+```
+
+---
+
+## 分组管理 API
+
+### 获取分组列表
+
+```http
+GET /api/groups
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "一楼办公区",
+      "description": "一楼所有空调设备",
+      "sortOrder": 0,
+      "createdAt": "2026-03-26T10:00:00Z",
+      "updatedAt": "2026-03-26T10:00:00Z",
+      "_count": {
+        "devices": 5
+      }
+    }
+  ]
+}
+```
+
+---
+
+### 获取分组详情
+
+```http
+GET /api/groups/:id
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "一楼办公区",
+    "description": "一楼所有空调设备",
+    "sortOrder": 0,
+    "createdAt": "2026-03-26T10:00:00Z",
+    "updatedAt": "2026-03-26T10:00:00Z",
+    "devices": [
+      {
+        "id": "862471030000001",
+        "name": "办公室空调 1",
+        "online": true
+      }
+    ]
+  }
+}
+```
+
+---
+
+### 创建分组
+
+```http
+POST /api/groups
+```
+
+**请求体**:
+
+```json
+{
+  "name": "二楼办公区",
+  "description": "二楼所有空调设备",
+  "sortOrder": 1
+}
+```
+
+**响应示例** (201):
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 2,
+    "name": "二楼办公区",
+    "description": "二楼所有空调设备",
+    "sortOrder": 1,
+    "createdAt": "2026-03-26T11:00:00Z",
+    "updatedAt": "2026-03-26T11:00:00Z"
+  },
+  "message": "Group created"
+}
+```
+
+---
+
+### 更新分组
+
+```http
+PUT /api/groups/:id
+```
+
+**请求体**:
+
+```json
+{
+  "name": "二楼会议区",
+  "description": "二楼会议室空调"
+}
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 2,
+    "name": "二楼会议区",
+    "description": "二楼会议室空调",
+    "sortOrder": 1
+  },
+  "message": "Group updated"
+}
+```
+
+---
+
+### 删除分组
+
+```http
+DELETE /api/groups/:id
+```
+
+**注意**: 如果分组下有设备，将返回 400 错误。
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "message": "Group deleted"
+}
+```
+
+**错误响应** (400):
+
+```json
+{
+  "success": false,
+  "error": "Cannot delete group with devices"
+}
+```
+
+---
+
+### 设置分组设备
+
+```http
+PUT /api/groups/:id/devices
+```
+
+**请求体**:
+
+```json
+{
+  "deviceIds": ["862471030000001", "862471030000002"]
+}
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "message": "Devices assigned to group"
+}
+```
+
+---
+
 ## 告警管理 API
 
 ### 获取告警列表

@@ -1,5 +1,12 @@
 <!--miniprogram/pages/index/index.wxml-->
 <view class="container">
+  <!-- 分组入口 -->
+  <view class="groups-entry" bindtap="onGroupsTap">
+    <text class="groups-icon">[分组]</text>
+    <text class="groups-text">按分组查看设备</text>
+    <text class="groups-arrow">›</text>
+  </view>
+
   <!-- 设备列表 -->
   <view class="device-list">
     <view

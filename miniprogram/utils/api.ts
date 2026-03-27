@@ -62,6 +62,17 @@ export interface AlarmRecord {
   createdAt: string;
 }
 
+// 分组相关接口
+export interface DeviceGroup {
+  id: number;
+  name: string;
+  description?: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+  _count?: { devices: number };
+}
+
 // API 请求函数
 export async function request<T>(
   url: string,
@@ -166,4 +177,15 @@ export async function getOverviewStats(): Promise<{
 }> {
   const result = await request<any>('/stats/overview');
   return result.data ?? {};
+}
+
+// 分组 API
+export async function getGroups(): Promise<DeviceGroup[]> {
+  const result = await request<DeviceGroup[]>('/groups');
+  return result.data ?? [];
+}
+
+export async function getGroupById(id: number): Promise<DeviceGroup> {
+  const result = await request<DeviceGroup>(`/groups/${id}`);
+  return result.data!;
 }

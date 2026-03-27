@@ -10,6 +10,7 @@ import {
   MenuUnfoldOutlined,
   LogoutOutlined,
   UserOutlined,
+  FolderOutlined,
 } from '@ant-design/icons'
 import { useAuth } from '../hooks/useAuth'
 
@@ -25,6 +26,11 @@ const menuItems = [
     key: '/devices',
     icon: <MobileOutlined />,
     label: '设备管理',
+  },
+  {
+    key: '/groups',
+    icon: <FolderOutlined />,
+    label: '分组管理',
   },
   {
     key: '/alarms',

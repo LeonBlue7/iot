@@ -138,17 +138,34 @@ export const login = asyncHandler(async (req, res) => {
 ```bash
 # 后端测试
 cd backend
-npm run test
-
-# 带覆盖率报告
-npm run test:coverage
+npm run test                # 运行所有测试
+npm run test:watch          # 监听模式
+npm run test:coverage       # 带覆盖率报告
 
 # 前端测试
 cd admin-web
-npm run test
+npm run test                # 运行单元测试
+npm run test:coverage       # 带覆盖率报告
+npm run test:e2e            # 运行 E2E 测试
+npm run test:e2e:ui         # E2E 测试 UI 模式
+```
 
-# 监听模式
-npm run test:watch
+### 测试结构
+
+```
+backend/tests/
+├── controllers/           # 控制器测试
+├── services/              # 服务层测试
+├── integration/           # 集成测试
+├── utils/                 # 工具函数测试
+└── setup.ts               # 测试配置
+
+admin-web/src/
+├── __tests__/             # 组件测试
+├── services/__tests__/    # 服务层测试
+└── pages/__tests__/       # 页面测试
+
+admin-web/e2e/             # E2E 测试
 ```
 
 ### 覆盖率要求

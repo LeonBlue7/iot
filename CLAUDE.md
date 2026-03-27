@@ -20,30 +20,39 @@
 ### 后端开发
 ```bash
 cd backend
-npm install          # 安装依赖
-npm run dev          # 开发模式启动
-npm run build        # 编译生产版本
-npm run start        # 生产模式启动
-npm run test         # 运行测试
-npx prisma studio    # 打开数据库管理界面
+npm install              # 安装依赖
+npm run dev              # 开发模式启动（热重载）
+npm run build            # 编译生产版本
+npm run start            # 生产模式启动
+npm run test             # 运行测试
+npm run test:watch       # 监听模式运行测试
+npm run test:coverage    # 运行测试并生成覆盖率报告
+npm run lint             # 代码检查
+npm run lint:fix         # 自动修复代码问题
+npm run format           # 格式化代码
 ```
 
 ### 数据库
 ```bash
-npx prisma migrate dev    # 创建并运行迁移
-npx prisma generate       # 生成Prisma Client
+cd backend
+npx prisma generate      # 生成Prisma Client
+npx prisma migrate dev   # 创建并运行迁移
+npx prisma studio        # 打开数据库管理界面
+npx prisma db seed       # 运行种子数据
 ```
 
 ### 管理后台前端
 ```bash
 cd admin-web
-npm install          # 安装依赖
-npm run dev          # 开发模式启动
-npm run build        # 构建生产版本
-npm run preview      # 预览生产构建
-npm run lint         # 代码检查
-npm run test         # 运行单元测试
-npm run test:coverage # 运行测试并生成覆盖率报告
+npm install              # 安装依赖
+npm run dev              # 开发模式启动
+npm run build            # 构建生产版本
+npm run preview          # 预览生产构建
+npm run lint             # 代码检查
+npm run test             # 运行单元测试
+npm run test:coverage    # 运行测试并生成覆盖率报告
+npm run test:e2e         # 运行E2E测试
+npm run test:e2e:ui      # E2E测试UI模式
 ```
 
 ## 项目结构
@@ -54,15 +63,22 @@ npm run test:coverage # 运行测试并生成覆盖率报告
 │   ├── src/
 │   │   ├── config/            # 配置文件
 │   │   ├── controllers/       # 控制器
+│   │   ├── middleware/        # 中间件
 │   │   ├── models/            # 数据模型
 │   │   ├── routes/            # 路由定义
 │   │   ├── services/          # 业务逻辑
 │   │   │   ├── mqtt/         # MQTT服务
 │   │   │   ├── device/       # 设备服务
-│   │   │   └── alarm/        # 告警服务
+│   │   │   ├── alarm/        # 告警服务
+│   │   │   ├── group/        # 分组服务
+│   │   │   └── admin/        # 管理员服务
+│   │   ├── types/            # 类型定义
 │   │   ├── utils/            # 工具函数
 │   │   └── app.ts            # 应用入口
 │   ├── prisma/                # 数据库迁移
+│   │   ├── migrations/        # 迁移文件
+│   │   ├── schema.prisma      # 数据库模型
+│   │   └── seed.ts            # 种子数据
 │   └── tests/                 # 测试文件
 ├── admin-web/                  # 管理后台前端
 │   ├── src/
@@ -70,6 +86,7 @@ npm run test:coverage # 运行测试并生成覆盖率报告
 │   │   ├── pages/             # 页面组件
 │   │   │   ├── Dashboard/    # 仪表盘
 │   │   │   ├── Devices/      # 设备管理
+│   │   │   ├── Groups/       # 分组管理
 │   │   │   ├── Alarms/       # 告警管理
 │   │   │   ├── Stats/        # 数据统计
 │   │   │   └── Login/        # 登录页面
@@ -81,6 +98,11 @@ npm run test:coverage # 运行测试并生成覆盖率报告
 │   └── dist/                  # 构建输出
 ├── miniprogram/               # 微信小程序
 │   ├── pages/                 # 页面
+│   │   ├── index/            # 首页/设备列表
+│   │   ├── groups/           # 分组页面
+│   │   ├── device/           # 设备详情
+│   │   ├── control/          # 设备控制
+│   │   └── alarms/           # 告警列表
 │   ├── components/            # 组件
 │   └── utils/                 # 工具函数
 └── docs/                      # 文档
@@ -119,6 +141,11 @@ npm run test:coverage # 运行测试并生成覆盖率报告
 
 ## API端点
 
+### 认证
+- `POST /api/admin/auth/login` - 管理员登录
+- `POST /api/admin/auth/logout` - 登出
+- `GET /api/admin/auth/me` - 获取当前用户信息
+
 ### 设备管理
 - `GET /api/devices` - 获取设备列表
 - `GET /api/devices/:id` - 获取设备详情
@@ -130,6 +157,14 @@ npm run test:coverage # 运行测试并生成覆盖率报告
 - `POST /api/devices/:id/control` - 远程控制
 - `PUT /api/devices/:id/params` - 设置参数
 - `GET /api/devices/:id/params` - 获取参数配置
+
+### 分组管理
+- `GET /api/groups` - 获取分组列表
+- `GET /api/groups/:id` - 获取分组详情
+- `POST /api/groups` - 创建分组
+- `PUT /api/groups/:id` - 更新分组
+- `DELETE /api/groups/:id` - 删除分组
+- `PUT /api/groups/:id/devices` - 设置分组设备
 
 ### 告警管理
 - `GET /api/alarms` - 获取告警列表
@@ -146,6 +181,34 @@ npm run test:coverage # 运行测试并生成覆盖率报告
 - 函数必须有显式返回类型
 - 错误处理要完整
 - 测试覆盖率要求80%+
+
+## 环境变量
+
+### 后端环境变量
+
+| 变量名 | 必需 | 默认值 | 说明 |
+|--------|------|--------|------|
+| `NODE_ENV` | 否 | development | 运行环境 (development/production) |
+| `PORT` | 否 | 3000 | 服务端口 |
+| `DATABASE_URL` | 是 | - | PostgreSQL连接字符串 |
+| `REDIS_HOST` | 否 | localhost | Redis主机地址 |
+| `REDIS_PORT` | 否 | 6379 | Redis端口 |
+| `REDIS_PASSWORD` | 否 | - | Redis密码 |
+| `MQTT_BROKER_URL` | 是 | - | MQTT Broker地址 |
+| `MQTT_USERNAME` | 否 | - | MQTT用户名 |
+| `MQTT_PASSWORD` | 否 | - | MQTT密码 |
+| `MQTT_CLIENT_ID` | 否 | iot_server_ | MQTT客户端ID前缀 |
+| `MQTT_CA_CERT_PATH` | 否 | - | CA证书路径(SSL) |
+| `JWT_SECRET` | 生产必需 | 随机生成 | JWT签名密钥 |
+| `JWT_EXPIRES_IN` | 否 | 7d | Token有效期 |
+| `WECHAT_APPID` | 否 | - | 微信小程序AppID |
+| `WECHAT_SECRET` | 否 | - | 微信小程序Secret |
+
+### 前端环境变量
+
+| 变量名 | 必需 | 说明 |
+|--------|------|------|
+| `VITE_API_BASE_URL` | 否 | API基础URL（默认相对路径） |
 
 ## 部署信息
 

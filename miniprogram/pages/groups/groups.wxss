@@ -1,0 +1,85 @@
+/* miniprogram/pages/groups/groups.wxss */
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.header {
+  padding: 20rpx 0;
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.loading,
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300rpx;
+  color: #999;
+}
+
+.group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 30rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.group-info {
+  flex: 1;
+}
+
+.group-name {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.group-desc {
+  font-size: 26rpx;
+  color: #999;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group-meta {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.device-count {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 26rpx;
+}
+
+.device-count .unit {
+  font-size: 22rpx;
+  margin-left: 4rpx;
+}
+
+.arrow {
+  font-size: 40rpx;
+  color: #ccc;
+}
