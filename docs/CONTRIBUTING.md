@@ -135,20 +135,36 @@ export const login = asyncHandler(async (req, res) => {
 
 ### 运行测试
 
+<!-- AUTO-GENERATED: 测试命令 -->
+
+#### 后端测试
+
 ```bash
-# 后端测试
 cd backend
 npm run test                # 运行所有测试
 npm run test:watch          # 监听模式
 npm run test:coverage       # 带覆盖率报告
+```
 
-# 前端测试
+#### 前端测试
+
+```bash
 cd admin-web
 npm run test                # 运行单元测试
 npm run test:coverage       # 带覆盖率报告
 npm run test:e2e            # 运行 E2E 测试
 npm run test:e2e:ui         # E2E 测试 UI 模式
+npm run test:e2e:headed     # 有界面 E2E 测试
 ```
+
+#### 部署脚本测试
+
+```bash
+# 运行 bats 测试套件
+bats tests/scripts/deploy.bats
+```
+
+<!-- END AUTO-GENERATED -->
 
 ### 测试结构
 
@@ -167,6 +183,44 @@ admin-web/src/
 
 admin-web/e2e/             # E2E 测试
 ```
+
+### 运维脚本
+
+<!-- AUTO-GENERATED: scripts 目录 -->
+
+项目提供运维自动化脚本：
+
+```
+scripts/
+├── deploy.sh      # 一键部署脚本
+├── backup.sh      # 数据库备份脚本
+├── restore.sh     # 数据恢复脚本
+└── logs.sh        # 日志管理脚本
+```
+
+#### 部署脚本用法
+
+```bash
+# 查看帮助
+./scripts/deploy.sh --help
+
+# 部署
+./scripts/deploy.sh deploy --version v1.2.0
+
+# 蓝绿部署
+./scripts/deploy.sh deploy --blue-green --target green
+
+# 查看状态
+./scripts/deploy.sh status --json
+
+# 健康检查
+./scripts/deploy.sh health
+
+# 回滚
+./scripts/deploy.sh rollback --previous
+```
+
+<!-- END AUTO-GENERATED -->
 
 ### 覆盖率要求
 
@@ -369,6 +423,7 @@ Fixes #456
 
 - [环境变量](./ENV.md) - 环境配置说明
 - [部署指南](./DEPLOYMENT.md) - 部署流程
+- [运行手册](./RUNBOOK.md) - 运维操作指南
 - [API 文档](./API.md) - 接口定义
 - [README](../README.md) - 项目概述
 
