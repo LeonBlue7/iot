@@ -4,7 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import config from './config/index.js';
-import { deviceRoutes, alarmRoutes, statsRoutes } from './routes/index.js';
+import { deviceRoutes, alarmRoutes, statsRoutes, groupRoutes } from './routes/index.js';
 import adminRoutes from './routes/admin.js';
 import { errorHandler } from './utils/index.js';
 import { authenticate } from './middleware/auth.js';
@@ -56,6 +56,7 @@ app.use('/api/admin', adminRoutes);
 
 // Device routes - use optionalAuth for read operations, authenticate for write operations
 app.use('/api/devices', deviceRoutes);
+app.use('/api/groups', authenticate, groupRoutes);
 app.use('/api/alarms', authenticate, alarmRoutes);
 app.use('/api/stats', authenticate, statsRoutes);
 

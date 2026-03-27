@@ -11,10 +11,10 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './e2e',
-  fullyParallel: true,
+  fullyParallel: false, // 禁用完全并行以避免登录冲突
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1, // 单线程运行避免并发问题
   reporter: [
     ['html'],
     ['json', { outputFile: 'test-results/results.json' }],

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Card, Row, Col, Spin, Alert } from 'antd'
+import { Card, Row, Col, Spin, Alert, message } from 'antd'
 import {
   LineChart,
   Line,
@@ -24,7 +24,7 @@ export default function Stats() {
       // 这里可以添加获取统计数据的逻辑
       // 暂时使用模拟数据
     } catch (error) {
-      console.error('Failed to load stats data:', error)
+      message.error('加载统计数据失败')
     } finally {
       setLoading(false)
     }

@@ -15,15 +15,21 @@ export class DevicesPage {
   constructor(page: Page) {
     this.page = page
     this.title = page.locator('h1:has-text("设备管理")')
-    this.refreshButton = page.locator('button:has-text("刷新")')
+    // 使用正则表达式匹配按钮文本，处理可能的空格
+    this.refreshButton = page.locator('button:has-text("刷新"), button:has-text("刷 新")')
     this.deviceTable = page.locator('.ant-table')
-    this.deviceRows = page.locator('.ant-table-tbody tr')
+    this.deviceRows = page.locator('.ant-table-tbody tr:not(:has-text("暂无数据"))')
     this.detailDrawer = page.locator('.ant-drawer:has-text("设备详情")')
     this.editModal = page.locator('.ant-modal:has-text("编辑设备信息")')
   }
 
   async goto() {
     await this.page.goto('/devices')
+  }
+
+  async hasData(): Promise<boolean> {
+    const count = await this.deviceRows.count()
+    return count > 0
   }
 
   async clickDeviceDetail(deviceId: string) {

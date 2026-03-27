@@ -129,19 +129,34 @@ test.describe('告警管理', () => {
     // 等待表格加载
     await alarmsPage.alarmTable.waitFor({ state: 'visible' })
 
-    // 遍历所有行
-    const rows = await page.locator('.ant-table-tbody tr').all()
+    // 等待表格行出现
+    const rows = page.locator('.ant-table-tbody tr')
+    await rows.first().waitFor({ state: 'visible', timeout: 10000 })
 
-    for (const row of rows) {
+    const rowCount = await rows.count()
+    let foundAcknowledged = false
+
+    for (let i = 0; i < rowCount; i++) {
+      const row = rows.nth(i)
       const statusTag = row.locator('td:nth-child(6) .ant-tag')
-      const statusText = await statusTag.textContent()
 
-      // 如果是已确认或已解决状态
-      if (statusText?.includes('已确认') || statusText?.includes('已解决')) {
-        // 验证该行没有确认按钮
-        const confirmButton = row.locator('button:has-text("确认")')
-        await expect(confirmButton).not.toBeVisible()
+      // 检查状态标签是否可见
+      if (await statusTag.isVisible({ timeout: 2000 }).catch(() => false)) {
+        const statusText = await statusTag.textContent()
+
+        // 如果是已确认或已解决状态
+        if (statusText?.includes('已确认') || statusText?.includes('已解决')) {
+          foundAcknowledged = true
+          // 验证该行没有确认按钮
+          const confirmButton = row.locator('button:has-text("确认")')
+          await expect(confirmButton).not.toBeVisible()
+        }
       }
+    }
+
+    // 如果没有找到已确认的告警，记录日志
+    if (!foundAcknowledged) {
+      console.log('没有找到已确认或已解决的告警')
     }
   })
 

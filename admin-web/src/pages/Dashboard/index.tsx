@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Card, Row, Col, Statistic, Table, Spin, Alert } from 'antd'
+import { Card, Row, Col, Statistic, Table, Spin, Alert, message } from 'antd'
 import {
   MobileOutlined,
   CheckCircleOutlined,
@@ -35,7 +35,7 @@ export default function Dashboard() {
       setStats(statsData)
       setRecentAlarms(alarmsData || [])
     } catch (error) {
-      console.error('Failed to load dashboard data:', error)
+      message.error('加载仪表盘数据失败')
     } finally {
       setLoading(false)
     }
