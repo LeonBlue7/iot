@@ -57,7 +57,7 @@ USE_COLOR=true
 JSON_OUTPUT=false
 BLUE_GREEN_ENABLED=false
 BLUE_GREEN_TARGET=""
-SKIP_TESTS=false
+SKIP_TESTS=true  # 生产部署默认跳过测试（测试应在CI中运行）
 VERIFY_HEALTH=false
 VERIFY_SCRIPT=""
 DEPLOY_VERSION="latest"
@@ -442,6 +442,13 @@ run_tests() {
     if [[ -f "$PROJECT_ROOT/backend/package.json" ]]; then
         log_debug "执行后端测试..."
         cd "$PROJECT_ROOT/backend"
+
+        # 检查是否需要安装依赖
+        if [[ ! -d "node_modules" ]]; then
+            log_info "安装后端依赖..."
+            npm ci --only=production 2>/dev/null || npm install --production
+        fi
+
         if npm test; then
             log_info "后端测试通过"
         else
@@ -454,6 +461,13 @@ run_tests() {
     if [[ -f "$PROJECT_ROOT/admin-web/package.json" ]]; then
         log_debug "执行前端测试..."
         cd "$PROJECT_ROOT/admin-web"
+
+        # 检查是否需要安装依赖
+        if [[ ! -d "node_modules" ]]; then
+            log_info "安装前端依赖..."
+            npm ci 2>/dev/null || npm install
+        fi
+
         if npm run test; then
             log_info "前端测试通过"
         else
