@@ -1,8 +1,6 @@
 # Docker Compose 生产环境配置
 # 包含完整的安全配置、MQTT Broker 和反向代理
 
-version: '3.8'
-
 services:
   # PostgreSQL 数据库
   postgres:
@@ -31,7 +29,7 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -69,11 +67,18 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
-      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
       MQTT_BROKER_URL: mqtt://emqx:1883
+      MQTT_USERNAME: ${MQTT_USERNAME:-device_user}
+      MQTT_PASSWORD: ${MQTT_PASSWORD}
       PORT: 3000
       JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: 24h
       INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD}
+      WECHAT_APPID: ${WECHAT_APPID}
+      WECHAT_SECRET: ${WECHAT_SECRET}
     depends_on:
       postgres:
         condition: service_healthy
@@ -81,8 +86,6 @@ services:
         condition: service_healthy
       emqx:
         condition: service_started
-    volumes:
-      - ./backend/.env:/app/.env:ro
     networks:
       - iot-network
     restart: unless-stopped
