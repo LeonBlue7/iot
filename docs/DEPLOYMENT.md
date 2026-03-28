@@ -97,10 +97,20 @@ cd iot
 ```bash
 # 复制环境变量模板
 cp backend/.env.example backend/.env
-cp nginx/ssl.example nginx/ssl
 
 # 编辑环境变量
 vim backend/.env
+```
+
+**SSL 证书配置**：
+
+```bash
+# 查看 SSL 证书目录说明
+cat nginx/ssl/README.md
+
+# SSL 证书文件应放置在：
+# nginx/ssl/jxbonner.cloud_bundle.pem  # 证书链
+# nginx/ssl/jxbonner.cloud.key         # 私钥
 ```
 
 **必需配置的环境变量**:

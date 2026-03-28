@@ -31,7 +31,10 @@ docker-compose.override.yml
 # SSL 证书（敏感）
 nginx/ssl/*.pem
 nginx/ssl/*.key
-nginx/ssl/
+nginx/ssl/*.crt
+nginx/ssl/*.csr
+# 但保留说明文档
+!nginx/ssl/README.md
 
 # 证书（允许忽略的）
 certbot/
