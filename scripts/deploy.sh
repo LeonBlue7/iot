@@ -772,13 +772,28 @@ check_redis_health() {
         return 0
     fi
 
-    if docker exec iot-redis redis-cli ping &>/dev/null | grep -q "PONG"; then
-        log_debug "Redis连接正常"
-        return 0
-    else
-        log_error "Redis连接失败"
-        return 1
+    # 从.env文件读取Redis密码
+    local redis_password=""
+    if [[ -f "$PROJECT_ROOT/.env" ]]; then
+        redis_password=$(grep -E "^REDIS_PASSWORD=" "$PROJECT_ROOT/.env" | cut -d'=' -f2- || true)
     fi
+
+    # 使用密码认证进行ping检查
+    if [[ -n "$redis_password" ]]; then
+        if docker exec iot-redis redis-cli -a "$redis_password" ping 2>/dev/null | grep -q "PONG"; then
+            log_debug "Redis连接正常"
+            return 0
+        fi
+    else
+        # 如果没有密码配置，尝试无密码连接
+        if docker exec iot-redis redis-cli ping 2>/dev/null | grep -q "PONG"; then
+            log_debug "Redis连接正常"
+            return 0
+        fi
+    fi
+
+    log_error "Redis连接失败"
+    return 1
 }
 
 # 检查后端API健康
@@ -790,19 +805,25 @@ check_api_health() {
         return 0
     fi
 
-    local api_url="http://localhost:3000/health"
-
+    # 生产环境通过nginx代理访问health端点
+    # 先尝试通过nginx（80端口）
     if command -v curl &>/dev/null; then
-        local response=$(curl -s -o /dev/null -w "%{http_code}" "$api_url" 2>/dev/null || echo "000")
+        local response=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost/health" 2>/dev/null || echo "000")
         if [[ "$response" == "200" ]]; then
-            log_debug "API健康检查通过"
+            log_debug "API健康检查通过（通过nginx代理）"
             return 0
         fi
     fi
 
-    # 尝试通过docker检查
+    # 尝试直接通过docker网络访问backend容器
     if docker exec iot-backend curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/health 2>/dev/null | grep -q "200"; then
-        log_debug "API健康检查通过"
+        log_debug "API健康检查通过（直接访问容器）"
+        return 0
+    fi
+
+    # 尝试通过docker网络从nginx容器访问backend
+    if docker exec iot-nginx curl -s -o /dev/null -w "%{http_code}" http://backend:3000/health 2>/dev/null | grep -q "200"; then
+        log_debug "API健康检查通过（通过docker网络）"
         return 0
     fi
 
