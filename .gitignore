@@ -1,9 +1,10 @@
 # 物联网管理系统 - 项目根目录 .gitignore
 
-# 环境变量
-.env
-.env.local
-.env.*.local
+# 环境变量（私人仓库，允许追踪）
+# .env
+# .env.local
+# .env.*.local
+# backend/.env
 
 # 依赖
 node_modules/
@@ -28,13 +29,9 @@ yarn-error.log*
 docker-compose.override.yml
 .nginx/
 
-# SSL 证书（敏感）
-nginx/ssl/*.pem
-nginx/ssl/*.key
-nginx/ssl/*.crt
-nginx/ssl/*.csr
-# 但保留说明文档
-!nginx/ssl/README.md
+# SSL 证书（私人仓库，允许追踪）
+# nginx/ssl/*.pem
+# nginx/ssl/*.key
 
 # 证书（允许忽略的）
 certbot/
