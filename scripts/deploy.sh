@@ -891,6 +891,12 @@ show_status() {
         return 1
     fi
 
+    # 使用 docker compose 检查状态
+    local compose_file="docker-compose.prod.yml"
+    if [[ ! -f "$PROJECT_ROOT/$compose_file" ]]; then
+        compose_file="docker-compose.yml"
+    fi
+
     if [[ "$JSON_OUTPUT" == "true" ]]; then
         echo -n "{\"services\":["
         local first=true
@@ -913,14 +919,19 @@ show_status() {
         printf "%-15s %-15s %s\n" "-------" "-------" "-------"
 
         for service in "${SERVICES[@]}"; do
-            local status=$(docker ps --filter "name=^iot-$service$" --format "{{.Status}}" 2>/dev/null || echo "N/A")
+            # 使用 docker compose 获取状态
+            local status=$(docker compose -f "$PROJECT_ROOT/$compose_file" ps --status running "$service" 2>/dev/null | grep -v "^NAME" | head -1)
+            local all_status=$(docker compose -f "$PROJECT_ROOT/$compose_file" ps "$service" 2>/dev/null | grep -v "^NAME" | head -1)
             local state=""
 
             if [[ -n "$status" ]]; then
-                if echo "$status" | grep -q "Up"; then
-                    state="${GREEN}运行中${NC}"
+                state="${GREEN}运行中${NC}"
+            elif [[ -n "$all_status" ]]; then
+                # 容器存在但未运行
+                if echo "$all_status" | grep -q "exited\|Exited"; then
+                    state="${RED}已退出${NC}"
                 else
-                    state="${RED}已停止${NC}"
+                    state="${YELLOW}异常${NC}"
                 fi
             else
                 state="${YELLOW}未部署${NC}"
