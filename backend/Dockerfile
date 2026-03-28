@@ -3,11 +3,11 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# 复制 package 文件
-COPY package.json ./
+# 复制 package 文件（包含 lock 文件）
+COPY package.json package-lock.json* ./
 
-# 安装依赖
-RUN npm ci --only=production && npm cache clean --force
+# 安装所有依赖（包括 devDependencies，用于编译）
+RUN npm ci && npm cache clean --force
 
 # 复制源代码
 COPY src/ ./src/
