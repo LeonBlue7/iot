@@ -2,6 +2,11 @@
 
 本文档提供运维人员日常操作、故障排查和应急响应的详细指南。
 
+> **适用环境**: 生产环境 (https://www.jxbonner.cloud)
+> **开发环境**: 请参考 [贡献指南](./CONTRIBUTING.md)
+
+---
+
 ## 目录
 
 - [服务概览](#服务概览)
@@ -14,6 +19,23 @@
 - [备份恢复](#备份恢复)
 
 ## 服务概览
+
+### 生产环境状态
+
+- ✅ 已部署运行
+- ✅ admin-web 管理后台正常
+- ✅ API 服务正常
+- ✅ MQTT Broker (EMQX) 正常
+- ✅ SSL 证书已配置
+
+### 服务地址
+
+| 服务 | 地址 | 说明 |
+|------|------|------|
+| 管理后台 | https://www.jxbonner.cloud | 用户界面 |
+| API 服务 | https://www.jxbonner.cloud/api | REST API |
+| MQTT Broker | mqtt://www.jxbonner.cloud:1883 | 设备连接 |
+| EMQX 控制台 | http://www.jxbonner.cloud:18083 | 管理界面 |
 
 ### 服务架构
 
@@ -343,9 +365,13 @@ docker-compose exec emqx emqx_ctl listeners
 # 查看 EMQX 日志
 docker-compose logs emqx
 
-# 测试 MQTT 连接
-mosquitto_pub -h localhost -p 1883 -t test -m "hello"
+# 测试 MQTT 连接（使用设备认证凭据）
+# 用户名: test1, 密码: test123
+mosquitto_pub -h localhost -p 1883 -u test1 -P test123 -t test -m "hello"
 ```
+
+> **⚠️ MQTT 设备认证**: 用户名 `test1`，密码 `test123`
+> 此凭据已写入 4G模组嵌入式程序，无法更改。
 
 #### 4. API 响应慢
 

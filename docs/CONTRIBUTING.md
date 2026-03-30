@@ -2,13 +2,37 @@
 
 欢迎参与物联网管理系统的开发！本文档提供开发环境设置、代码规范和提交流程的详细说明。
 
+> **重要**: 本文档适用于本地开发环境。生产环境配置请参考 [部署指南](./DEPLOYMENT.md)。
+
+---
+
 ## 目录
 
+- [环境概述](#环境概述)
 - [开发环境设置](#开发环境设置)
 - [代码规范](#代码规范)
 - [测试要求](#测试要求)
 - [提交流程](#提交流程)
 - [代码审查](#代码审查)
+
+---
+
+## 环境概述
+
+| 环境 | 用途 | 配置文件 |
+|------|------|----------|
+| **开发环境** | 本地开发、测试 | `backend/.env` (手动创建) |
+| **生产环境** | 已部署运行 | `.env` + `backend/.env` (预配置) |
+
+> ⚠️ **注意**: 开发环境配置与生产环境配置需分开，不要混用。
+
+### 生产环境状态
+
+- ✅ 已部署: https://www.jxbonner.cloud
+- ✅ admin-web 管理后台正常运行
+- ⚠️ 生产环境配置已预填充，本地开发无需修改
+
+---
 
 ## 开发环境设置
 
@@ -24,27 +48,33 @@
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/your-org/iot.git
+git clone https://github.com/LeonBlue7/iot.git
 cd iot
 
 # 2. 安装后端依赖
 cd backend
 npm install
 
-# 3. 配置环境变量
+# 3. 配置开发环境变量（重要！）
 cp .env.example .env
-# 编辑 .env 填入必要配置
+# 编辑 .env 填入本地开发配置
+# ⚠️ 不要复制生产环境的配置
 
-# 4. 设置数据库
-npm run prisma:generate
-npm run prisma:migrate
-npm run prisma:seed
+# 4. 设置数据库（使用 Docker）
+cd ..
+docker-compose up -d postgres redis emqx
 
-# 5. 安装前端依赖
+# 5. 运行数据库迁移
+cd backend
+npx prisma generate
+npx prisma migrate dev
+npx prisma db seed
+
+# 6. 安装前端依赖
 cd ../admin-web
 npm install
 
-# 6. 安装小程序依赖
+# 7. 安装小程序依赖（可选）
 cd ../miniprogram
 npm install
 ```
@@ -52,15 +82,33 @@ npm install
 ### 使用 Docker 开发
 
 ```bash
-# 启动数据库、Redis 和 MQTT Broker
+# 启动基础设施服务（PostgreSQL、Redis、EMQX）
 docker-compose up -d postgres redis emqx
 
 # 查看服务状态
 docker-compose ps
 
+# 后端开发模式（本地运行，连接 Docker 服务）
+cd backend
+npm run dev
+
+# 前端开发模式
+cd admin-web
+npm run dev
+
 # 停止服务
 docker-compose down
 ```
+
+### 开发环境配置要点
+
+| 配置项 | 开发环境 | 生产环境 |
+|--------|----------|----------|
+| `NODE_ENV` | `development` | `production` |
+| `DATABASE_URL` | `postgresql://...@localhost:5432/iot_db` | `postgresql://...@postgres:5432/iot_db` |
+| `REDIS_HOST` | `localhost` | `redis` |
+| `MQTT_BROKER_URL` | `mqtt://localhost:1883` | `mqtt://emqx:1883` |
+| `JWT_SECRET` | *(可选，自动生成)* | *(已配置，64字符)* |
 
 ## 代码规范
 

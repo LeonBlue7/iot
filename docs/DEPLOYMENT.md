@@ -2,6 +2,45 @@
 
 本文档描述如何在生产环境中部署物联网智能办公空调控制系统。
 
+> **生产环境状态**: 已完成初步部署，admin-web 管理后台正常运行。
+
+---
+
+## 目录
+
+- [快速访问](#快速访问)
+- [一键部署](#一键部署)
+- [前置要求](#前置要求)
+- [部署命令详解](#部署命令详解)
+- [预配置信息](#预配置信息)
+- [服务端口](#服务端口)
+- [常用操作](#常用操作)
+- [故障排查](#故障排查)
+- [更新部署](#更新部署)
+
+---
+
+## 快速访问
+
+### 生产环境地址
+
+| 服务 | 地址 | 说明 |
+|------|------|------|
+| 管理后台 | https://www.jxbonner.cloud | React + Ant Design |
+| API 健康检查 | https://www.jxbonner.cloud/health | 后端服务状态 |
+| EMQX 控制台 | http://www.jxbonner.cloud:18083 | MQTT Broker 管理 |
+
+### 默认账号
+
+| 系统 | 用户名 | 密码来源 |
+|------|--------|----------|
+| 管理后台 | `admin` | 见 `INITIAL_ADMIN_PASSWORD` 环境变量 |
+| EMQX 控制台 | `admin` | 见 `EMQX_PASSWORD` 环境变量 |
+
+⚠️ **首次登录后请立即修改密码**
+
+---
+
 ## 一键部署（推荐）
 
 项目已预配置所有生产环境参数，支持一键部署：
@@ -29,13 +68,15 @@ cd iot
 
 ### 服务器要求
 
-| 项目 | 最低配置 | 推荐配置 |
-|------|----------|----------|
-| 操作系统 | Ubuntu 22.04 LTS | Ubuntu 22.04 LTS |
-| CPU | 2 核心 | 4 核心 |
-| 内存 | 4GB | 8GB |
-| 存储 | 20GB | 50GB |
-| 网络 | 静态公网 IP | 静态公网 IP |
+| 项目 | 最低配置 | 推荐配置 | 当前配置 |
+|------|----------|----------|----------|
+| 操作系统 | Ubuntu 22.04 LTS | Ubuntu 22.04 LTS | ✅ Ubuntu 22.04 LTS |
+| CPU | 2 核心 | 4 核心 | - |
+| 内存 | 4GB | 8GB | - |
+| 存储 | 20GB | 50GB | - |
+| 网络 | 静态公网 IP | 静态公网 IP | ✅ 腾讯云 |
+| Docker | 26.x | 26.x | ✅ Docker 26 |
+| Docker Compose | v2.x | v2.x | ✅ 已安装 |
 
 ### 必装软件
 
@@ -85,7 +126,7 @@ docker-compose --version
 
 ## 预配置信息
 
-项目已预配置以下内容，无需额外操作：
+项目已预配置以下内容，部署时无需额外操作：
 
 ### SSL 证书
 
@@ -95,26 +136,36 @@ docker-compose --version
 
 ### 环境变量
 
-生产环境配置已内置在 `.env` 和 `backend/.env` 文件中，包含：
+生产环境配置已内置在以下文件中：
+
+| 文件 | 说明 |
+|------|------|
+| `.env` | Docker Compose 环境变量 |
+| `backend/.env` | 后端服务环境变量 |
+
+配置内容包括：
 - 数据库连接信息
 - Redis 配置
-- MQTT 配置
+- MQTT 配置（含设备认证）
 - JWT 密钥
 - 微信小程序配置
 - 管理员初始密码
 
-### 默认账号
+### MQTT 设备认证（重要）
 
-| 系统 | 用户名 | 密码 |
-|------|--------|------|
-| 管理后台 | admin | 见 `INITIAL_ADMIN_PASSWORD` 环境变量 |
-| EMQX 控制台 | admin | 见 `EMQX_PASSWORD` 环境变量 |
+| 属性 | 值 | 说明 |
+|------|-----|------|
+| 用户名 | `test1` | 设备端已硬编码 |
+| 密码 | `test123` | 设备端已硬编码 |
 
-⚠️ **首次登录后请立即修改密码**
+> **说明**: 4G模组嵌入式程序已将此认证信息写入固件，无法远程更改。
+> 此凭据用于设备与服务器之间的 MQTT 通信。
 
 ---
 
 ## 服务端口
+
+### 外部端口（公网访问）
 
 | 端口 | 服务 | 协议 | 说明 |
 |------|------|------|------|
@@ -122,6 +173,15 @@ docker-compose --version
 | 443 | Nginx | HTTPS | Web 入口 |
 | 1883 | EMQX | MQTT | 设备连接 |
 | 18083 | EMQX | HTTP | 管理控制台 |
+
+### 内部端口（Docker 网络）
+
+| 端口 | 服务 | 说明 |
+|------|------|------|
+| 3000 | Backend | API 服务 |
+| 5432 | PostgreSQL | 数据库 |
+| 6379 | Redis | 缓存 |
+| 8083 | EMQX | MQTT WebSocket |
 
 ---
 
@@ -136,6 +196,7 @@ docker-compose logs -f
 # 查看特定服务日志
 docker-compose logs -f backend
 docker-compose logs -f emqx
+docker-compose logs -f nginx
 ```
 
 ### 重启服务
@@ -146,6 +207,7 @@ docker-compose restart
 
 # 重启特定服务
 docker-compose restart backend
+docker-compose restart nginx
 ```
 
 ### 停止服务
@@ -213,6 +275,22 @@ docker-compose exec emqx emqx_ctl status
 
 # 查看 EMQX 日志
 docker-compose logs emqx
+
+# 检查设备认证
+# 用户名: test1, 密码: test123
+```
+
+### Nginx 问题
+
+```bash
+# 检查 Nginx 配置
+docker-compose exec nginx nginx -t
+
+# 查看 Nginx 日志
+docker-compose logs nginx
+
+# 检查 SSL 证书
+ls -la nginx/ssl/
 ```
 
 ---
@@ -234,7 +312,7 @@ git pull origin main
 ```
 /opt/iot/
 ├── backend/           # 后端服务
-│   ├── .env          # 后端环境变量（已配置）
+│   ├── .env          # 生产环境变量（已配置）
 │   └── ...
 ├── admin-web/         # 管理后台前端
 ├── nginx/             # Nginx 配置
@@ -253,6 +331,7 @@ git pull origin main
 
 ## 相关文档
 
+- [环境变量配置](./ENV.md) - 详细环境变量说明
 - [运行手册](./RUNBOOK.md) - 运维操作详细指南
 - [API 文档](./API.md) - 接口定义
 - [贡献指南](./CONTRIBUTING.md) - 开发规范
