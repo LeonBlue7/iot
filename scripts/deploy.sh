@@ -636,13 +636,25 @@ deploy_services() {
 
     # 启动新容器
     log_debug "启动新容器..."
-    if docker compose -f docker-compose.prod.yml $compose_flags up -d; then
-        log_info "服务部署完成"
-        return 0
-    else
+    if ! docker compose -f docker-compose.prod.yml $compose_flags up -d; then
         log_error "服务部署失败"
         return 1
     fi
+
+    # 等待backend容器启动
+    log_debug "等待backend容器启动..."
+    sleep 5
+
+    # 运行数据库迁移
+    log_info "运行数据库迁移..."
+    if docker exec iot-backend npx prisma migrate deploy 2>&1; then
+        log_info "数据库迁移完成"
+    else
+        log_warn "数据库迁移可能存在问题，继续部署"
+    fi
+
+    log_info "服务部署完成"
+    return 0
 }
 
 # 部署后验证
