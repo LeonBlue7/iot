@@ -2,11 +2,11 @@
   "name": "iot-backend",
   "version": "1.0.0",
   "description": "物联网管理系统后端服务",
-  "main": "dist/app.js",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/app.js",
+    "start": "node dist/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
