@@ -2,9 +2,14 @@
 // 初始化管理员账号和测试数据
 
 import { PrismaClient } from '@prisma/client'
-import { hashPassword } from '../src/services/admin/auth.service.js'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
+
+// 密码哈希函数（独立实现，不依赖src目录）
+async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 12)
+}
 
 // 从环境变量读取初始密码，未设置时使用强随机密码
 const INITIAL_ADMIN_PASSWORD = process.env.INITIAL_ADMIN_PASSWORD || crypto.randomUUID().slice(0, 16)
