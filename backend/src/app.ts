@@ -11,6 +11,11 @@ import { authenticate } from './middleware/auth.js';
 
 const app = express();
 
+// Trust proxy for rate limiting behind nginx
+if (config.nodeEnv === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Security middleware
 app.use(helmet());
 app.use(
