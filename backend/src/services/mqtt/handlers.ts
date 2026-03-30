@@ -266,6 +266,13 @@ export async function handleDataUpload(deviceId: string, payload: string): Promi
   }
 
   try {
+    // 先确保设备存在（自动创建设备记录）
+    await prisma.device.upsert({
+      where: { id: deviceId },
+      update: { lastSeenAt: new Date(), online: true },
+      create: { id: deviceId, online: true, lastSeenAt: new Date() },
+    });
+
     const sensorData = await prisma.sensorData.create({
       data: {
         deviceId,
@@ -341,6 +348,13 @@ export async function handleParameterUpload(deviceId: string, payload: string): 
   }
 
   try {
+    // 先确保设备存在（自动创建设备记录）
+    await prisma.device.upsert({
+      where: { id: deviceId },
+      update: { lastSeenAt: new Date(), online: true },
+      create: { id: deviceId, online: true, lastSeenAt: new Date() },
+    });
+
     const params = await prisma.deviceParam.upsert({
       where: { deviceId },
       update: {
