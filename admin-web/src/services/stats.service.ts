@@ -15,7 +15,7 @@ export const statsApi = {
    */
   async getOverview(): Promise<OverviewStats> {
     const response = await axios.get<ApiResponse<OverviewStats>>(
-      '/api/stats/overview',
+      '/stats/overview',
     )
 
     if (!response.data.success) {

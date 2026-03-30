@@ -8,7 +8,7 @@ export const groupApi = {
    * 获取分组列表
    */
   async getList(): Promise<DeviceGroup[]> {
-    const response = await axios.get<ApiResponse<DeviceGroup[]>>('/api/groups')
+    const response = await axios.get<ApiResponse<DeviceGroup[]>>('/groups')
 
     if (!response.data.success) {
       throw new Error((response.data as any).error || '获取分组列表失败')
@@ -34,7 +34,7 @@ export const groupApi = {
    * 创建分组
    */
   async create(data: CreateGroupInput): Promise<DeviceGroup> {
-    const response = await axios.post<ApiResponse<DeviceGroup>>('/api/groups', data)
+    const response = await axios.post<ApiResponse<DeviceGroup>>('/groups', data)
 
     if (!response.data.success) {
       throw new Error((response.data as any).error || '创建分组失败')

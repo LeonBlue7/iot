@@ -21,7 +21,7 @@ export const deviceApi = {
    */
   async getList(params?: DeviceListParams): Promise<DeviceListResponse> {
     const response = await axios.get<ApiResponse<Device[]>>(
-      '/api/devices',
+      '/devices',
       { params },
     )
 

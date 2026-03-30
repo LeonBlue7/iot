@@ -14,7 +14,7 @@ export const alarmApi = {
    */
   async getList(params?: AlarmListParams): Promise<AlarmRecord[]> {
     const response = await axios.get<ApiResponse<AlarmRecord[]>>(
-      '/api/alarms',
+      '/alarms',
       { params },
     )
 
