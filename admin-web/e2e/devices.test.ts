@@ -74,8 +74,8 @@ test.describe('设备管理', () => {
     const testName = `Test_${Date.now()}`;
     await page.getByLabel('设备名称').fill(testName);
 
-    // 点击确定
-    await page.getByRole('button', { name: '确定' }).click();
+    // 点击确定 - 使用更通用的选择器
+    await page.locator('.ant-modal .ant-btn-primary').click();
 
     // 等待更新完成
     await page.waitForTimeout(1000);

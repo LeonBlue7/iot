@@ -22,6 +22,9 @@ export default defineConfig({
   ],
   outputDir: 'test-results/',
 
+  // 排除诊断测试文件（连接生产服务器，本地测试会超时）
+  testIgnore: ['**/diag/**'],
+
   use: {
     baseURL: 'http://localhost:3001',
     trace: 'on-first-retry',

@@ -1,4 +1,5 @@
 export { LoginPage } from './LoginPage'
 export { DashboardPage } from './DashboardPage'
 export { DevicesPage } from './DevicesPage'
+export { DevicesNewPage } from './DevicesNewPage'
 export { AlarmsPage } from './AlarmsPage'

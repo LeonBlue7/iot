@@ -96,8 +96,8 @@ test.describe('分组管理', () => {
       const nameInput = page.getByLabel('分组名称')
       await nameInput.fill('Updated_Group_Name')
 
-      // 提交
-      await page.getByRole('button', { name: '确定' }).click()
+      // 提交 - 使用更通用的选择器
+      await page.locator('.ant-modal .ant-btn-primary').click()
 
       // 验证成功
       await expect(page.getByText('更新成功')).toBeVisible()

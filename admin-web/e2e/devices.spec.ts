@@ -104,8 +104,8 @@ test.describe('设备管理', () => {
       const newName = `测试设备_${Date.now()}`
       await devicesPage.page.locator('.ant-modal input[placeholder="请输入设备名称"]').fill(newName)
 
-      // 提交表单
-      await devicesPage.page.locator('.ant-modal button:has-text("确定")').click()
+      // 提交表单 - 使用更通用的选择器
+      await devicesPage.page.locator('.ant-modal .ant-btn-primary').click()
 
       // 验证成功提示
       await expect(devicesPage.page.locator('.ant-message-success')).toBeVisible({ timeout: 5000 })
