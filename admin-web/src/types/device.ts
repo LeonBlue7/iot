@@ -4,8 +4,10 @@ export interface Device {
   name?: string
   simCard?: string
   online: boolean
+  enabled: boolean // Enable/disable status
   lastSeenAt?: string
   createdAt: string
+  groupId?: number | null
   params?: DeviceParams | null
 }
 

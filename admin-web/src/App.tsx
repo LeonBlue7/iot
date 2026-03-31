@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Devices from './pages/Devices'
+import DevicesNew from './pages/DevicesNew'
 import Alarms from './pages/Alarms'
 import Stats from './pages/Stats'
 import Groups from './pages/Groups'
@@ -23,6 +24,7 @@ function App() {
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="devices" element={<Devices />} />
+        <Route path="devices-new" element={<DevicesNew />} />
         <Route path="groups" element={<Groups />} />
         <Route path="alarms" element={<Alarms />} />
         <Route path="stats" element={<Stats />} />

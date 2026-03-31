@@ -45,3 +45,24 @@ export interface AlarmRecord {
 }
 
 export type AlarmStatus = 0 | 1 | 2;
+
+// 批量操作结果
+export interface BatchOperationResult {
+  success: boolean;        // 操作是否成功执行
+  successCount: number;    // 成功处理的设备数量
+  failCount: number;       // 处理失败的设备数量
+  failedDevices?: string[]; // 失败的设备ID列表
+  errors?: string[];       // 错误信息列表
+}
+
+// 搜索选项
+export interface SearchDevicesOptions {
+  keyword?: string;
+  customerId?: number;
+  zoneId?: number;
+  groupId?: number;
+  online?: boolean;
+  enabled?: boolean;
+  page?: number;
+  limit?: number;
+}

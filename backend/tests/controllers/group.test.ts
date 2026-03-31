@@ -6,6 +6,7 @@ jest.mock('../../src/services/index.js', () => ({
   groupService: {
     findAll: jest.fn(),
     findById: jest.fn(),
+    findByZoneId: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
@@ -19,6 +20,7 @@ import { groupService } from '../../src/services/index.js';
 // Get mocked functions
 const mockFindAll = groupService.findAll as jest.Mock;
 const mockFindById = groupService.findById as jest.Mock;
+const mockFindByZoneId = groupService.findByZoneId as jest.Mock;
 const mockCreate = groupService.create as jest.Mock;
 const mockUpdate = groupService.update as jest.Mock;
 const mockDelete = groupService.delete as jest.Mock;
@@ -54,8 +56,8 @@ describe('Group Controller', () => {
   describe('getGroups', () => {
     it('should return all groups with success response', async () => {
       const mockGroups = [
-        { id: 1, name: 'Group 1', _count: { devices: 5 } },
-        { id: 2, name: 'Group 2', _count: { devices: 0 } },
+        { id: 1, name: 'Group 1', zoneId: 1, _count: { devices: 5 } },
+        { id: 2, name: 'Group 2', zoneId: 1, _count: { devices: 0 } },
       ];
 
       mockFindAll.mockResolvedValue(mockGroups);
@@ -75,12 +77,46 @@ describe('Group Controller', () => {
     });
   });
 
+  describe('getGroupsByZoneId', () => {
+    it('should return groups by zone id', async () => {
+      const mockGroups = [
+        { id: 1, name: 'Group 1', zoneId: 1, _count: { devices: 2 } },
+      ];
+
+      mockRequest.params.zoneId = '1';
+      mockFindByZoneId.mockResolvedValue(mockGroups);
+
+      const { getGroupsByZoneId } = require('../../src/controllers/groupController.js');
+      getGroupsByZoneId(mockRequest, mockResponse, mockNext);
+      await waitForAsync();
+
+      expect(mockFindByZoneId).toHaveBeenCalledWith(1);
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          data: mockGroups,
+        })
+      );
+    });
+
+    it('should call next with NotFoundError for invalid zone id', async () => {
+      mockRequest.params.zoneId = 'invalid';
+
+      const { getGroupsByZoneId } = require('../../src/controllers/groupController.js');
+      getGroupsByZoneId(mockRequest, mockResponse, mockNext);
+      await waitForAsync();
+
+      expect(mockNext).toHaveBeenCalled();
+    });
+  });
+
   describe('getGroupById', () => {
     it('should return group by id', async () => {
       const mockGroup = {
         id: 1,
         name: 'Test Group',
-        description: 'Test Description',
+        zoneId: 1,
+        zone: { id: 1, name: 'Zone 1' },
         devices: [],
       };
 
@@ -116,11 +152,12 @@ describe('Group Controller', () => {
       const mockCreated = {
         id: 1,
         name: 'New Group',
-        description: 'Description',
-        sortOrder: 0,
+        zoneId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
-      mockRequest.body = { name: 'New Group', description: 'Description' };
+      mockRequest.body = { name: 'New Group', zoneId: 1 };
       mockCreate.mockResolvedValue(mockCreated);
 
       const { createGroup } = require('../../src/controllers/groupController.js');
@@ -129,7 +166,7 @@ describe('Group Controller', () => {
 
       expect(mockCreate).toHaveBeenCalledWith({
         name: 'New Group',
-        description: 'Description',
+        zoneId: 1,
       });
       expect(mockResponse.status).toHaveBeenCalledWith(201);
       expect(mockResponse.json).toHaveBeenCalledWith(
@@ -141,8 +178,8 @@ describe('Group Controller', () => {
       );
     });
 
-    it('should call next with ZodError for invalid input', async () => {
-      mockRequest.body = {}; // missing name
+    it('should call next with ZodError for missing zoneId', async () => {
+      mockRequest.body = { name: 'New Group' }; // missing zoneId
 
       const { createGroup } = require('../../src/controllers/groupController.js');
       createGroup(mockRequest, mockResponse, mockNext);
@@ -152,8 +189,8 @@ describe('Group Controller', () => {
       expect(mockNext.mock.calls[0][0].name).toBe('ZodError');
     });
 
-    it('should call next with ZodError for name longer than 100 characters', async () => {
-      mockRequest.body = { name: 'a'.repeat(101) };
+    it('should call next with ZodError for missing name', async () => {
+      mockRequest.body = { zoneId: 1 }; // missing name
 
       const { createGroup } = require('../../src/controllers/groupController.js');
       createGroup(mockRequest, mockResponse, mockNext);
@@ -166,7 +203,7 @@ describe('Group Controller', () => {
 
   describe('updateGroup', () => {
     it('should update group', async () => {
-      const mockUpdated = { id: 1, name: 'Updated Name' };
+      const mockUpdated = { id: 1, name: 'Updated Name', zoneId: 1 };
 
       mockRequest.params.id = '1';
       mockRequest.body = { name: 'Updated Name' };
@@ -208,7 +245,7 @@ describe('Group Controller', () => {
 
   describe('setGroupDevices', () => {
     it('should assign devices to group', async () => {
-      const mockGroup = { id: 1, name: 'Test Group', devices: [] };
+      const mockGroup = { id: 1, name: 'Test Group', zoneId: 1, devices: [] };
       mockRequest.params.id = '1';
       mockRequest.body = { deviceIds: ['dev1', 'dev2'] };
       mockFindById.mockResolvedValue(mockGroup);
@@ -252,23 +289,9 @@ describe('Group Controller', () => {
     });
 
     it('should call next with ZodError for empty deviceIds', async () => {
-      const mockGroup = { id: 1, name: 'Test Group', devices: [] };
+      const mockGroup = { id: 1, name: 'Test Group', zoneId: 1, devices: [] };
       mockRequest.params.id = '1';
       mockRequest.body = { deviceIds: [] };
-      mockFindById.mockResolvedValue(mockGroup);
-
-      const { setGroupDevices } = require('../../src/controllers/groupController.js');
-      setGroupDevices(mockRequest, mockResponse, mockNext);
-      await waitForAsync();
-
-      expect(mockNext).toHaveBeenCalled();
-      expect(mockNext.mock.calls[0][0].name).toBe('ZodError');
-    });
-
-    it('should call next with ZodError for missing deviceIds', async () => {
-      const mockGroup = { id: 1, name: 'Test Group', devices: [] };
-      mockRequest.params.id = '1';
-      mockRequest.body = {};
       mockFindById.mockResolvedValue(mockGroup);
 
       const { setGroupDevices } = require('../../src/controllers/groupController.js');

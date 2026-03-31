@@ -7,6 +7,7 @@ const router = Router();
 
 // 所有路由都需要认证
 router.get('/', authenticate, groupController.getGroups);
+router.get('/zone/:zoneId', authenticate, groupController.getGroupsByZoneId);
 router.get('/:id', authenticate, groupController.getGroupById);
 router.post('/', authenticate, groupController.createGroup);
 router.put('/:id', authenticate, groupController.updateGroup);

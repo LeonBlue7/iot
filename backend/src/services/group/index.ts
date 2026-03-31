@@ -1,25 +1,43 @@
 // src/services/group/index.ts
 import prisma from '../../utils/database.js';
-import { NotFoundError, BadRequestError } from '../../utils/errors.js';
+import { NotFoundError, BadRequestError, ValidationError } from '../../utils/errors.js';
 import type {
-  DeviceGroup,
+  Group,
+  GroupWithDevices,
+  GroupWithDeviceCount,
+  GroupWithDeviceCountOnly,
   CreateGroupInput,
   UpdateGroupInput,
-  GroupWithDevices,
 } from '../../types/group.js';
 
 class GroupService {
   /**
    * 获取所有分组
    */
-  async findAll(): Promise<(DeviceGroup & { _count: { devices: number } })[]> {
-    return prisma.deviceGroup.findMany({
+  async findAll(): Promise<GroupWithDeviceCount[]> {
+    return prisma.group.findMany({
+      include: {
+        zone: true,
+        _count: {
+          select: { devices: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  /**
+   * 根据分区ID获取分组
+   */
+  async findByZoneId(zoneId: number): Promise<GroupWithDeviceCountOnly[]> {
+    return prisma.group.findMany({
+      where: { zoneId },
       include: {
         _count: {
           select: { devices: true },
         },
       },
-      orderBy: { sortOrder: 'asc' },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -27,23 +45,36 @@ class GroupService {
    * 根据ID获取分组详情
    */
   async findById(id: number): Promise<GroupWithDevices | null> {
-    return prisma.deviceGroup.findUnique({
+    return prisma.group.findUnique({
       where: { id },
-      include: {
-        devices: true,
-      },
+      include: { zone: true, devices: true },
     });
   }
 
   /**
    * 创建分组
    */
-  async create(data: CreateGroupInput): Promise<DeviceGroup> {
-    return prisma.deviceGroup.create({
+  async create(data: CreateGroupInput): Promise<Group> {
+    // 验证名称
+    if (!data.name || data.name.trim() === '') {
+      throw new ValidationError('Group name is required');
+    }
+    if (data.name.length > 100) {
+      throw new ValidationError('Group name must be at most 100 characters');
+    }
+
+    // 检查分区是否存在
+    const zone = await prisma.zone.findUnique({
+      where: { id: data.zoneId },
+    });
+    if (!zone) {
+      throw new NotFoundError(`Zone ${data.zoneId} not found`);
+    }
+
+    return prisma.group.create({
       data: {
-        name: data.name,
-        description: data.description ?? null,
-        sortOrder: data.sortOrder ?? 0,
+        name: data.name.trim(),
+        zoneId: data.zoneId,
       },
     });
   }
@@ -51,18 +82,27 @@ class GroupService {
   /**
    * 更新分组
    */
-  async update(id: number, data: UpdateGroupInput): Promise<DeviceGroup> {
+  async update(id: number, data: UpdateGroupInput): Promise<Group> {
+    // 检查分组是否存在
     const existing = await this.findById(id);
     if (!existing) {
       throw new NotFoundError(`Group ${id} not found`);
     }
 
-    return prisma.deviceGroup.update({
+    // 验证名称
+    if (data.name !== undefined) {
+      if (!data.name || data.name.trim() === '') {
+        throw new ValidationError('Group name is required');
+      }
+      if (data.name.length > 100) {
+        throw new ValidationError('Group name must be at most 100 characters');
+      }
+    }
+
+    return prisma.group.update({
       where: { id },
       data: {
-        name: data.name,
-        description: data.description,
-        sortOrder: data.sortOrder,
+        name: data.name?.trim(),
       },
     });
   }
@@ -71,16 +111,18 @@ class GroupService {
    * 删除分组
    */
   async delete(id: number): Promise<void> {
-    // 检查是否有设备关联
-    const deviceCount = await prisma.device.count({
-      where: { groupId: id },
-    });
+    // 检查分组是否存在
+    const existing = await this.findById(id);
+    if (!existing) {
+      throw new NotFoundError(`Group ${id} not found`);
+    }
 
-    if (deviceCount > 0) {
+    // 检查是否有设备关联
+    if (existing.devices.length > 0) {
       throw new BadRequestError('Cannot delete group with devices');
     }
 
-    await prisma.deviceGroup.delete({
+    await prisma.group.delete({
       where: { id },
     });
   }

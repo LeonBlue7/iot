@@ -10,23 +10,26 @@ import {
   Space,
   message,
   Popconfirm,
-  InputNumber,
+  Select,
   Tag,
 } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import { groupApi } from '../../services/group.service'
-import type { DeviceGroup, CreateGroupInput, UpdateGroupInput } from '../../types/group'
+import { zoneApi } from '../../services/zone.service'
+import type { DeviceGroup, CreateGroupInput, UpdateGroupInput, Zone } from '../../types/group'
 
 export default function Groups() {
   const [loading, setLoading] = useState(false)
   const [groups, setGroups] = useState<DeviceGroup[]>([])
+  const [zones, setZones] = useState<Zone[]>([])
   const [modalVisible, setModalVisible] = useState(false)
   const [editingGroup, setEditingGroup] = useState<DeviceGroup | null>(null)
   const [form] = Form.useForm()
 
   useEffect(() => {
     loadGroups()
+    loadZones()
   }, [])
 
   async function loadGroups() {
@@ -34,10 +37,19 @@ export default function Groups() {
     try {
       const data = await groupApi.getList()
       setGroups(data)
-    } catch (error) {
+    } catch {
       message.error('加载分组列表失败')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function loadZones() {
+    try {
+      const data = await zoneApi.getList()
+      setZones(data)
+    } catch {
+      // Ignore zone loading error for now
     }
   }
 
@@ -51,8 +63,7 @@ export default function Groups() {
     setEditingGroup(group)
     form.setFieldsValue({
       name: group.name,
-      description: group.description,
-      sortOrder: group.sortOrder,
+      zoneId: group.zoneId,
     })
     setModalVisible(true)
   }
@@ -85,6 +96,11 @@ export default function Groups() {
     }
   }
 
+  const getZoneName = (zoneId: number): string => {
+    const zone = zones.find(z => z.id === zoneId)
+    return zone?.name || '-'
+  }
+
   const columns: ColumnsType<DeviceGroup> = [
     {
       title: 'ID',
@@ -98,16 +114,10 @@ export default function Groups() {
       key: 'name',
     },
     {
-      title: '描述',
-      dataIndex: 'description',
-      key: 'description',
-      render: (text: string | null) => text || '-',
-    },
-    {
-      title: '排序',
-      dataIndex: 'sortOrder',
-      key: 'sortOrder',
-      width: 80,
+      title: '所属分区',
+      dataIndex: 'zoneId',
+      key: 'zoneId',
+      render: (zoneId: number) => getZoneName(zoneId),
     },
     {
       title: '设备数量',
@@ -178,7 +188,7 @@ export default function Groups() {
         open={modalVisible}
         onOk={() => form.submit()}
         onCancel={() => setModalVisible(false)}
-        destroyOnHidden
+        destroyOnClose
       >
         <Form form={form} onFinish={handleSubmit} layout="vertical">
           <Form.Item
@@ -188,11 +198,18 @@ export default function Groups() {
           >
             <Input placeholder="请输入分组名称" maxLength={100} />
           </Form.Item>
-          <Form.Item name="description" label="描述">
-            <Input.TextArea placeholder="请输入描述" maxLength={500} rows={3} />
-          </Form.Item>
-          <Form.Item name="sortOrder" label="排序" initialValue={0}>
-            <InputNumber min={0} style={{ width: '100%' }} />
+          <Form.Item
+            name="zoneId"
+            label="所属分区"
+            rules={[{ required: true, message: '请选择所属分区' }]}
+          >
+            <Select placeholder="请选择分区">
+              {zones.map(zone => (
+                <Select.Option key={zone.id} value={zone.id}>
+                  {zone.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
         </Form>
       </Modal>

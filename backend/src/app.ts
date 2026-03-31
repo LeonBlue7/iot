@@ -4,7 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import config from './config/index.js';
-import { deviceRoutes, alarmRoutes, statsRoutes, groupRoutes } from './routes/index.js';
+import { deviceRoutes, alarmRoutes, statsRoutes, groupRoutes, customerRoutes, zoneRoutes, batchRoutes } from './routes/index.js';
 import adminRoutes from './routes/admin.js';
 import { errorHandler } from './utils/index.js';
 import { authenticate } from './middleware/auth.js';
@@ -64,6 +64,9 @@ app.use('/api/devices', deviceRoutes);
 app.use('/api/groups', authenticate, groupRoutes);
 app.use('/api/alarms', authenticate, alarmRoutes);
 app.use('/api/stats', authenticate, statsRoutes);
+app.use('/api/customers', authenticate, customerRoutes);
+app.use('/api/zones', authenticate, zoneRoutes);
+app.use('/api/batch', batchRoutes);
 
 // 404 handler
 app.use((_req, res) => {

@@ -62,6 +62,7 @@ describe('Devices', () => {
         online: true,
         lastSeenAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
+        enabled: true,
       },
     ]
 
@@ -95,6 +96,7 @@ describe('Devices', () => {
         online: true,
         lastSeenAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
+        enabled: true,
       },
     ]
 
@@ -124,6 +126,7 @@ describe('Devices', () => {
         online: true,
         lastSeenAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
+        enabled: true,
       },
     ]
 
@@ -153,6 +156,7 @@ describe('Devices', () => {
         online: true,
         lastSeenAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
+        enabled: true,
       },
     ]
 
@@ -182,6 +186,7 @@ describe('Devices', () => {
         online: true,
         lastSeenAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
+        enabled: true,
       },
     ]
 
@@ -210,6 +215,7 @@ describe('Devices', () => {
         online: false,
         lastSeenAt: undefined,
         createdAt: new Date().toISOString(),
+        enabled: true,
       },
     ]
 
@@ -232,6 +238,7 @@ describe('Devices', () => {
         online: true,
         lastSeenAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
+        enabled: true,
       },
     ]
 

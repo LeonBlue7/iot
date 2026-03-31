@@ -10,7 +10,7 @@ export interface AlarmListParams {
 
 export const alarmApi = {
   /**
-   * 获取告警列表
+   * Get alarm list
    */
   async getList(params?: AlarmListParams): Promise<AlarmRecord[]> {
     const response = await axios.get<ApiResponse<AlarmRecord[]>>(
@@ -26,11 +26,11 @@ export const alarmApi = {
   },
 
   /**
-   * 确认告警
+   * Acknowledge alarm
    */
   async acknowledge(id: number): Promise<void> {
     const response = await axios.put<ApiResponse<void>>(
-      `/api/alarms/${id}/acknowledge`,
+      `/alarms/${id}/acknowledge`,
     )
 
     if (!response.data.success) {

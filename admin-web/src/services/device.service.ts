@@ -17,7 +17,7 @@ export interface DeviceListResponse {
 
 export const deviceApi = {
   /**
-   * 获取设备列表
+   * Get device list
    */
   async getList(params?: DeviceListParams): Promise<DeviceListResponse> {
     const response = await axios.get<ApiResponse<Device[]>>(
@@ -38,11 +38,11 @@ export const deviceApi = {
   },
 
   /**
-   * 获取设备详情
+   * Get device by ID
    */
   async getById(id: string): Promise<Device> {
     const response = await axios.get<ApiResponse<Device>>(
-      `/api/devices/${id}`,
+      `/devices/${id}`,
     )
 
     if (!response.data.success) {
@@ -53,11 +53,11 @@ export const deviceApi = {
   },
 
   /**
-   * 获取实时数据
+   * Get realtime data
    */
   async getRealtimeData(id: string): Promise<SensorData | null> {
     const response = await axios.get<ApiResponse<SensorData | null>>(
-      `/api/devices/${id}/realtime`,
+      `/devices/${id}/realtime`,
     )
 
     if (!response.data.success) {
@@ -68,14 +68,14 @@ export const deviceApi = {
   },
 
   /**
-   * 获取历史数据
+   * Get history data
    */
   async getHistoryData(
     id: string,
     params?: { startTime?: string; endTime?: string; limit?: number },
   ): Promise<SensorData[]> {
     const response = await axios.get<ApiResponse<SensorData[]>>(
-      `/api/devices/${id}/history`,
+      `/devices/${id}/history`,
       { params },
     )
 
@@ -87,11 +87,11 @@ export const deviceApi = {
   },
 
   /**
-   * 控制设备
+   * Control device
    */
   async controlDevice(id: string, action: ControlAction): Promise<void> {
     const response = await axios.post<ApiResponse<void>>(
-      `/api/devices/${id}/control`,
+      `/devices/${id}/control`,
       { action },
     )
 
@@ -101,11 +101,11 @@ export const deviceApi = {
   },
 
   /**
-   * 获取设备参数
+   * Get device params
    */
   async getParams(id: string): Promise<DeviceParams | null> {
     const response = await axios.get<ApiResponse<DeviceParams | null>>(
-      `/api/devices/${id}/params`,
+      `/devices/${id}/params`,
     )
 
     if (!response.data.success) {
@@ -116,14 +116,14 @@ export const deviceApi = {
   },
 
   /**
-   * 更新设备参数
+   * Update device params
    */
   async updateParams(
     id: string,
     params: Partial<DeviceParams>,
   ): Promise<DeviceParams> {
     const response = await axios.put<ApiResponse<DeviceParams>>(
-      `/api/devices/${id}/params`,
+      `/devices/${id}/params`,
       params,
     )
 
@@ -135,14 +135,14 @@ export const deviceApi = {
   },
 
   /**
-   * 更新设备信息
+   * Update device info
    */
   async update(
     id: string,
     data: { name?: string; productId?: string },
   ): Promise<Device> {
     const response = await axios.put<ApiResponse<Device>>(
-      `/api/devices/${id}`,
+      `/devices/${id}`,
       data,
     )
 

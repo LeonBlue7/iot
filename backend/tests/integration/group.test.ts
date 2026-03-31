@@ -10,6 +10,7 @@ jest.mock('../../src/services/index.js', () => ({
   groupService: {
     findAll: jest.fn(),
     findById: jest.fn(),
+    findByZoneId: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
@@ -29,6 +30,7 @@ jest.mock('../../src/middleware/auth.js', () => ({
 import { groupService } from '../../src/services/index.js';
 const mockFindAll = groupService.findAll as jest.Mock;
 const mockFindById = groupService.findById as jest.Mock;
+const mockFindByZoneId = groupService.findByZoneId as jest.Mock;
 const mockCreate = groupService.create as jest.Mock;
 const mockUpdate = groupService.update as jest.Mock;
 const mockDelete = groupService.delete as jest.Mock;
@@ -47,8 +49,8 @@ describe('Group API Integration', () => {
   describe('GET /api/groups', () => {
     it('should return groups list', async () => {
       const mockGroups = [
-        { id: 1, name: 'Group 1', description: null, sortOrder: 0, _count: { devices: 5 } },
-        { id: 2, name: 'Group 2', description: 'Desc', sortOrder: 1, _count: { devices: 0 } },
+        { id: 1, name: 'Group 1', zoneId: 1, zone: { id: 1, name: 'Zone 1' }, _count: { devices: 5 } },
+        { id: 2, name: 'Group 2', zoneId: 1, zone: { id: 1, name: 'Zone 1' }, _count: { devices: 0 } },
       ];
 
       mockFindAll.mockResolvedValue(mockGroups);
@@ -62,13 +64,35 @@ describe('Group API Integration', () => {
     });
   });
 
+  describe('GET /api/groups/zone/:zoneId', () => {
+    it('should return groups by zone id', async () => {
+      const mockGroups = [
+        { id: 1, name: 'Group 1', zoneId: 1, _count: { devices: 2 } },
+      ];
+
+      mockFindByZoneId.mockResolvedValue(mockGroups);
+
+      const response = await request(app).get('/api/groups/zone/1');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('success', true);
+      expect(response.body.data).toHaveLength(1);
+    });
+
+    it('should return 404 for invalid zone id', async () => {
+      const response = await request(app).get('/api/groups/zone/invalid');
+
+      expect(response.status).toBe(404);
+    });
+  });
+
   describe('GET /api/groups/:id', () => {
     it('should return group details', async () => {
       const mockGroup = {
         id: 1,
         name: 'Test Group',
-        description: 'Test Description',
-        sortOrder: 0,
+        zoneId: 1,
+        zone: { id: 1, name: 'Zone 1', customerId: 1 },
         devices: [],
       };
 
@@ -96,8 +120,7 @@ describe('Group API Integration', () => {
       const mockCreated = {
         id: 1,
         name: 'New Group',
-        description: 'New Description',
-        sortOrder: 0,
+        zoneId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -106,17 +129,26 @@ describe('Group API Integration', () => {
 
       const response = await request(app)
         .post('/api/groups')
-        .send({ name: 'New Group', description: 'New Description' });
+        .send({ name: 'New Group', zoneId: 1 });
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('success', true);
       expect(response.body.data.name).toBe('New Group');
     });
 
-    it('should reject invalid input', async () => {
+    it('should reject invalid input (missing zoneId)', async () => {
       const response = await request(app)
         .post('/api/groups')
-        .send({});
+        .send({ name: 'New Group' });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('success', false);
+    });
+
+    it('should reject invalid input (missing name)', async () => {
+      const response = await request(app)
+        .post('/api/groups')
+        .send({ zoneId: 1 });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('success', false);
@@ -128,8 +160,7 @@ describe('Group API Integration', () => {
       const mockUpdated = {
         id: 1,
         name: 'Updated Group',
-        description: null,
-        sortOrder: 0,
+        zoneId: 1,
       };
 
       mockUpdate.mockResolvedValue(mockUpdated);
@@ -169,7 +200,7 @@ describe('Group API Integration', () => {
 
   describe('PUT /api/groups/:id/devices', () => {
     it('should assign devices to group', async () => {
-      const mockGroup = { id: 1, name: 'Test Group', devices: [] };
+      const mockGroup = { id: 1, name: 'Test Group', zoneId: 1, devices: [] };
       mockFindById.mockResolvedValue(mockGroup);
       mockSetGroupDevices.mockResolvedValue(undefined);
 
@@ -192,7 +223,7 @@ describe('Group API Integration', () => {
     });
 
     it('should reject empty deviceIds', async () => {
-      const mockGroup = { id: 1, name: 'Test Group', devices: [] };
+      const mockGroup = { id: 1, name: 'Test Group', zoneId: 1, devices: [] };
       mockFindById.mockResolvedValue(mockGroup);
 
       const response = await request(app)

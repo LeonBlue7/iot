@@ -8,41 +8,80 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 设备分组表
-model DeviceGroup {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(100)
-  description String?  @db.VarChar(500)
-  sortOrder   Int      @default(0) @map("sort_order")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+// ============== 层级管理模型 ==============
+
+// 客户表（层级第一层）
+model Customer {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relations
-  devices Device[]
+  zones Zone[]
 
   @@index([name])
-  @@map("device_groups")
+  @@map("customers")
 }
 
-// 设备表
+// 分区表（层级第二层）
+model Zone {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  customerId Int      @map("customer_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  groups   Group[]
+
+  @@index([customerId])
+  @@index([name])
+  @@map("zones")
+}
+
+// 分组表（层级第三层）
+model Group {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  zoneId    Int      @map("zone_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  zone    Zone     @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+  devices Device[]
+
+  @@index([zoneId])
+  @@index([name])
+  @@map("groups")
+}
+
+// ============== 设备管理模型 ==============
+
+// 设备表（层级第四层 - 空调设备）
 model Device {
   id         String    @id @db.VarChar(20) // IMEI号
   productId  String?   @map("product_id") @db.VarChar(50)
   name       String?   @db.VarChar(100)
   simCard    String?   @map("sim_card") @db.VarChar(20)
   online     Boolean   @default(false)
+  enabled    Boolean   @default(true) // 启用/禁用状态
   lastSeenAt DateTime? @map("last_seen_at")
   createdAt  DateTime  @default(now()) @map("created_at")
-  groupId    Int?      @map("group_id")
+  groupId    Int?      @map("group_id") // 暂保持可选，迁移后改为必填
 
   // Relations
-  group       DeviceGroup?  @relation(fields: [groupId], references: [id])
+  group       Group?        @relation(fields: [groupId], references: [id])
   sensorData  SensorData[]
   params      DeviceParam?
   alarms      AlarmRecord[]
   controlLogs ControlLog[]
 
   @@index([groupId])
+  @@index([name])
+  @@index([productId])
   @@map("devices")
 }
 

@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { alarmApi } from '../alarm.service'
 
-// Use vi.hoisted to define mock before vi.mock is hoisted
 const mockAxios = vi.hoisted(() => ({
   get: vi.fn(),
   post: vi.fn(),
@@ -28,7 +27,7 @@ describe('alarmApi', () => {
 
       const result = await alarmApi.getList()
 
-      expect(mockAxios.get).toHaveBeenCalledWith('/api/alarms', { params: undefined })
+      expect(mockAxios.get).toHaveBeenCalledWith('/alarms', { params: undefined })
       expect(result).toEqual(mockAlarms)
     })
 
@@ -39,7 +38,7 @@ describe('alarmApi', () => {
 
       await alarmApi.getList({ page: 1, limit: 10, status: 0 })
 
-      expect(mockAxios.get).toHaveBeenCalledWith('/api/alarms', {
+      expect(mockAxios.get).toHaveBeenCalledWith('/alarms', {
         params: { page: 1, limit: 10, status: 0 },
       })
     })
@@ -59,7 +58,7 @@ describe('alarmApi', () => {
 
       await alarmApi.acknowledge(1)
 
-      expect(mockAxios.put).toHaveBeenCalledWith('/api/alarms/1/acknowledge')
+      expect(mockAxios.put).toHaveBeenCalledWith('/alarms/1/acknowledge')
     })
 
     it('should throw error on acknowledge failure', async () => {
@@ -67,6 +66,22 @@ describe('alarmApi', () => {
       mockAxios.put.mockResolvedValue({ data: mockResponse } as any)
 
       await expect(alarmApi.acknowledge(1)).rejects.toThrow('Ack failed')
+    })
+  })
+
+  describe('Edge cases', () => {
+    it('should handle empty alarm list', async () => {
+      mockAxios.get.mockResolvedValue({ data: { success: true, data: [] } })
+
+      const result = await alarmApi.getList()
+
+      expect(result).toEqual([])
+    })
+
+    it('should handle network error', async () => {
+      mockAxios.get.mockRejectedValue(new Error('Network error'))
+
+      await expect(alarmApi.getList()).rejects.toThrow('Network error')
     })
   })
 })

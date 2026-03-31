@@ -6,14 +6,11 @@ import { asyncHandler, successResponse, NotFoundError } from '../utils/index.js'
 
 const createGroupSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be at most 100 characters'),
-  description: z.string().max(500, 'Description must be at most 500 characters').nullable().optional(),
-  sortOrder: z.number().int().optional(),
+  zoneId: z.number().int().positive('Zone ID must be a positive integer'),
 });
 
 const updateGroupSchema = z.object({
   name: z.string().min(1).max(100).optional(),
-  description: z.string().max(500).nullable().optional(),
-  sortOrder: z.number().int().optional(),
 });
 
 const setDevicesSchema = z.object({
@@ -45,6 +42,20 @@ export const getGroupById = asyncHandler(async (req: Request, res: Response): Pr
   }
 
   res.json(successResponse(group));
+});
+
+/**
+ * 根据分区ID获取分组
+ */
+export const getGroupsByZoneId = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const zoneId = parseInt(req.params.zoneId ?? '', 10);
+
+  if (Number.isNaN(zoneId)) {
+    throw new NotFoundError('Invalid zone ID');
+  }
+
+  const groups = await groupService.findByZoneId(zoneId);
+  res.json(successResponse(groups));
 });
 
 /**

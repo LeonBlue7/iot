@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { deviceApi } from '../device.service'
 
-// Use vi.hoisted to define mock before vi.mock is hoisted
 const mockAxios = vi.hoisted(() => ({
   get: vi.fn(),
   post: vi.fn(),
@@ -21,14 +20,14 @@ describe('deviceApi', () => {
   describe('getList', () => {
     it('should return device list on successful request', async () => {
       const mockDevices = [
-        { id: '123456789012345', name: 'Test Device', online: true },
+        { id: '123456789012345', name: 'Test Device', online: true, enabled: true },
       ]
       const mockResponse = { success: true as const, data: mockDevices }
       mockAxios.get.mockResolvedValue({ data: mockResponse } as any)
 
       const result = await deviceApi.getList()
 
-      expect(mockAxios.get).toHaveBeenCalledWith('/api/devices', { params: undefined })
+      expect(mockAxios.get).toHaveBeenCalledWith('/devices', { params: undefined })
       expect(result.data).toEqual(mockDevices)
     })
 
@@ -40,13 +39,13 @@ describe('deviceApi', () => {
     })
 
     it('should pass params to API', async () => {
-      const mockDevices = [{ id: '123456789012345', name: 'Test', online: true }]
+      const mockDevices = [{ id: '123456789012345', name: 'Test', online: true, enabled: true }]
       const mockResponse = { success: true as const, data: mockDevices }
       mockAxios.get.mockResolvedValue({ data: mockResponse } as any)
 
       await deviceApi.getList({ page: 1, limit: 10, online: true })
 
-      expect(mockAxios.get).toHaveBeenCalledWith('/api/devices', {
+      expect(mockAxios.get).toHaveBeenCalledWith('/devices', {
         params: { page: 1, limit: 10, online: true },
       })
     })
@@ -54,13 +53,13 @@ describe('deviceApi', () => {
 
   describe('getById', () => {
     it('should return device detail on successful request', async () => {
-      const mockDevice = { id: '123456789012345', name: 'Test Device', online: true }
+      const mockDevice = { id: '123456789012345', name: 'Test Device', online: true, enabled: true }
       const mockResponse = { success: true as const, data: mockDevice }
       mockAxios.get.mockResolvedValue({ data: mockResponse } as any)
 
       const result = await deviceApi.getById('123456789012345')
 
-      expect(mockAxios.get).toHaveBeenCalledWith('/api/devices/123456789012345')
+      expect(mockAxios.get).toHaveBeenCalledWith('/devices/123456789012345')
       expect(result).toEqual(mockDevice)
     })
 
@@ -80,7 +79,7 @@ describe('deviceApi', () => {
 
       const result = await deviceApi.getRealtimeData('123456789012345')
 
-      expect(mockAxios.get).toHaveBeenCalledWith('/api/devices/123456789012345/realtime')
+      expect(mockAxios.get).toHaveBeenCalledWith('/devices/123456789012345/realtime')
       expect(result).toEqual(mockData)
     })
   })
@@ -97,7 +96,7 @@ describe('deviceApi', () => {
         limit: 100,
       })
 
-      expect(mockAxios.get).toHaveBeenCalledWith('/api/devices/123456789012345/history', {
+      expect(mockAxios.get).toHaveBeenCalledWith('/devices/123456789012345/history', {
         params: { startTime: '2024-01-01', endTime: '2024-01-02', limit: 100 },
       })
     })
@@ -110,7 +109,7 @@ describe('deviceApi', () => {
 
       await deviceApi.controlDevice('123456789012345', 'on')
 
-      expect(mockAxios.post).toHaveBeenCalledWith('/api/devices/123456789012345/control', {
+      expect(mockAxios.post).toHaveBeenCalledWith('/devices/123456789012345/control', {
         action: 'on',
       })
     })
@@ -125,15 +124,32 @@ describe('deviceApi', () => {
 
   describe('update', () => {
     it('should update device info', async () => {
-      const mockDevice = { id: '123456789012345', name: 'Updated' }
+      const mockDevice = { id: '123456789012345', name: 'Updated', online: true, enabled: true }
       const mockResponse = { success: true as const, data: mockDevice }
       mockAxios.put.mockResolvedValue({ data: mockResponse } as any)
 
       await deviceApi.update('123456789012345', { name: 'Updated' })
 
-      expect(mockAxios.put).toHaveBeenCalledWith('/api/devices/123456789012345', {
+      expect(mockAxios.put).toHaveBeenCalledWith('/devices/123456789012345', {
         name: 'Updated',
       })
+    })
+  })
+
+  describe('Edge cases', () => {
+    it('should handle empty device list', async () => {
+      mockAxios.get.mockResolvedValue({ data: { success: true, data: [] } })
+
+      const result = await deviceApi.getList()
+
+      expect(result.data).toEqual([])
+      expect(result.total).toBe(0)
+    })
+
+    it('should handle network error', async () => {
+      mockAxios.get.mockRejectedValue(new Error('Network error'))
+
+      await expect(deviceApi.getList()).rejects.toThrow('Network error')
     })
   })
 })

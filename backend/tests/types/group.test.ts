@@ -1,71 +1,38 @@
 // tests/types/group.test.ts
 import { describe, it, expect } from '@jest/globals';
 import type {
-  DeviceGroup,
+  Group,
   CreateGroupInput,
   UpdateGroupInput,
   GroupWithDevices,
 } from '../../src/types/group.js';
 
 describe('Group Types', () => {
-  describe('DeviceGroup', () => {
-    it('should define DeviceGroup type with required fields', () => {
-      const group: DeviceGroup = {
+  describe('Group', () => {
+    it('should define Group type with required fields', () => {
+      const group: Group = {
         id: 1,
         name: 'Test Group',
-        description: 'Test Description',
-        sortOrder: 0,
+        zoneId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
       expect(group.id).toBe(1);
       expect(group.name).toBe('Test Group');
-      expect(group.description).toBe('Test Description');
-      expect(group.sortOrder).toBe(0);
-    });
-
-    it('should allow null description', () => {
-      const group: DeviceGroup = {
-        id: 1,
-        name: 'Test',
-        description: null,
-        sortOrder: 0,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      expect(group.description).toBeNull();
+      expect(group.zoneId).toBe(1);
     });
   });
 
   describe('CreateGroupInput', () => {
-    it('should require name field', () => {
+    it('should require name and zoneId fields', () => {
       const input: CreateGroupInput = {
         name: 'New Group',
+        zoneId: 1,
       };
 
       expect(input.name).toBe('New Group');
-    });
-
-    it('should allow optional fields', () => {
-      const input: CreateGroupInput = {
-        name: 'New Group',
-        description: 'Description',
-        sortOrder: 1,
-      };
-
-      expect(input.description).toBe('Description');
-      expect(input.sortOrder).toBe(1);
-    });
-
-    it('should allow null description', () => {
-      const input: CreateGroupInput = {
-        name: 'New Group',
-        description: null,
-      };
-
-      expect(input.description).toBeNull();
+      expect(input.zoneId).toBe(1);
     });
   });
 
@@ -76,30 +43,22 @@ describe('Group Types', () => {
       };
 
       expect(input.name).toBe('Updated Name');
-      expect(input.description).toBeUndefined();
-      expect(input.sortOrder).toBeUndefined();
     });
 
-    it('should allow updating all fields', () => {
-      const input: UpdateGroupInput = {
-        name: 'Updated',
-        description: 'New Description',
-        sortOrder: 5,
-      };
+    it('should allow empty update', () => {
+      const input: UpdateGroupInput = {};
 
-      expect(input.name).toBe('Updated');
-      expect(input.description).toBe('New Description');
-      expect(input.sortOrder).toBe(5);
+      expect(input.name).toBeUndefined();
     });
   });
 
   describe('GroupWithDevices', () => {
-    it('should extend DeviceGroup with devices array', () => {
+    it('should extend Group with devices array', () => {
       const group: GroupWithDevices = {
         id: 1,
         name: 'Group with Devices',
-        description: null,
-        sortOrder: 0,
+        zoneId: 1,
+        zone: { id: 1, name: 'Zone 1', customerId: 1, createdAt: new Date(), updatedAt: new Date() },
         createdAt: new Date(),
         updatedAt: new Date(),
         devices: [
@@ -109,6 +68,7 @@ describe('Group Types', () => {
             productId: null,
             simCard: null,
             online: true,
+            enabled: true,
             lastSeenAt: null,
             createdAt: new Date(),
             groupId: 1,
@@ -118,6 +78,7 @@ describe('Group Types', () => {
 
       expect(group.devices).toHaveLength(1);
       expect(group.devices?.[0]?.id).toBe('device1');
+      expect(group.zone.name).toBe('Zone 1');
     });
   });
 });

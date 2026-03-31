@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { statsApi } from '../stats.service'
 
-// Use vi.hoisted to define mock before vi.mock is hoisted
 const mockAxios = vi.hoisted(() => ({
   get: vi.fn(),
   post: vi.fn(),
@@ -32,7 +31,7 @@ describe('statsApi', () => {
 
       const result = await statsApi.getOverview()
 
-      expect(mockAxios.get).toHaveBeenCalledWith('/api/stats/overview')
+      expect(mockAxios.get).toHaveBeenCalledWith('/stats/overview')
       expect(result).toEqual(mockStats)
     })
 
@@ -41,6 +40,29 @@ describe('statsApi', () => {
       mockAxios.get.mockResolvedValue({ data: mockResponse } as any)
 
       await expect(statsApi.getOverview()).rejects.toThrow('Stats Error')
+    })
+  })
+
+  describe('Edge cases', () => {
+    it('should handle zero values', async () => {
+      const mockStats = {
+        totalDevices: 0,
+        onlineDevices: 0,
+        offlineDevices: 0,
+        totalAlarms: 0,
+        unacknowledgedAlarms: 0,
+      }
+      mockAxios.get.mockResolvedValue({ data: { success: true, data: mockStats } })
+
+      const result = await statsApi.getOverview()
+
+      expect(result.totalDevices).toBe(0)
+    })
+
+    it('should handle network error', async () => {
+      mockAxios.get.mockRejectedValue(new Error('Network error'))
+
+      await expect(statsApi.getOverview()).rejects.toThrow('Network error')
     })
   })
 })

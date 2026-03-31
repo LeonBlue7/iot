@@ -1,14 +1,25 @@
 // src/services/device/index.ts
 import prisma from '../../utils/database.js';
-import { NotFoundError } from '../../utils/errors.js';
+import { NotFoundError, ValidationError } from '../../utils/errors.js';
 import type { IDeviceService } from './types.js';
-import type { Device, CreateDeviceInput, UpdateDeviceInput, SensorData, DeviceParam } from '../../types/index.js';
+import type {
+  Device,
+  CreateDeviceInput,
+  UpdateDeviceInput,
+  SensorData,
+  DeviceParam,
+  BatchOperationResult,
+  SearchDevicesOptions,
+} from '../../types/index.js';
 
 interface FindAllOptions {
   page?: number;
   limit?: number;
   online?: boolean;
 }
+
+// Valid control actions
+const VALID_ACTIONS = ['on', 'off', 'reset'];
 
 class DeviceService implements IDeviceService {
   async findAll(options: FindAllOptions = {}): Promise<Device[]> {
@@ -147,6 +158,212 @@ class DeviceService implements IDeviceService {
 
     // Send MQTT command would be implemented here
     // For now, just log the action
+  }
+
+  // ========== Batch Operations ==========
+
+  /**
+   * 批量控制设备
+   */
+  async batchControl(
+    deviceIds: string[],
+    action: string,
+    operator: string
+  ): Promise<BatchOperationResult> {
+    // Validate input
+    if (!deviceIds || deviceIds.length === 0) {
+      throw new ValidationError('At least one device is required');
+    }
+    if (!VALID_ACTIONS.includes(action)) {
+      throw new ValidationError('Invalid action. Must be one of: on, off, reset');
+    }
+
+    // Find existing devices
+    const existingDevices = await prisma.device.findMany({
+      where: { id: { in: deviceIds } },
+      select: { id: true },
+    });
+
+    const existingIds = existingDevices.map((d) => d.id);
+    const failedDevices = deviceIds.filter((id) => !existingIds.includes(id));
+
+    // Create control logs for existing devices
+    if (existingIds.length > 0) {
+      await prisma.controlLog.createMany({
+        data: existingIds.map((deviceId) => ({
+          deviceId,
+          action,
+          operator,
+        })),
+      });
+    }
+
+    return {
+      success: true,
+      successCount: existingIds.length,
+      failCount: failedDevices.length,
+      failedDevices: failedDevices.length > 0 ? failedDevices : undefined,
+    };
+  }
+
+  /**
+   * 批量更新设备参数
+   */
+  async batchUpdateParams(
+    deviceIds: string[],
+    params: Partial<DeviceParam>
+  ): Promise<BatchOperationResult> {
+    // Validate input
+    if (!deviceIds || deviceIds.length === 0) {
+      throw new ValidationError('At least one device is required');
+    }
+    if (!params || Object.keys(params).length === 0) {
+      throw new ValidationError('At least one parameter is required');
+    }
+
+    // Find existing devices
+    const existingDevices = await prisma.device.findMany({
+      where: { id: { in: deviceIds } },
+      select: { id: true },
+    });
+
+    const existingIds = existingDevices.map((d) => d.id);
+    const failedDevices = deviceIds.filter((id) => !existingIds.includes(id));
+
+    // Update params for existing devices
+    if (existingIds.length > 0) {
+      // Update each device's params individually since Prisma doesn't support bulk upsert
+      for (const deviceId of existingIds) {
+        await prisma.deviceParam.upsert({
+          where: { deviceId },
+          update: params,
+          create: {
+            deviceId,
+            ...params,
+          },
+        });
+      }
+    }
+
+    return {
+      success: true,
+      successCount: existingIds.length,
+      failCount: failedDevices.length,
+      failedDevices: failedDevices.length > 0 ? failedDevices : undefined,
+    };
+  }
+
+  /**
+   * 批量移动设备到分组
+   */
+  async batchMoveToGroup(
+    deviceIds: string[],
+    groupId: number
+  ): Promise<BatchOperationResult> {
+    // Validate input
+    if (!deviceIds || deviceIds.length === 0) {
+      throw new ValidationError('At least one device is required');
+    }
+
+    // Check if group exists
+    const group = await prisma.group.findUnique({
+      where: { id: groupId },
+    });
+    if (!group) {
+      throw new NotFoundError(`Group ${groupId} not found`);
+    }
+
+    // Update devices
+    const result = await prisma.device.updateMany({
+      where: { id: { in: deviceIds } },
+      data: { groupId },
+    });
+
+    return {
+      success: true,
+      successCount: result.count,
+      failCount: deviceIds.length - result.count,
+    };
+  }
+
+  /**
+   * 批量切换设备启用状态
+   */
+  async batchToggleEnabled(
+    deviceIds: string[],
+    enabled: boolean
+  ): Promise<BatchOperationResult> {
+    // Validate input
+    if (!deviceIds || deviceIds.length === 0) {
+      throw new ValidationError('At least one device is required');
+    }
+
+    // Update devices
+    const result = await prisma.device.updateMany({
+      where: { id: { in: deviceIds } },
+      data: { enabled },
+    });
+
+    return {
+      success: true,
+      successCount: result.count,
+      failCount: deviceIds.length - result.count,
+    };
+  }
+
+  /**
+   * 搜索设备
+   */
+  async searchDevices(options: SearchDevicesOptions): Promise<Device[]> {
+    const {
+      keyword,
+      customerId,
+      zoneId,
+      groupId,
+      online,
+      enabled,
+      page = 1,
+      limit = 50,
+    } = options;
+
+    // Build where clause
+    const where: any = {};
+
+    // Keyword search
+    if (keyword) {
+      where.OR = [
+        { id: { contains: keyword, mode: 'insensitive' } },
+        { name: { contains: keyword, mode: 'insensitive' } },
+        { productId: { contains: keyword, mode: 'insensitive' } },
+      ];
+    }
+
+    // Hierarchy filters
+    if (groupId) {
+      where.groupId = groupId;
+    }
+    if (zoneId) {
+      where.group = { zoneId };
+    }
+    if (customerId) {
+      where.group = { zone: { customerId } };
+    }
+
+    // Status filters
+    if (online !== undefined) {
+      where.online = online;
+    }
+    if (enabled !== undefined) {
+      where.enabled = enabled;
+    }
+
+    return prisma.device.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: Math.min(limit, 100),
+      include: { params: true, group: { include: { zone: true } } },
+    });
   }
 }
 
