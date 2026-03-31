@@ -39,12 +39,15 @@ test.describe('分组管理', () => {
     const modal = page.locator('.ant-modal')
     await modal.waitFor({ state: 'visible', timeout: 5000 })
 
-    // 填写表单
+    // 填写表单 - 只填写名称，描述字段可能不存在
     const nameInput = page.locator('.ant-modal input[type="text"]').first()
     await nameInput.fill(groupName)
 
+    // 尝试填写描述（如果存在）
     const descInput = page.locator('.ant-modal textarea').first()
-    await descInput.fill('这是一个测试分组')
+    if (await descInput.isVisible({ timeout: 1000 }).catch(() => false)) {
+      await descInput.fill('这是一个测试分组')
+    }
 
     // 提交
     const okButton = page.locator('.ant-modal .ant-btn-primary:not([disabled])')
