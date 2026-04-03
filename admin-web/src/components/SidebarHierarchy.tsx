@@ -1,17 +1,24 @@
 // admin-web/src/components/SidebarHierarchy.tsx
 import { useState, useEffect, useCallback } from 'react'
-import { Tree, Spin, Divider, Typography, message, Button } from 'antd'
+import { Tree, Spin, Divider, Typography, message, Button, Modal, Form, Input, Space } from 'antd'
 import type { TreeProps } from 'antd'
-import { FolderOutlined, HomeOutlined, AppstoreOutlined, ReloadOutlined } from '@ant-design/icons'
+import { FolderOutlined, HomeOutlined, AppstoreOutlined, ReloadOutlined, PlusOutlined } from '@ant-design/icons'
 import { customerApi } from '../services/customer.service'
 import { zoneApi } from '../services/zone.service'
 import { groupApi } from '../services/group.service'
 import { useHierarchyStore } from '../store/hierarchyStore'
-import type { HierarchyTreeNode, Customer, Zone, DeviceGroup } from '../types/hierarchy'
+import type { HierarchyTreeNode, Customer, Zone, DeviceGroup, CreateZoneInput, CreateGroupInput } from '../types/hierarchy'
 
 interface SidebarHierarchyProps {
   collapsed: boolean
   onSelectionChange?: (selection: HierarchyTreeNode | null) => void
+}
+
+type CreateModalState = {
+  visible: boolean
+  level: 'zone' | 'group' | null
+  parentId: number | null
+  parentName: string | null
 }
 
 export function SidebarHierarchy({
@@ -22,6 +29,15 @@ export function SidebarHierarchy({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { selectedNode, expandedKeys, setSelection, setExpandedKeys } = useHierarchyStore()
+
+  // 创建Modal状态
+  const [createModal, setCreateModal] = useState<CreateModalState>({
+    visible: false,
+    level: null,
+    parentId: null,
+    parentName: null,
+  })
+  const [createForm] = Form.useForm()
 
   // 加载层级数据
   const loadHierarchy = useCallback(async (): Promise<void> => {
@@ -117,12 +133,84 @@ export function SidebarHierarchy({
     [setExpandedKeys]
   )
 
-  // 渲染树节点标题
-  const renderTitle = (node: HierarchyTreeNode): string => {
-    if (node.level === 'group' && node.deviceCount !== undefined) {
-      return `${node.title} (${node.deviceCount})`
+  // 打开创建Modal
+  const handleOpenCreate = useCallback((level: 'zone' | 'group', parentId: number, parentName: string) => {
+    setCreateModal({
+      visible: true,
+      level,
+      parentId,
+      parentName,
+    })
+    createForm.resetFields()
+    if (level === 'zone') {
+      createForm.setFieldsValue({ customerId: parentId })
+    } else {
+      createForm.setFieldsValue({ zoneId: parentId })
     }
-    return node.title
+  }, [createForm])
+
+  // 处理创建提交
+  const handleCreateSubmit = useCallback(async (values: CreateZoneInput | CreateGroupInput) => {
+    try {
+      if (createModal.level === 'zone') {
+        await zoneApi.create(values as CreateZoneInput)
+        message.success('分区创建成功')
+      } else if (createModal.level === 'group') {
+        await groupApi.create(values as CreateGroupInput)
+        message.success('分组创建成功')
+      }
+      setCreateModal({ visible: false, level: null, parentId: null, parentName: null })
+      loadHierarchy()
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '创建失败'
+      message.error(errorMessage)
+    }
+  }, [createModal.level, loadHierarchy])
+
+  // 渲染树节点标题（包含创建按钮）
+  const renderTitle = (node: HierarchyTreeNode): JSX.Element => {
+    const countDisplay = node.deviceCount !== undefined ? ` (${node.deviceCount})` : ''
+
+    // 根据层级添加创建按钮
+    if (node.level === 'customer') {
+      return (
+        <Space size={4} style={{ width: '100%', justifyContent: 'space-between' }}>
+          <span>{node.title}{countDisplay}</span>
+          <Button
+            type="text"
+            size="small"
+            icon={<PlusOutlined style={{ color: '#fff', fontSize: 12 }} />}
+            onClick={(e) => {
+              e.stopPropagation()
+              handleOpenCreate('zone', node.id, node.title)
+            }}
+            style={{ padding: '0 4px', height: 'auto' }}
+            title="创建分区"
+          />
+        </Space>
+      )
+    }
+
+    if (node.level === 'zone') {
+      return (
+        <Space size={4} style={{ width: '100%', justifyContent: 'space-between' }}>
+          <span>{node.title}{countDisplay}</span>
+          <Button
+            type="text"
+            size="small"
+            icon={<PlusOutlined style={{ color: '#fff', fontSize: 12 }} />}
+            onClick={(e) => {
+              e.stopPropagation()
+              handleOpenCreate('group', node.id, node.title)
+            }}
+            style={{ padding: '0 4px', height: 'auto' }}
+            title="创建分组"
+          />
+        </Space>
+      )
+    }
+
+    return <span>{node.title}{countDisplay}</span>
   }
 
   if (collapsed) {
@@ -174,6 +262,50 @@ export function SidebarHierarchy({
           />
         </Spin>
       )}
+
+      {/* 创建分区Modal */}
+      <Modal
+        title={`在 "${createModal.parentName || ''}" 下创建分区`}
+        open={createModal.visible && createModal.level === 'zone'}
+        onOk={() => createForm.submit()}
+        onCancel={() => setCreateModal({ visible: false, level: null, parentId: null, parentName: null })}
+        destroyOnClose
+      >
+        <Form form={createForm} onFinish={handleCreateSubmit} layout="vertical">
+          <Form.Item
+            name="name"
+            label="分区名称"
+            rules={[{ required: true, message: '请输入分区名称' }]}
+          >
+            <Input placeholder="请输入分区名称" maxLength={100} />
+          </Form.Item>
+          <Form.Item name="customerId" hidden>
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* 创建分组Modal */}
+      <Modal
+        title={`在 "${createModal.parentName || ''}" 下创建分组`}
+        open={createModal.visible && createModal.level === 'group'}
+        onOk={() => createForm.submit()}
+        onCancel={() => setCreateModal({ visible: false, level: null, parentId: null, parentName: null })}
+        destroyOnClose
+      >
+        <Form form={createForm} onFinish={handleCreateSubmit} layout="vertical">
+          <Form.Item
+            name="name"
+            label="分组名称"
+            rules={[{ required: true, message: '请输入分组名称' }]}
+          >
+            <Input placeholder="请输入分组名称" maxLength={100} />
+          </Form.Item>
+          <Form.Item name="zoneId" hidden>
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   )
 }

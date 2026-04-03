@@ -12,6 +12,8 @@ import {
   UserOutlined,
   FolderOutlined,
   TeamOutlined,
+  HomeOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons'
 import { useAuth } from '../hooks/useAuth'
 import { SidebarHierarchy } from './SidebarHierarchy'
@@ -25,14 +27,24 @@ const menuItems = [
     label: '仪表盘',
   },
   {
-    key: '/devices',
-    icon: <MobileOutlined />,
-    label: '设备管理',
+    key: '/customers',
+    icon: <HomeOutlined />,
+    label: '客户管理',
+  },
+  {
+    key: '/zones',
+    icon: <AppstoreOutlined />,
+    label: '分区管理',
   },
   {
     key: '/groups',
     icon: <FolderOutlined />,
     label: '分组管理',
+  },
+  {
+    key: '/devices',
+    icon: <MobileOutlined />,
+    label: '设备管理',
   },
   {
     key: '/alarms',
