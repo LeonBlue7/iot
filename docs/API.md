@@ -4,6 +4,21 @@
 
 **Base URL**: `https://www.jxbonner.cloud/api`
 
+> **最后更新**: 2026-04-03（添加四层层级管理API）
+
+## 系统架构
+
+系统采用四层层级管理架构：
+
+```
+Customer (客户)
+    └── Zone (分区)
+            └── Group (分组)
+                    └── Device (设备)
+```
+
+这种层级结构支持多租户场景，允许按客户、分区、分组进行设备管理。
+
 ## 认证
 
 > ⚠️ **注意**: 当前版本尚未实现认证中间件，生产环境部署前必须添加。
@@ -47,6 +62,190 @@ Authorization: Bearer <your_jwt_token>
   "limit": 20
 }
 ```
+
+---
+
+## 客户管理 API
+
+> 四层层级管理的顶层：Customer (客户)
+
+### 获取客户列表
+
+```http
+GET /api/customers
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "客户A",
+      "contact": "联系人",
+      "phone": "13800138000",
+      "address": "地址信息",
+      "createdAt": "2026-03-26T10:00:00Z",
+      "_count": {
+        "zones": 3
+      }
+    }
+  ]
+}
+```
+
+---
+
+### 获取客户详情
+
+```http
+GET /api/customers/:id
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "客户A",
+    "contact": "联系人",
+    "phone": "13800138000",
+    "address": "地址信息",
+    "zones": [
+      {
+        "id": 1,
+        "name": "一楼办公区"
+      }
+    ]
+  }
+}
+```
+
+---
+
+### 创建客户
+
+```http
+POST /api/customers
+```
+
+**请求体**:
+
+```json
+{
+  "name": "新客户",
+  "contact": "联系人",
+  "phone": "13800138000",
+  "address": "地址信息"
+}
+```
+
+---
+
+### 更新客户
+
+```http
+PUT /api/customers/:id
+```
+
+---
+
+### 删除客户
+
+```http
+DELETE /api/customers/:id
+```
+
+**注意**: 如果客户下有分区，将返回 400 错误。
+
+---
+
+## 分区管理 API
+
+> 四层层级管理的第二层：Zone (分区)
+
+### 获取分区列表
+
+```http
+GET /api/zones
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "一楼办公区",
+      "customerId": 1,
+      "customer": {
+        "id": 1,
+        "name": "客户A"
+      },
+      "_count": {
+        "groups": 5
+      }
+    }
+  ]
+}
+```
+
+---
+
+### 获取特定客户的分区
+
+```http
+GET /api/zones/customer/:customerId
+```
+
+---
+
+### 获取分区详情
+
+```http
+GET /api/zones/:id
+```
+
+---
+
+### 创建分区
+
+```http
+POST /api/zones
+```
+
+**请求体**:
+
+```json
+{
+  "name": "二楼办公区",
+  "customerId": 1
+}
+```
+
+---
+
+### 更新分区
+
+```http
+PUT /api/zones/:id
+```
+
+---
+
+### 删除分区
+
+```http
+DELETE /api/zones/:id
+```
+
+**注意**: 如果分区下有分组，将返回 400 错误。
 
 ---
 
@@ -424,6 +623,9 @@ POST /api/admin/auth/logout
 
 ## 分组管理 API
 
+> 四层层级管理的第三层：Group (分组)
+> 分组必须属于某个分区 (Zone)
+
 ### 获取分组列表
 
 ```http
@@ -439,6 +641,12 @@ GET /api/groups
     {
       "id": 1,
       "name": "一楼办公区",
+      "zoneId": 1,
+      "zone": {
+        "id": 1,
+        "name": "一楼分区",
+        "customerId": 1
+      },
       "description": "一楼所有空调设备",
       "sortOrder": 0,
       "createdAt": "2026-03-26T10:00:00Z",
@@ -446,6 +654,29 @@ GET /api/groups
       "_count": {
         "devices": 5
       }
+    }
+  ]
+}
+```
+
+---
+
+### 获取特定分区的分组
+
+```http
+GET /api/groups/zone/:zoneId
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "会议室",
+      "zoneId": 1
     }
   ]
 }
@@ -495,9 +726,13 @@ POST /api/groups
 ```json
 {
   "name": "二楼办公区",
+  "zoneId": 1,
   "description": "二楼所有空调设备",
   "sortOrder": 1
 }
+```
+
+**注意**: `zoneId` 为必填字段，分组必须属于某个分区。
 ```
 
 **响应示例** (201):
