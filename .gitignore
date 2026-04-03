@@ -3,11 +3,11 @@
 # Claude Code 指导文件（不上传远程仓库）
 CLAUDE.md
 
-# 环境变量（私人仓库，允许追踪）
-# .env
-# .env.local
-# .env.*.local
-# backend/.env
+# 环境变量（包含敏感信息，禁止追踪）
+.env
+.env.local
+.env.*.local
+backend/.env
 
 # 依赖
 node_modules/

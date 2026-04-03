@@ -3,6 +3,7 @@
 欢迎参与物联网管理系统的开发！本文档提供开发环境设置、代码规范和提交流程的详细说明。
 
 > **重要**: 本文档适用于本地开发环境。生产环境配置请参考 [部署指南](./DEPLOYMENT.md)。
+> **最后更新**: 2026-04-03（Docker 化重构）
 
 ---
 
@@ -38,77 +39,144 @@
 
 ### 前置要求
 
-- **Node.js**: 20.x 或更高版本
-- **npm**: 10.x 或更高版本
-- **PostgreSQL**: 15.x (或使用 Docker)
-- **Redis**: 7.x (或使用 Docker)
-- **Git**: 最新稳定版
+| 项目 | 要求 | 说明 |
+|------|------|------|
+| Docker | 20.x+ | 容器运行时 |
+| Docker Compose | V2 | Docker Compose 插件（推荐） |
+| Git | 最新稳定版 | 版本控制 |
+| Node.js | 20.x+ | 仅用于本地调试（可选） |
 
-### 安装步骤
+> **推荐**: 使用 Docker 开发环境，无需本地安装 Node.js、PostgreSQL、Redis。
+
+### Docker 化开发（推荐）
+
+项目已完全容器化，一键启动所有服务：
 
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/LeonBlue7/iot.git
 cd iot
 
-# 2. 安装后端依赖
-cd backend
-npm install
-
-# 3. 配置开发环境变量（重要！）
+# 2. 复制环境变量模板
 cp .env.example .env
-# 编辑 .env 填入本地开发配置
-# ⚠️ 不要复制生产环境的配置
 
-# 4. 设置数据库（使用 Docker）
-cd ..
-docker-compose up -d postgres redis emqx
+# 3. 启动完整开发环境
+docker compose up -d
 
-# 5. 运行数据库迁移
-cd backend
-npx prisma generate
-npx prisma migrate dev
-npx prisma db seed
+# 4. 初始化数据库（首次启动）
+docker compose exec backend npx prisma migrate dev
+docker compose exec backend npm run prisma:seed
 
-# 6. 安装前端依赖
-cd ../admin-web
-npm install
-
-# 7. 安装小程序依赖（可选）
-cd ../miniprogram
-npm install
+# 5. 验证服务运行
+docker compose ps
 ```
 
-### 使用 Docker 开发
+启动后可访问：
+- 后端 API：http://localhost:3000
+- 管理后台：http://localhost:3001
+- EMQX 控制台：http://localhost:18083
+
+### 常用 Docker 开发命令
+
+<!-- AUTO-GENERATED: Docker 开发命令 -->
 
 ```bash
-# 启动基础设施服务（PostgreSQL、Redis、EMQX）
-docker-compose up -d postgres redis emqx
+# 启动所有服务
+docker compose up -d
 
 # 查看服务状态
-docker-compose ps
+docker compose ps
 
-# 后端开发模式（本地运行，连接 Docker 服务）
-cd backend
-npm run dev
+# 查看日志
+docker compose logs -f backend
+docker compose logs -f admin-web
 
-# 前端开发模式
-cd admin-web
-npm run dev
+# 进入容器
+docker compose exec backend sh
+docker compose exec admin-web sh
+
+# 运行数据库迁移
+docker compose exec backend npx prisma migrate dev
+
+# 运行种子数据
+docker compose exec backend npm run prisma:seed
+
+# 运行测试
+docker compose exec backend npm run test
+docker compose exec admin-web npm run test
 
 # 停止服务
-docker-compose down
+docker compose down
+
+# 停止并清理数据
+docker compose down -v
+```
+
+<!-- END AUTO-GENERATED -->
+
+### 热重载机制
+
+开发环境支持代码热重载：
+
+- **后端**: 挂载 `backend/src/` 目录，修改代码自动重启
+- **前端**: 挂载 `admin-web/src/` 目录，Vite HMR 自动更新页面
+- **数据库**: 挂载 `backend/prisma/` 目录，迁移后自动生效
+
+### 本地开发模式（可选）
+
+如果需要在本地调试（不使用 Docker），可按以下步骤操作：
+
+```bash
+# 1. 仅启动基础设施服务
+docker compose up -d postgres redis emqx
+
+# 2. 配置后端环境变量
+cd backend
+cp .env.example .env
+# 编辑 .env，将主机名改为 localhost
+
+# 3. 本地运行后端
+npm install
+npx prisma generate
+npx prisma migrate dev
+npm run dev
+
+# 4. 本地运行前端
+cd ../admin-web
+npm install
+npm run dev
+```
+
+### Docker Compose V2 安装
+
+```bash
+# 检查版本
+docker compose version
+
+# 安装 Docker Compose V2 插件
+# Ubuntu/Debian:
+sudo apt-get update
+sudo apt-get install docker-compose-plugin
+
+# macOS (Docker Desktop 已内置)
+brew install docker-compose
+
+# 或使用独立版本
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 ### 开发环境配置要点
 
-| 配置项 | 开发环境 | 生产环境 |
-|--------|----------|----------|
-| `NODE_ENV` | `development` | `production` |
-| `DATABASE_URL` | `postgresql://...@localhost:5432/iot_db` | `postgresql://...@postgres:5432/iot_db` |
-| `REDIS_HOST` | `localhost` | `redis` |
-| `MQTT_BROKER_URL` | `mqtt://localhost:1883` | `mqtt://emqx:1883` |
-| `JWT_SECRET` | *(可选，自动生成)* | *(已配置，64字符)* |
+| 配置项 | Docker 开发环境 | 本地开发环境 | 生产环境 |
+|--------|-----------------|--------------|----------|
+| `NODE_ENV` | `development` | `development` | `production` |
+| `DATABASE_URL` | `postgresql://...@postgres:5432/iot_db` | `postgresql://...@localhost:5432/iot_db` | `postgresql://...@postgres:5432/iot_db` |
+| `REDIS_HOST` | `redis` | `localhost` | `redis` |
+| `MQTT_BROKER_URL` | `mqtt://emqx:1883` | `mqtt://localhost:1883` | `mqtt://emqx:1883` |
+| `JWT_SECRET` | *(容器默认值)* | *(可选，自动生成)* | *(已配置)* |
+
+> **Docker 网络**: 在 Docker 环境中使用服务名（postgres、redis、emqx）而非 localhost。
 
 ## 代码规范
 

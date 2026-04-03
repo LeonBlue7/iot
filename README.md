@@ -33,46 +33,72 @@
 
 ## 快速开始
 
-### 后端服务
+### Docker 开发环境（推荐）
+
+项目已完全容器化，一键启动所有服务：
 
 ```bash
-cd backend
+# 1. 克隆项目
+git clone https://github.com/LeonBlue7/iot.git
+cd iot
 
-# 1. 配置环境变量
+# 2. 复制环境变量模板
 cp .env.example .env
-# 编辑 .env 填入必要的配置
 
-# 2. 安装依赖
-npm install
+# 3. 启动完整开发环境
+docker compose up -d
 
-# 3. 生成 Prisma Client
-npm run prisma:generate
-
-# 4. 运行数据库迁移
-npm run prisma:migrate
-
-# 5. 初始化管理员账号
-npm run prisma:seed
-
-# 6. 开发模式启动
-npm run dev
+# 4. 初始化数据库（首次启动）
+docker compose exec backend npx prisma migrate dev
+docker compose exec backend npm run prisma:seed
 ```
 
-访问 `http://localhost:3000/health` 验证服务运行。
+启动后可访问：
+- **后端 API**: http://localhost:3000
+- **管理后台**: http://localhost:3001
+- **EMQX 控制台**: http://localhost:18083 (用户名: admin, 密码: public)
 
-### 管理后台
+验证服务运行：
+```bash
+# 检查服务状态
+docker compose ps
+
+# 查看日志
+docker compose logs -f backend
+```
+
+### 本地开发模式（可选）
+
+如果需要在本地调试，可仅启动基础设施服务：
 
 ```bash
-cd admin-web
+# 仅启动数据库、缓存、MQTT
+docker compose up -d postgres redis emqx
 
-# 1. 安装依赖
+# 后端服务（本地运行）
+cd backend
+cp .env.example .env
 npm install
+npx prisma generate
+npx prisma migrate dev
+npm run dev
 
-# 2. 启动开发服务器
+# 管理后台（本地运行）
+cd admin-web
+npm install
 npm run dev
 ```
 
-访问 `http://localhost:5173` 打开管理后台。
+### 常用 Docker 命令
+
+```bash
+docker compose up -d           # 启动所有服务
+docker compose ps              # 查看服务状态
+docker compose logs -f         # 查看日志
+docker compose exec backend sh # 进入后端容器
+docker compose down            # 停止服务
+docker compose down -v         # 停止并清理数据
+```
 
 ### 微信小程序
 
@@ -114,6 +140,8 @@ iot/
 │   │   └── app.ts            # 应用入口
 │   ├── prisma/                # 数据库迁移和种子
 │   ├── tests/                 # 测试文件
+│   ├── Dockerfile             # 生产环境 Dockerfile
+│   ├── Dockerfile.dev         # 开发环境 Dockerfile
 │   └── .env.example           # 环境变量模板
 ├── admin-web/                  # 管理后台前端
 │   ├── src/
@@ -124,6 +152,9 @@ iot/
 │   │   ├── store/             # 状态管理
 │   │   ├── types/             # TypeScript 类型
 │   │   └── tests/             # 测试配置
+│   ├── Dockerfile             # 生产环境 Dockerfile
+│   ├── Dockerfile.dev         # 开发环境 Dockerfile
+│   ├── vite.config.docker.ts  # Docker 环境专用配置
 │   └── package.json
 ├── miniprogram/                # 微信小程序
 │   ├── pages/                 # 页面
@@ -135,7 +166,18 @@ iot/
 │   ├── API.md                 # API 文档
 │   ├── ENV.md                 # 环境变量文档
 │   └── CONTRIBUTING.md        # 贡献指南
-├── docker-compose.yml          # Docker Compose 配置
+├── nginx/                      # Nginx 配置（生产环境）
+│   ├── nginx.conf             # Nginx 配置文件
+│   └── ssl/                   # SSL 证书
+├── scripts/                    # 运维脚本
+│   ├── deploy.sh              # 一键部署
+│   ├── backup.sh              # 数据库备份
+│   └── restore.sh             # 数据恢复
+├── docker-compose.yml          # 开发环境配置
+├── docker-compose.prod.yml     # 生产环境配置
+├── docker-compose.monitoring.yml # 监控服务配置
+├── .env.example                # 开发环境变量模板
+├── CLAUDE.md                   # 项目指导文档
 └── README.md                   # 项目说明
 ```
 

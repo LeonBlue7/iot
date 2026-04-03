@@ -2,36 +2,137 @@
 
 本文档列出项目中所有环境变量的详细说明，明确区分开发环境和生产环境。
 
-> **重要**: 生产环境配置已预填充，部署时无需修改。开发环境需手动配置。
+> **重要**: 生产环境配置已预填充，部署时无需修改。开发环境使用 Docker Compose 一键启动。
+> **最后更新**: 2026-04-03（Docker 化重构）
 
 ---
 
 ## 目录
 
 - [环境概述](#环境概述)
+- [开发环境（Docker 化）](#开发环境docker-化)
 - [生产环境配置](#生产环境配置)
-- [开发环境配置](#开发环境配置)
 - [安全检查清单](#安全检查清单)
 
 ---
 
 ## 环境概述
 
-| 环境 | 配置文件位置 | 说明 |
-|------|-------------|------|
-| **生产环境** | `.env` + `backend/.env` | 已预配置，服务器上已部署 |
-| **开发环境** | `backend/.env.example` → `backend/.env` | 本地开发，需手动创建 |
+| 环境 | 配置文件位置 | 启动方式 |
+|------|-------------|----------|
+| **开发环境** | `.env.example` → `.env` | `docker compose up -d` |
+| **生产环境** | `.env` + `backend/.env` | `./scripts/deploy.sh deploy` |
 
 ### 配置文件说明
 
-| 文件 | 作用 | Git追踪 |
-|------|------|---------|
-| `.env` | Docker Compose 生产环境变量 | ✅ 已追踪（私人仓库） |
-| `backend/.env` | 后端生产环境变量 | ✅ 已追踪（私人仓库） |
-| `backend/.env.example` | 开发环境模板 | ✅ 已追踪 |
-| `backend/.env` (开发) | 本地开发配置 | ❌ 不追踪（需手动创建） |
+| 文件 | 作用 | Git 追踪 |
+|------|------|----------|
+| `.env.example` | 开发环境模板 | ✅ 已追踪 |
+| `.env` | 开发/生产环境变量 | ❌ 禁止追踪（安全） |
+| `backend/.env.example` | 后端开发模板 | ✅ 已追踪 |
+| `backend/.env` | 后端生产环境变量 | ❌ 禁止追踪（安全） |
 
 ---
+
+## 开发环境（Docker 化）
+
+### 快速启动
+
+```bash
+# 1. 复制环境变量模板
+cp .env.example .env
+
+# 2. 启动完整开发环境
+docker compose up -d
+
+# 3. 初始化数据库
+docker compose exec backend npx prisma migrate dev
+docker compose exec backend npm run prisma:seed
+```
+
+### 开发环境访问地址
+
+| 服务 | 地址 | 说明 |
+|------|------|------|
+| 后端 API | http://localhost:3000 | Express 服务 |
+| 管理后台 | http://localhost:3001 | Vite 开发服务器 |
+| EMQX 控制台 | http://localhost:18083 | MQTT 管理 (admin/public) |
+| PostgreSQL | localhost:5432 | 数据库 |
+| Redis | localhost:6379 | 缓存 |
+
+### Docker Compose 服务架构
+
+<!-- AUTO-GENERATED: docker-compose.yml 服务 -->
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    iot-dev-network                       │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐ │
+│  │   backend   │───▶│  postgres   │    │    redis    │ │
+│  │   :3000     │    │   :5432     │    │   :6379     │ │
+│  └─────────────┘    └─────────────┘    └─────────────┘ │
+│         │                   │                   │       │
+│         ▼                   │                   │       │
+│  ┌─────────────┐            │                   │       │
+│  │  admin-web  │            │                   │       │
+│  │   :3001     │            │                   │       │
+│  └─────────────┘            │                   │       │
+│         │                   │                   │       │
+│         └───────────────────┼───────────────────┘       │
+│                             ▼                           │
+│                    ┌─────────────┐                      │
+│                    │    emqx     │                      │
+│                    │  :1883      │                      │
+│                    │  :18083     │                      │
+│                    └─────────────┘                      │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+<!-- END AUTO-GENERATED -->
+
+### Docker 网络配置要点
+
+在 Docker 环境中，服务之间使用服务名而非 localhost：
+
+| 配置项 | Docker 环境 | 本地开发 |
+|--------|-------------|----------|
+| `DATABASE_URL` | `postgresql://...@postgres:5432/iot_db` | `postgresql://...@localhost:5432/iot_db` |
+| `REDIS_HOST` | `redis` | `localhost` |
+| `MQTT_BROKER_URL` | `mqtt://emqx:1883` | `mqtt://localhost:1883` |
+
+> **注意**: `docker-compose.yml` 已自动配置 Docker 网络，无需手动设置。
+
+### 开发环境变量模板
+
+`.env.example` 默认配置（使用占位符）：
+
+```bash
+# 数据库配置
+DB_USER=iot_user
+DB_PASSWORD=<your_database_password>
+DB_NAME=iot_db
+DB_PORT=5432
+
+# Redis 配置
+REDIS_PASSWORD=<your_redis_password>
+REDIS_PORT=6379
+
+# EMQX 配置
+EMQX_USERNAME=admin
+EMQX_PASSWORD=<your_emqx_dashboard_password>
+MQTT_USERNAME=          # 开发环境允许匿名
+MQTT_PASSWORD=
+
+# JWT 配置
+JWT_SECRET=<generate_random_secret_min_32_chars>
+JWT_EXPIRES_IN=7d
+
+# 初始管理员密码
+INITIAL_ADMIN_PASSWORD=<your_admin_password>
+```
 
 ## 生产环境配置
 
@@ -122,20 +223,34 @@
 
 ```bash
 # 1. 复制环境变量模板
-cd backend
 cp .env.example .env
 
-# 2. 编辑配置文件
-# 修改 DATABASE_URL、REDIS_HOST 等本地配置
+# 2. 启动完整开发环境（推荐）
+docker compose up -d
 
-# 3. 启动基础设施（推荐使用 Docker）
-cd ..
-docker-compose up -d postgres redis emqx
+# 3. 初始化数据库
+docker compose exec backend npx prisma migrate dev
+docker compose exec backend npm run prisma:seed
+```
 
-# 4. 运行数据库迁移
+### 本地开发模式（可选）
+
+如果需要本地运行服务而非容器：
+
+```bash
+# 1. 仅启动基础设施服务
+docker compose up -d postgres redis emqx
+
+# 2. 配置后端环境变量
 cd backend
+cp .env.example .env
+# 编辑 .env，将主机名改为 localhost
+
+# 3. 运行服务
+npm install
+npx prisma generate
 npx prisma migrate dev
-npx prisma db seed
+npm run dev
 ```
 
 ### 开发环境变量
@@ -254,7 +369,7 @@ openssl rand -base64 64
 - [x] `REDIS_PASSWORD` 使用强随机密码
 - [x] `JWT_SECRET` 使用 64 字符随机密钥
 - [x] `WECHAT_SECRET` 未暴露在客户端代码
-- [x] `.env` 文件配置完成（私人仓库已追踪）
+- [x] `.env` 文件配置完成（禁止 Git 追踪，确保安全）
 - [x] 生产环境使用 HTTPS
 - [x] MQTT 设备认证已配置
 
@@ -268,10 +383,14 @@ openssl rand -base64 64
 
 ## 相关文件
 
-- `backend/.env.example` - 开发环境变量模板
-- `.env` - 生产环境 Docker Compose 配置（已预配置）
-- `backend/.env` - 生产环境后端配置（已预配置）
-- `docker-compose.yml` - 开发环境 Docker 配置
+- `.env.example` - 开发环境变量模板
+- `.env` - 开发/生产环境 Docker Compose 配置
+- `backend/.env.example` - 后端开发模板
+- `backend/.env` - 后端生产配置
+- `docker-compose.yml` - 开发环境 Docker 配置（完全容器化）
 - `docker-compose.prod.yml` - 生产环境 Docker 配置
+- `backend/Dockerfile.dev` - 后端开发环境 Dockerfile
+- `admin-web/Dockerfile.dev` - 前端开发环境 Dockerfile
+- `admin-web/vite.config.docker.ts` - Docker 环境专用 Vite 配置
 - [部署指南](./DEPLOYMENT.md) - 生产部署流程
-- [运行手册](./RUNBOOK.md) - 运维操作指南
+- [贡献指南](./CONTRIBUTING.md) - 开发环境设置

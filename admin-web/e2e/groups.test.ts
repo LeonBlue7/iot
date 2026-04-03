@@ -39,14 +39,24 @@ test.describe('分组管理', () => {
     const modal = page.locator('.ant-modal')
     await modal.waitFor({ state: 'visible', timeout: 5000 })
 
-    // 填写表单 - 只填写名称，描述字段可能不存在
+    // 填写表单 - 分组名称
     const nameInput = page.locator('.ant-modal input[type="text"]').first()
     await nameInput.fill(groupName)
 
-    // 尝试填写描述（如果存在）
-    const descInput = page.locator('.ant-modal textarea').first()
-    if (await descInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await descInput.fill('这是一个测试分组')
+    // 选择所属分区（必填字段）
+    const zoneSelect = page.locator('.ant-modal .ant-select')
+    await zoneSelect.click()
+    await page.waitForTimeout(500)
+
+    // 选择第一个分区选项
+    const firstZoneOption = page.locator('.ant-select-dropdown .ant-select-item-option').first()
+    if (await firstZoneOption.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await firstZoneOption.click()
+    } else {
+      // 如果没有分区选项，跳过测试
+      console.log('没有可用的分区选项，跳过创建测试')
+      test.skip(true, 'No zone options available')
+      return
     }
 
     // 提交
@@ -75,9 +85,17 @@ test.describe('分组管理', () => {
       console.log(`创建分组失败: ${errorText}`)
       test.skip(true, `API returned error: ${errorText}`)
     } else if (modalStillVisible) {
-      // Modal 仍然可见 - 可能是 API 无响应或前端处理问题
-      console.log('Modal 仍然可见，跳过验证')
-      test.skip(true, 'Modal did not close after submission')
+      // 检查是否有表单验证错误
+      const formError = page.locator('.ant-form-item-explain-error')
+      if (await formError.isVisible({ timeout: 500 }).catch(() => false)) {
+        const errorText = await formError.textContent()
+        console.log(`表单验证错误: ${errorText}`)
+        test.skip(true, `Form validation error: ${errorText}`)
+      } else {
+        // Modal 仍然可见 - 可能是 API 无响应或前端处理问题
+        console.log('Modal 仍然可见，跳过验证')
+        test.skip(true, 'Modal did not close after submission')
+      }
     } else {
       console.log('未收到成功或错误消息，跳过验证')
       test.skip(true, 'No response received after submission')
