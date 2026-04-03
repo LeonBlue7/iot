@@ -18,7 +18,9 @@ model Customer {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relations
-  zones Zone[]
+  zones        Zone[]
+  adminUsers   AdminUser[]
+  userCustomers AdminUserCustomer[]
 
   @@index([name])
   @@map("customers")
@@ -214,12 +216,37 @@ model AdminUser {
   createdAt          DateTime  @default(now()) @map("created_at")
   updatedAt          DateTime  @updatedAt @map("updated_at")
 
+  // 多租户字段
+  customerId   Int?     @map("customer_id")
+  isSuperAdmin Boolean  @default(false) @map("is_super_admin")
+
   // Relations
-  auditLogs AuditLog[]
+  auditLogs        AuditLog[]
+  customer         Customer?          @relation(fields: [customerId], references: [id])
+  customerAssignments AdminUserCustomer[]
 
   @@index([username])
   @@index([email])
+  @@index([customerId])
   @@map("admin_users")
+}
+
+// 用户-客户多对多关联表（支持一个用户管理多个客户）
+model AdminUserCustomer {
+  id          Int      @id @default(autoincrement())
+  adminUserId Int      @map("admin_user_id")
+  customerId  Int      @map("customer_id")
+  role        String   @default("viewer") @db.VarChar(20) // viewer, editor, admin
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([adminUserId, customerId])
+  @@index([adminUserId])
+  @@index([customerId])
+  @@map("admin_user_customers")
 }
 
 // 管理员角色表

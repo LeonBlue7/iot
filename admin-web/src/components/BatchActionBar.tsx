@@ -31,14 +31,14 @@ export function BatchActionBar({
   const normalizedCount = Math.max(0, selectedCount)
   const isDisabled = normalizedCount === 0
 
-  // Determine singular/plural form
-  const itemText = normalizedCount === 1 ? 'item' : 'items'
+  // 确定单数/复数形式（中文不区分）
+  const itemText = '项设备'
 
   return (
     <div data-testid="batch-action-bar" style={{ padding: '12px 16px', background: '#fafafa', borderRadius: 4 }}>
       <Space size="middle">
         <Typography.Text data-testid="selected-count">
-          {normalizedCount} {itemText} selected
+          已选中 {normalizedCount} {itemText}
         </Typography.Text>
 
         <Button
@@ -47,7 +47,7 @@ export function BatchActionBar({
           disabled={isDisabled}
           onClick={() => !isDisabled && onBatchControl('on')}
         >
-          Turn On
+          开启
         </Button>
 
         <Button
@@ -56,7 +56,7 @@ export function BatchActionBar({
           disabled={isDisabled}
           onClick={() => !isDisabled && onBatchControl('off')}
         >
-          Turn Off
+          关闭
         </Button>
 
         <Button
@@ -65,7 +65,7 @@ export function BatchActionBar({
           disabled={isDisabled}
           onClick={() => !isDisabled && onBatchControl('reset')}
         >
-          Reset
+          重启
         </Button>
 
         <Button
@@ -74,7 +74,7 @@ export function BatchActionBar({
           disabled={isDisabled}
           onClick={() => !isDisabled && onBatchMove()}
         >
-          Move to Group
+          移动分组
         </Button>
 
         <Button
@@ -83,7 +83,7 @@ export function BatchActionBar({
           disabled={isDisabled}
           onClick={() => !isDisabled && onBatchParams()}
         >
-          Set Params
+          设置参数
         </Button>
 
         <Button
@@ -92,7 +92,7 @@ export function BatchActionBar({
           disabled={isDisabled}
           onClick={() => !isDisabled && onBatchToggle(true)}
         >
-          Enable
+          启用
         </Button>
 
         <Button
@@ -101,7 +101,7 @@ export function BatchActionBar({
           disabled={isDisabled}
           onClick={() => !isDisabled && onBatchToggle(false)}
         >
-          Disable
+          禁用
         </Button>
 
         <Button
@@ -111,7 +111,7 @@ export function BatchActionBar({
           danger
           onClick={() => !isDisabled && onBatchDelete()}
         >
-          Delete
+          删除
         </Button>
       </Space>
     </div>

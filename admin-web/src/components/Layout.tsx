@@ -11,8 +11,10 @@ import {
   LogoutOutlined,
   UserOutlined,
   FolderOutlined,
+  TeamOutlined,
 } from '@ant-design/icons'
 import { useAuth } from '../hooks/useAuth'
+import { SidebarHierarchy } from './SidebarHierarchy'
 
 const { Header, Sider, Content } = AntLayout
 
@@ -41,6 +43,11 @@ const menuItems = [
     key: '/stats',
     icon: <BarChartOutlined />,
     label: '统计分析',
+  },
+  {
+    key: '/users',
+    icon: <TeamOutlined />,
+    label: '用户管理',
   },
 ]
 
@@ -83,6 +90,7 @@ export function Layout() {
           items={menuItems}
           onClick={handleMenuClick}
         />
+        <SidebarHierarchy collapsed={collapsed} />
       </Sider>
       <AntLayout>
         <Header

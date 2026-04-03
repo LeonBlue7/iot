@@ -73,7 +73,7 @@ export function DeviceSearchPanel({
     <Space data-testid="space">
       <Input
         data-testid="search-input"
-        placeholder="Search devices..."
+        placeholder="搜索设备..."
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
         onKeyDown={handleKeyPress}
@@ -83,7 +83,7 @@ export function DeviceSearchPanel({
 
       <Select
         data-testid="search-select"
-        placeholder="Select Customer"
+        placeholder="选择客户"
         value={customerId}
         onChange={(value) => setCustomerId(value as number | undefined)}
         options={customerOptions}
@@ -92,7 +92,7 @@ export function DeviceSearchPanel({
       />
 
       <Select
-        placeholder="Select Zone"
+        placeholder="选择分区"
         value={zoneId}
         onChange={(value) => setZoneId(value as number | undefined)}
         options={zoneOptions}
@@ -101,7 +101,7 @@ export function DeviceSearchPanel({
       />
 
       <Select
-        placeholder="Select Group"
+        placeholder="选择分组"
         value={groupId}
         onChange={(value) => setGroupId(value as number | undefined)}
         options={groupOptions}
@@ -110,11 +110,11 @@ export function DeviceSearchPanel({
       />
 
       <Button data-testid="btn-primary" type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
-        Search
+        搜索
       </Button>
 
       <Button data-testid="btn-default" icon={<ReloadOutlined />} onClick={handleReset}>
-        Reset
+        重置
       </Button>
     </Space>
   )

@@ -1,88 +1,270 @@
-import { useEffect, useState } from 'react'
-import {
-  Table,
-  Card,
-  Button,
-  Tag,
-  Space,
-  Modal,
-  Drawer,
-  Form,
-  Input,
-  message,
-} from 'antd'
-import type { ColumnsType } from 'antd/es/table'
-import {
-  EditOutlined,
-  PoweroffOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-} from '@ant-design/icons'
+// admin-web/src/pages/Devices/index.tsx
+import { useState, useEffect, useCallback } from 'react'
+import { Card, Table, Breadcrumb, Tag, Button, Modal, Select, message } from 'antd'
+import type { ColumnsType, TableProps } from 'antd/es/table'
+import { HomeOutlined, ReloadOutlined } from '@ant-design/icons'
+import { DeviceSearchPanel } from '../../components/DeviceSearchPanel'
+import { BatchActionBar } from '../../components/BatchActionBar'
+import { BatchParamsModal } from '../../components/BatchParamsModal'
 import { deviceApi } from '../../services/device.service'
+import { batchApi } from '../../services/batch.service'
+import { customerApi } from '../../services/customer.service'
+import { groupApi } from '../../services/group.service'
+import { useHierarchyStore } from '../../store/hierarchyStore'
 import type { Device } from '../../types/device'
+import type { DeviceSearchParams, Customer, Zone, DeviceGroup } from '../../types/hierarchy'
 
-export default function Devices() {
-  const [loading, setLoading] = useState(false)
+export default function Devices(): JSX.Element {
+  // 从store获取层级选择状态
+  const selectedNode = useHierarchyStore((state) => state.selectedNode)
+
+  // 设备状态
   const [devices, setDevices] = useState<Device[]>([])
-  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null)
-  const [detailVisible, setDetailVisible] = useState(false)
-  const [editVisible, setEditVisible] = useState(false)
-  const [editingDevice, setEditingDevice] = useState<Device | null>(null)
-  const [form] = Form.useForm()
+  const [loading, setLoading] = useState(false)
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([])
 
+  // 批量参数设置弹窗状态
+  const [paramsModalVisible, setParamsModalVisible] = useState(false)
+
+  // 批量移动弹窗状态
+  const [moveModalVisible, setMoveModalVisible] = useState(false)
+  const [targetGroupId, setTargetGroupId] = useState<number | undefined>()
+  const [availableGroups, setAvailableGroups] = useState<DeviceGroup[]>([])
+
+  // 搜索筛选器状态
+  const [searchFilters, setSearchFilters] = useState<{
+    customers: Customer[]
+    zones: Zone[]
+    groups: DeviceGroup[]
+  }>({ customers: [], zones: [], groups: [] })
+
+  // 当前搜索参数
+  const [searchParams, setSearchParams] = useState<DeviceSearchParams | null>(null)
+
+  // 加载搜索筛选器
   useEffect(() => {
-    loadDevices()
+    const loadFilters = async (): Promise<void> => {
+      try {
+        const customers = await customerApi.getList()
+        setSearchFilters((prev) => ({ ...prev, customers }))
+      } catch (error) {
+        // 忽略筛选器加载错误
+      }
+    }
+    loadFilters()
   }, [])
 
-  async function loadDevices() {
-    setLoading(true)
+  // 根据层级选择和搜索参数加载设备
+  const loadDevices = useCallback(async (): Promise<void> => {
     try {
-      const result = await deviceApi.getList()
-      setDevices(result.data)
+      setLoading(true)
+
+      // 构建搜索参数
+      const params: DeviceSearchParams = {}
+
+      // 从store获取层级筛选
+      if (selectedNode) {
+        if (selectedNode.level === 'customer') {
+          params.customerId = selectedNode.id
+        } else if (selectedNode.level === 'zone') {
+          params.zoneId = selectedNode.id
+        } else if (selectedNode.level === 'group') {
+          params.groupId = selectedNode.id
+        }
+      }
+
+      // 合并手动搜索参数
+      if (searchParams?.keyword) {
+        params.keyword = searchParams.keyword
+      }
+
+      if (Object.keys(params).length > 0) {
+        const result = await batchApi.search(params)
+        setDevices(result)
+      } else {
+        const result = await deviceApi.getList()
+        setDevices(result.data)
+      }
     } catch (error) {
       message.error('加载设备列表失败')
+      setDevices([])
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedNode, searchParams])
 
-  async function handleControl(id: string, action: 'on' | 'off' | 'reset') {
+  // 组件挂载和层级/搜索变化时加载设备
+  useEffect(() => {
+    loadDevices()
+    // 层级变化时清除选择
+    setSelectedRowKeys([])
+  }, [loadDevices])
+
+  // 处理搜索
+  const handleSearch = useCallback((params: DeviceSearchParams) => {
+    setSearchParams(params)
+  }, [])
+
+  // 处理搜索重置
+  const handleSearchReset = useCallback(() => {
+    setSearchParams(null)
+  }, [])
+
+  // 处理批量控制
+  const handleBatchControl = useCallback(async (action: 'on' | 'off' | 'reset') => {
+    if (selectedRowKeys.length === 0) return
+
     try {
-      await deviceApi.controlDevice(id, action)
-      message.success(`设备${action === 'on' ? '开启' : action === 'off' ? '关闭' : '重启'}成功`)
-      loadDevices()
-    } catch (error) {
-      message.error('控制设备失败')
-    }
-  }
+      const result = await batchApi.control({
+        deviceIds: selectedRowKeys,
+        action,
+      })
 
-  async function handleEdit(values: { name?: string }) {
-    if (!editingDevice) return
+      if (result.success) {
+        message.success(`批量操作完成：成功 ${result.successCount} 台，失败 ${result.failCount} 台`)
+        loadDevices()
+      }
+    } catch (error) {
+      message.error('批量控制失败')
+    }
+  }, [selectedRowKeys, loadDevices])
+
+  // 处理批量移动
+  const handleBatchMove = useCallback(async () => {
+    if (selectedRowKeys.length === 0) return
+
+    // 加载所有分组供选择
     try {
-      await deviceApi.update(editingDevice.id, values)
-      message.success('设备信息更新成功')
-      setEditVisible(false)
-      loadDevices()
+      const groups = await groupApi.getList()
+      setAvailableGroups(groups)
+      setMoveModalVisible(true)
     } catch (error) {
-      message.error('更新设备信息失败')
+      message.error('加载分组列表失败')
     }
+  }, [selectedRowKeys])
+
+  // 处理批量移动提交
+  const handleBatchMoveSubmit = useCallback(async () => {
+    if (!targetGroupId) {
+      message.warning('请选择目标分组')
+      return
+    }
+
+    try {
+      const result = await batchApi.moveToGroup({
+        deviceIds: selectedRowKeys,
+        targetGroupId,
+      })
+
+      if (result.success) {
+        message.success(`成功移动 ${result.successCount} 台设备`)
+        setMoveModalVisible(false)
+        setTargetGroupId(undefined)
+        setSelectedRowKeys([])
+        loadDevices()
+      }
+    } catch (error) {
+      message.error('批量移动失败')
+    }
+  }, [selectedRowKeys, targetGroupId, loadDevices])
+
+  // 处理批量参数设置
+  const handleBatchParams = useCallback(() => {
+    if (selectedRowKeys.length === 0) return
+    setParamsModalVisible(true)
+  }, [selectedRowKeys])
+
+  // 处理批量参数提交
+  const handleBatchParamsSubmit = useCallback(async (data: {
+    deviceIds: string[]
+    params: Record<string, unknown>
+    selectedFields: string[]
+  }) => {
+    try {
+      const result = await batchApi.updateParams(data)
+
+      if (result.success) {
+        message.success(`成功更新 ${result.successCount} 台设备的参数`)
+        setParamsModalVisible(false)
+        loadDevices()
+      }
+    } catch (error) {
+      message.error('批量参数更新失败')
+    }
+  }, [loadDevices])
+
+  // 处理批量启用/禁用
+  const handleBatchToggle = useCallback(async (enabled: boolean) => {
+    if (selectedRowKeys.length === 0) return
+
+    try {
+      const result = await batchApi.toggleEnabled({
+        deviceIds: selectedRowKeys,
+        enabled,
+      })
+
+      if (result.success) {
+        message.success(`成功${enabled ? '启用' : '禁用'} ${result.successCount} 台设备`)
+        loadDevices()
+      }
+    } catch (error) {
+      message.error('批量操作失败')
+    }
+  }, [selectedRowKeys, loadDevices])
+
+  // 处理批量删除
+  const handleBatchDelete = useCallback(() => {
+    if (selectedRowKeys.length === 0) return
+
+    Modal.confirm({
+      title: '确认删除',
+      content: `确定要删除选中的 ${selectedRowKeys.length} 台设备吗？`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        // 注意：批量删除API尚未实现
+        message.warning('批量删除功能暂未实现')
+      },
+    })
+  }, [selectedRowKeys])
+
+  // 渲染层级路径面包屑
+  const renderHierarchyPath = (): JSX.Element => {
+    const items: { title: JSX.Element | string; key: string }[] = [
+      { title: <><HomeOutlined /> <span>全部设备</span></>, key: 'all' },
+    ]
+
+    if (selectedNode) {
+      if (selectedNode.level === 'customer') {
+        items.push({ title: '客户', key: 'customer' })
+      } else if (selectedNode.level === 'zone') {
+        items.push({ title: '分区', key: 'zone' })
+      } else if (selectedNode.level === 'group') {
+        items.push({ title: '分组', key: 'group' })
+      }
+    }
+
+    return (
+      <Breadcrumb data-testid="hierarchy-path" items={items} />
+    )
   }
 
+  // 表格列定义
   const columns: ColumnsType<Device> = [
     {
-      title: '设备 ID',
+      title: '设备ID',
       dataIndex: 'id',
       key: 'id',
       width: 180,
     },
     {
-      title: '设备名称',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
       render: (name?: string) => name || '未命名',
     },
     {
-      title: 'SIM 卡号',
+      title: 'SIM卡号',
       dataIndex: 'simCard',
       key: 'simCard',
       render: (simCard?: string) => simCard || '-',
@@ -92,116 +274,107 @@ export default function Devices() {
       dataIndex: 'online',
       key: 'online',
       render: (online: boolean) => (
-        <Tag icon={online ? <CheckCircleOutlined /> : <CloseCircleOutlined />} color={online ? 'success' : 'default'}>
+        <Tag color={online ? 'success' : 'default'}>
           {online ? '在线' : '离线'}
         </Tag>
       ),
     },
     {
-      title: '最后上线时间',
+      title: '启用状态',
+      dataIndex: 'enabled',
+      key: 'enabled',
+      render: (enabled: boolean) => (
+        <Tag color={enabled ? 'success' : 'warning'}>
+          {enabled ? '已启用' : '已禁用'}
+        </Tag>
+      ),
+    },
+    {
+      title: '最后在线',
       dataIndex: 'lastSeenAt',
       key: 'lastSeenAt',
       render: (lastSeenAt?: string) =>
-        lastSeenAt ? new Date(lastSeenAt).toLocaleString('zh-CN') : '从未',
-    },
-    {
-      title: '操作',
-      key: 'action',
-      width: 280,
-      render: (_, record) => (
-        <Space>
-          <Button
-            type="link"
-            icon={<PoweroffOutlined />}
-            onClick={() => handleControl(record.id, 'on')}
-          >
-            开启
-          </Button>
-          <Button
-            type="link"
-            icon={<CloseCircleOutlined />}
-            onClick={() => handleControl(record.id, 'off')}
-          >
-            关闭
-          </Button>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => {
-              setSelectedDevice(record)
-              setDetailVisible(true)
-            }}
-          >
-            详情
-          </Button>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => {
-              setEditingDevice(record)
-              form.setFieldsValue({ name: record.name })
-              setEditVisible(true)
-            }}
-          >
-            编辑
-          </Button>
-        </Space>
-      ),
+        lastSeenAt ? new Date(lastSeenAt).toLocaleString() : '从未上线',
     },
   ]
 
+  // 表格行选择配置
+  const rowSelection: TableProps<Device>['rowSelection'] = {
+    selectedRowKeys,
+    onChange: (newSelectedRowKeys: React.Key[]) => {
+      setSelectedRowKeys(newSelectedRowKeys as string[])
+    },
+  }
+
   return (
-    <div>
+    <div data-testid="devices-page" style={{ padding: 24 }}>
+      {/* 标题栏 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h1>设备管理</h1>
-        <Button type="primary" onClick={loadDevices} loading={loading}>
+        <div>
+          <h1 style={{ margin: 0 }}>设备管理</h1>
+          {renderHierarchyPath()}
+        </div>
+        <Button icon={<ReloadOutlined />} onClick={loadDevices} loading={loading}>
           刷新
         </Button>
       </div>
 
-      <Card>
+      {/* 搜索面板 */}
+      <Card size="small" style={{ marginBottom: 16 }}>
+        <DeviceSearchPanel
+          onSearch={handleSearch}
+          onReset={handleSearchReset}
+          filters={searchFilters}
+        />
+      </Card>
+
+      {/* 批量操作栏 */}
+      <BatchActionBar
+        selectedCount={selectedRowKeys.length}
+        onBatchControl={handleBatchControl}
+        onBatchMove={handleBatchMove}
+        onBatchParams={handleBatchParams}
+        onBatchToggle={handleBatchToggle}
+        onBatchDelete={handleBatchDelete}
+      />
+
+      {/* 设备表格 */}
+      <Card style={{ marginTop: 16 }}>
         <Table
+          data-testid="devices-table"
           columns={columns}
           dataSource={devices}
           rowKey="id"
           loading={loading}
+          rowSelection={rowSelection}
           pagination={{ pageSize: 10 }}
         />
       </Card>
 
-      {/* 设备详情抽屉 */}
-      <Drawer
-        title="设备详情"
-        placement="right"
-        width={600}
-        open={detailVisible}
-        onClose={() => setDetailVisible(false)}
-      >
-        {selectedDevice && (
-          <div>
-            <h3>基本信息</h3>
-            <p><strong>设备 ID:</strong> {selectedDevice.id}</p>
-            <p><strong>设备名称:</strong> {selectedDevice.name || '未命名'}</p>
-            <p><strong>SIM 卡号:</strong> {selectedDevice.simCard || '-'}</p>
-            <p><strong>状态:</strong> <Tag color={selectedDevice.online ? 'success' : 'default'}>{selectedDevice.online ? '在线' : '离线'}</Tag></p>
-            <p><strong>创建时间:</strong> {new Date(selectedDevice.createdAt).toLocaleString('zh-CN')}</p>
-            <p><strong>最后上线时间:</strong> {selectedDevice.lastSeenAt ? new Date(selectedDevice.lastSeenAt).toLocaleString('zh-CN') : '从未'}</p>
-          </div>
-        )}
-      </Drawer>
+      {/* 批量参数设置弹窗 */}
+      <BatchParamsModal
+        visible={paramsModalVisible}
+        deviceIds={selectedRowKeys}
+        onClose={() => setParamsModalVisible(false)}
+        onSubmit={handleBatchParamsSubmit}
+      />
 
-      {/* 编辑设备对话框 */}
+      {/* 批量移动弹窗 */}
       <Modal
-        title="编辑设备信息"
-        open={editVisible}
-        onOk={() => form.submit()}
-        onCancel={() => setEditVisible(false)}
+        title="移动设备到分组"
+        open={moveModalVisible}
+        onCancel={() => setMoveModalVisible(false)}
+        onOk={handleBatchMoveSubmit}
+        okText="确定"
+        cancelText="取消"
       >
-        <Form form={form} onFinish={handleEdit} layout="vertical">
-          <Form.Item name="name" label="设备名称">
-            <Input placeholder="请输入设备名称" />
-          </Form.Item>
-        </Form>
+        <Select
+          style={{ width: '100%' }}
+          placeholder="请选择目标分组"
+          value={targetGroupId}
+          onChange={(value) => setTargetGroupId(value)}
+          options={availableGroups.map((g) => ({ value: g.id, label: g.name }))}
+        />
       </Modal>
     </div>
   )

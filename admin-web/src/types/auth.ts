@@ -9,6 +9,8 @@ export interface UserInfo {
   email: string
   name: string
   permissions: string[]
+  isSuperAdmin?: boolean
+  customerId?: number | null
 }
 
 export interface AuthState {

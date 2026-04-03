@@ -1,6 +1,8 @@
 node_modules/
 dist/
-# .env  # 私人仓库，允许追踪
+.env
+.env.local
+.env.*.local
 *.log
 logs/
 coverage/

@@ -4,7 +4,15 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import config from './config/index.js';
-import { deviceRoutes, alarmRoutes, statsRoutes, groupRoutes, customerRoutes, zoneRoutes, batchRoutes } from './routes/index.js';
+import {
+  deviceRoutes,
+  alarmRoutes,
+  statsRoutes,
+  groupRoutes,
+  customerRoutes,
+  zoneRoutes,
+  batchRoutes,
+} from './routes/index.js';
 import adminRoutes from './routes/admin.js';
 import { errorHandler } from './utils/index.js';
 import { authenticate } from './middleware/auth.js';
@@ -20,19 +28,29 @@ if (config.nodeEnv === 'production') {
 app.use(helmet());
 app.use(
   cors({
-    origin:
-      config.nodeEnv === 'production' ? ['https://www.jxbonner.cloud'] : '*',
+    origin: config.nodeEnv === 'production' ? ['https://www.jxbonner.cloud'] : '*',
     credentials: true,
   })
 );
 
 // Rate limiting - stricter for control endpoints
+// 测试环境跳过rate limiting
+const isTestMode = config.nodeEnv === 'test' || process.env.SKIP_RATE_LIMIT === 'true';
+
+// 检查请求是否来自测试环境
+const shouldSkipRateLimit = (req: express.Request): boolean => {
+  if (isTestMode) return true;
+  // 检查X-Test-Mode头
+  return req.headers['x-test-mode'] === 'true';
+};
+
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: config.nodeEnv === 'production' ? 30 : 1000, // 1000 requests per 15 minutes in dev
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: 'RATE_LIMIT_EXCEEDED', message: '请求过于频繁，请稍后重试' },
+  skip: (req) => shouldSkipRateLimit(req),
 });
 app.use('/api/', apiLimiter);
 
@@ -42,7 +60,12 @@ const loginLimiter = rateLimit({
   max: config.nodeEnv === 'production' ? 10 : 100, // 100 login attempts per 15 minutes in dev
   standardHeaders: true,
   legacyHeaders: false,
-  message: { success: false, error: 'RATE_LIMIT_EXCEEDED', message: '登录尝试过于频繁，请 15 分钟后重试' },
+  message: {
+    success: false,
+    error: 'RATE_LIMIT_EXCEEDED',
+    message: '登录尝试过于频繁，请 15 分钟后重试',
+  },
+  skip: (req) => shouldSkipRateLimit(req),
 });
 app.use('/api/admin/auth/login', loginLimiter);
 

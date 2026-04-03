@@ -6,8 +6,8 @@ import { test, expect } from './fixtures'
  */
 test.describe('四层分层功能验证', () => {
   test('验证层级树显示三级结构', async ({ authenticatedPage }) => {
-    // 访问新版设备管理页面
-    await authenticatedPage.goto('/devices-new')
+    // 访问设备管理页面
+    await authenticatedPage.goto('/devices')
     await authenticatedPage.waitForLoadState('networkidle')
 
     // 等待层级树加载
@@ -120,7 +120,7 @@ test.describe('四层分层功能验证', () => {
   })
 
   test('验证层级筛选功能', async ({ authenticatedPage }) => {
-    await authenticatedPage.goto('/devices-new')
+    await authenticatedPage.goto('/devices')
     await authenticatedPage.waitForLoadState('networkidle')
 
     // 等待设备表格加载
@@ -142,7 +142,7 @@ test.describe('四层分层功能验证', () => {
   })
 
   test('验证批量操作功能', async ({ authenticatedPage }) => {
-    await authenticatedPage.goto('/devices-new')
+    await authenticatedPage.goto('/devices')
     await authenticatedPage.waitForLoadState('networkidle')
 
     // 等待设备表格加载

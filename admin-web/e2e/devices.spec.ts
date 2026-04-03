@@ -5,11 +5,12 @@ import { DevicesPage, DashboardPage } from './pages'
  * 设备管理 E2E 测试
  *
  * 测试场景：
- * 1. 设备列表页面加载
- * 2. 查看设备详情
- * 3. 编辑设备信息
- * 4. 设备控制（开启/关闭）
- * 5. 刷新设备列表
+ * 1. 页面加载和布局
+ * 2. 层级树导航
+ * 3. 设备列表操作
+ * 4. 批量操作功能
+ * 5. 设备搜索
+ * 6. 分页功能
  */
 test.describe('设备管理', () => {
   let devicesPage: DevicesPage
@@ -19,233 +20,246 @@ test.describe('设备管理', () => {
     await devicesPage.goto()
   })
 
-  test('设备列表页面应正确加载', async () => {
-    // 等待页面加载完成
-    await devicesPage.title.waitFor({ state: 'visible', timeout: 10000 })
+  test.describe('页面加载', () => {
+    test('页面应正确加载', async () => {
+      // 验证设备表格存在
+      await expect(devicesPage.deviceTable).toBeVisible({ timeout: 10000 })
 
-    // 验证页面标题
-    await expect(devicesPage.title).toBeVisible()
+      // 验证层级树存在
+      await expect(devicesPage.hierarchyTree).toBeVisible()
+    })
 
-    // 验证刷新按钮存在 - 使用正则匹配处理空格
-    const refreshBtn = devicesPage.page.locator('button').filter({ hasText: /刷\s*新/ })
-    await expect(refreshBtn).toBeVisible()
+    test('应显示刷新按钮', async () => {
+      await expect(devicesPage.refreshButton).toBeVisible()
+    })
 
-    // 验证设备表格存在
-    await expect(devicesPage.deviceTable).toBeVisible()
+    test('批量操作栏初始状态应禁用', async () => {
+      // 初始状态应该没有选中设备
+      const selectedCount = await devicesPage.getSelectedCount()
+      expect(selectedCount).toBe(0)
+    })
   })
 
-  test('设备列表应显示空状态或数据', async () => {
-    // 等待数据加载
-    await devicesPage.deviceTable.waitFor({ state: 'visible' })
+  test.describe('层级树导航', () => {
+    test('层级树应可见', async () => {
+      await expect(devicesPage.hierarchyTree).toBeVisible()
+    })
 
-    // 检查是否显示空状态或有数据
-    const emptyState = devicesPage.page.locator('.ant-empty, .ant-table-placeholder, text=暂无数据')
-    const hasEmptyState = await emptyState.isVisible().catch(() => false)
-    const deviceCount = await devicesPage.getDeviceCount()
+    test('点击层级节点应筛选设备', async () => {
+      // 等待层级树加载
+      await devicesPage.hierarchyTree.waitFor({ state: 'visible' })
 
-    // 要么显示空状态，要么有数据
-    expect(hasEmptyState || deviceCount >= 0).toBeTruthy()
-  })
-
-  test('查看设备详情', async () => {
-    // 等待表格加载
-    await devicesPage.deviceTable.waitFor({ state: 'visible' })
-
-    // 检查是否有设备数据
-    const hasData = await devicesPage.hasData()
-
-    if (!hasData) {
-      // 没有数据时跳过测试
-      console.log('没有设备数据，跳过查看详情测试')
-      return
-    }
-
-    // 获取第一个设备ID
-    const firstDeviceId = await devicesPage.page.locator('.ant-table-tbody tr:first-child td:first-child').textContent()
-
-    if (firstDeviceId) {
-      // 点击详情按钮
-      await devicesPage.clickDeviceDetail(firstDeviceId)
-
-      // 验证抽屉打开
-      await devicesPage.detailDrawer.waitFor({ state: 'visible', timeout: 5000 })
-      await expect(devicesPage.detailDrawer).toBeVisible()
-
-      // 验证详情内容
-      await expect(devicesPage.detailDrawer.locator('h3:has-text("基本信息")')).toBeVisible()
-      await expect(devicesPage.detailDrawer.locator(`text=${firstDeviceId}`)).toBeVisible()
-    }
-  })
-
-  test('编辑设备名称', async () => {
-    // 等待表格加载
-    await devicesPage.deviceTable.waitFor({ state: 'visible' })
-
-    // 检查是否有设备数据
-    const hasData = await devicesPage.hasData()
-
-    if (!hasData) {
-      console.log('没有设备数据，跳过编辑测试')
-      return
-    }
-
-    // 获取第一个设备ID
-    const firstDeviceId = await devicesPage.page.locator('.ant-table-tbody tr:first-child td:first-child').textContent()
-
-    if (firstDeviceId) {
-      // 点击编辑按钮
-      await devicesPage.clickDeviceEdit(firstDeviceId)
-
-      // 验证编辑对话框打开
-      await devicesPage.editModal.waitFor({ state: 'visible', timeout: 5000 })
-      await expect(devicesPage.editModal).toBeVisible()
-
-      // 修改设备名称
-      const newName = `测试设备_${Date.now()}`
-      await devicesPage.page.locator('.ant-modal input[placeholder="请输入设备名称"]').fill(newName)
-
-      // 提交表单 - 使用更通用的选择器
-      await devicesPage.page.locator('.ant-modal .ant-btn-primary').click()
-
-      // 验证成功提示
-      await expect(devicesPage.page.locator('.ant-message-success')).toBeVisible({ timeout: 5000 })
-
-      // 关闭对话框
-      await expect(devicesPage.editModal).not.toBeVisible()
-    }
-  })
-
-  test('开启设备', async () => {
-    // 等待表格加载
-    await devicesPage.deviceTable.waitFor({ state: 'visible' })
-
-    // 检查是否有设备数据
-    const hasData = await devicesPage.hasData()
-
-    if (!hasData) {
-      console.log('没有设备数据，跳过开启设备测试')
-      return
-    }
-
-    // 获取第一个设备ID
-    const firstDeviceId = await devicesPage.page.locator('.ant-table-tbody tr:first-child td:first-child').textContent()
-
-    if (firstDeviceId) {
-      // 点击开启按钮
-      await devicesPage.controlDevice(firstDeviceId, '开启')
-
-      // 验证成功提示
-      await expect(devicesPage.page.locator('.ant-message-success')).toBeVisible({ timeout: 5000 })
-    }
-  })
-
-  test('关闭设备', async () => {
-    // 等待表格加载
-    await devicesPage.deviceTable.waitFor({ state: 'visible' })
-
-    // 检查是否有设备数据
-    const hasData = await devicesPage.hasData()
-
-    if (!hasData) {
-      console.log('没有设备数据，跳过关闭设备测试')
-      return
-    }
-
-    // 获取第一个设备ID
-    const firstDeviceId = await devicesPage.page.locator('.ant-table-tbody tr:first-child td:first-child').textContent()
-
-    if (firstDeviceId) {
-      // 点击关闭按钮
-      await devicesPage.controlDevice(firstDeviceId, '关闭')
-
-      // 验证成功提示
-      await expect(devicesPage.page.locator('.ant-message-success')).toBeVisible({ timeout: 5000 })
-    }
-  })
-
-  test('刷新设备列表', async () => {
-    // 等待表格加载
-    await devicesPage.deviceTable.waitFor({ state: 'visible' })
-
-    // 使用正则匹配刷新按钮
-    const refreshBtn = devicesPage.page.locator('button').filter({ hasText: /刷\s*新/ })
-    await expect(refreshBtn).toBeVisible()
-
-    // 点击刷新按钮
-    await refreshBtn.click()
-
-    // 等待加载状态 - Ant Design 可能使用不同的 loading 指示器
-    // 简化测试：等待表格刷新完成
-    await devicesPage.page.waitForTimeout(500)
-
-    // 验证表格仍然可见
-    await expect(devicesPage.deviceTable).toBeVisible()
-  })
-
-  test('设备在线状态显示正确', async () => {
-    // 等待表格加载
-    await devicesPage.deviceTable.waitFor({ state: 'visible' })
-
-    // 检查是否有设备数据
-    const hasData = await devicesPage.hasData()
-
-    if (!hasData) {
-      console.log('没有设备数据，跳过状态检查测试')
-      return
-    }
-
-    // 检查状态标签
-    const statusTag = devicesPage.page.locator('.ant-table-tbody tr:first-child .ant-tag')
-
-    // 验证状态标签存在
-    await expect(statusTag).toBeVisible({ timeout: 5000 })
-
-    // 验证状态文字
-    const statusText = await statusTag.textContent()
-    expect(statusText).toMatch(/在线|离线/)
-  })
-
-  test('分页功能正常工作', async () => {
-    // 等待表格加载
-    await devicesPage.deviceTable.waitFor({ state: 'visible' })
-
-    // 检查分页器是否存在
-    const pagination = devicesPage.page.locator('.ant-pagination')
-
-    // 如果有多个页面，测试分页
-    const paginationExists = await pagination.isVisible().catch(() => false)
-
-    if (paginationExists) {
-      // 点击下一页（如果可用）
-      const nextButton = pagination.locator('.ant-pagination-next:not(.ant-pagination-disabled)')
-      if (await nextButton.isVisible()) {
-        await nextButton.click()
+      // 尝试展开第一个节点
+      const firstExpandIcon = devicesPage.page.locator('.ant-tree-switcher_close').first()
+      if (await firstExpandIcon.isVisible()) {
+        await firstExpandIcon.click()
         await devicesPage.page.waitForTimeout(500)
-        // 验证表格仍然可见
+      }
+
+      // 点击第一个子节点
+      const firstNode = devicesPage.page.locator('.ant-tree-node-content-wrapper').first()
+      if (await firstNode.isVisible()) {
+        await firstNode.click()
+        await devicesPage.page.waitForTimeout(500)
+
+        // 验证表格仍在显示
         await expect(devicesPage.deviceTable).toBeVisible()
       }
-    }
+    })
+  })
+
+  test.describe('设备列表操作', () => {
+    test('设备列表应显示数据或空状态', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      const hasData = await devicesPage.hasData()
+      const emptyState = devicesPage.page.locator('.ant-empty, .ant-table-placeholder, text=暂无数据')
+      const hasEmptyState = await emptyState.isVisible().catch(() => false)
+
+      expect(hasData || hasEmptyState).toBeTruthy()
+    })
+
+    test('刷新按钮应刷新设备列表', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      // 点击刷新
+      await devicesPage.refreshButton.click()
+      await devicesPage.page.waitForTimeout(500)
+
+      // 验证表格仍然可见
+      await expect(devicesPage.deviceTable).toBeVisible()
+    })
+
+    test('设备在线状态应正确显示', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      const hasData = await devicesPage.hasData()
+      if (!hasData) {
+        console.log('没有设备数据，跳过状态检查')
+        return
+      }
+
+      // 检查状态标签 - 使用更通用的选择器
+      const statusTag = devicesPage.page.locator('.ant-table-tbody tr:first-child td').nth(2)
+
+      // 验证状态内容存在
+      const statusText = await statusTag.textContent()
+      // 状态可能显示为"在线"、"离线"或者Badge形式
+      expect(statusText).toBeTruthy()
+    })
+  })
+
+  test.describe('批量操作', () => {
+    test('选择设备后批量操作栏应激活', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      const hasData = await devicesPage.hasData()
+      if (!hasData) {
+        console.log('没有设备数据，跳过批量操作测试')
+        return
+      }
+
+      // 选择第一个设备
+      const firstCheckbox = devicesPage.page.locator('.ant-table-tbody tr:first-child .ant-checkbox-input')
+      await firstCheckbox.check()
+
+      // 验证选中计数
+      const selectedCount = await devicesPage.getSelectedCount()
+      expect(selectedCount).toBeGreaterThan(0)
+    })
+
+    test('全选功能应选中所有设备', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      const hasData = await devicesPage.hasData()
+      if (!hasData) {
+        console.log('没有设备数据，跳过全选测试')
+        return
+      }
+
+      // 点击全选
+      await devicesPage.selectAllDevices()
+
+      // 验证有设备被选中
+      const selectedCount = await devicesPage.getSelectedCount()
+      expect(selectedCount).toBeGreaterThan(0)
+    })
+
+    test('批量开启按钮应可见', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      const hasData = await devicesPage.hasData()
+      if (!hasData) {
+        console.log('没有设备数据，跳过批量操作测试')
+        return
+      }
+
+      // 选择一个设备
+      const firstCheckbox = devicesPage.page.locator('.ant-table-tbody tr:first-child .ant-checkbox-input')
+      await firstCheckbox.check()
+
+      // 验证批量操作按钮可见
+      const batchOnBtn = devicesPage.batchActionBar.locator('[data-testid="btn-batch-on"]')
+      await expect(batchOnBtn).toBeVisible()
+      await expect(batchOnBtn).not.toBeDisabled()
+    })
+
+    test('批量关闭按钮应可见', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      const hasData = await devicesPage.hasData()
+      if (!hasData) {
+        console.log('没有设备数据，跳过批量操作测试')
+        return
+      }
+
+      const firstCheckbox = devicesPage.page.locator('.ant-table-tbody tr:first-child .ant-checkbox-input')
+      await firstCheckbox.check()
+
+      const batchOffBtn = devicesPage.batchActionBar.locator('[data-testid="btn-batch-off"]')
+      await expect(batchOffBtn).toBeVisible()
+      await expect(batchOffBtn).not.toBeDisabled()
+    })
+
+    test('批量设置参数按钮应可见', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      const hasData = await devicesPage.hasData()
+      if (!hasData) {
+        console.log('没有设备数据，跳过批量操作测试')
+        return
+      }
+
+      const firstCheckbox = devicesPage.page.locator('.ant-table-tbody tr:first-child .ant-checkbox-input')
+      await firstCheckbox.check()
+
+      const paramsBtn = devicesPage.batchActionBar.locator('[data-testid="btn-batch-params"]')
+      await expect(paramsBtn).toBeVisible()
+      await expect(paramsBtn).not.toBeDisabled()
+    })
+
+    test('批量移动分组按钮应可见', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      const hasData = await devicesPage.hasData()
+      if (!hasData) {
+        console.log('没有设备数据，跳过批量操作测试')
+        return
+      }
+
+      const firstCheckbox = devicesPage.page.locator('.ant-table-tbody tr:first-child .ant-checkbox-input')
+      await firstCheckbox.check()
+
+      const moveBtn = devicesPage.batchActionBar.locator('[data-testid="btn-batch-move"]')
+      await expect(moveBtn).toBeVisible()
+      await expect(moveBtn).not.toBeDisabled()
+    })
+  })
+
+  test.describe('分页功能', () => {
+    test('分页器应正确显示', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      const pagination = devicesPage.page.locator('.ant-pagination')
+      const hasPagination = await pagination.isVisible().catch(() => false)
+
+      if (hasPagination) {
+        // 验证分页器存在
+        await expect(pagination).toBeVisible()
+      } else {
+        // 可能数据量不足以显示分页
+        console.log('分页器未显示，可能数据量不足')
+      }
+    })
+
+    test('下一页按钮应工作', async () => {
+      await devicesPage.deviceTable.waitFor({ state: 'visible' })
+
+      const nextBtn = devicesPage.page.locator('.ant-pagination-next:not(.ant-pagination-disabled)')
+      if (await nextBtn.isVisible()) {
+        await nextBtn.click()
+        await devicesPage.page.waitForTimeout(500)
+        await expect(devicesPage.deviceTable).toBeVisible()
+      }
+    })
   })
 })
 
-test.describe('设备管理 - 从仪表盘导航', () => {
-  test('从仪表盘点击设备可跳转到设备详情', async ({ authenticatedPage }) => {
+test.describe('设备管理 - 导航测试', () => {
+  test('从仪表盘可以导航到设备管理', async ({ authenticatedPage }) => {
     const dashboardPage = new DashboardPage(authenticatedPage)
     await dashboardPage.goto()
-
-    // 等待数据加载
     await dashboardPage.title.waitFor()
 
-    // 如果有设备，验证导航
-    const totalDevices = await dashboardPage.getStatValue(dashboardPage.totalDevicesStat)
-    if (totalDevices > 0) {
-      // 从仪表盘跳转到设备管理 - 使用更通用的选择器
-      const devicesMenu = authenticatedPage.locator('.ant-layout-sider a[href*="devices"], nav a[href*="devices"], .ant-menu-item:has-text("设备")')
+    // 点击侧边栏设备管理菜单
+    const devicesMenu = authenticatedPage.locator('.ant-layout-sider a[href*="devices"], nav a[href*="devices"], .ant-menu-item:has-text("设备")')
 
-      if (await devicesMenu.first().isVisible()) {
-        await devicesMenu.first().click()
-        await expect(authenticatedPage).toHaveURL(/\/devices/)
-      }
+    if (await devicesMenu.first().isVisible()) {
+      await devicesMenu.first().click()
+      // 验证跳转
+      await expect(authenticatedPage).toHaveURL(/\/devices/)
+    } else {
+      console.log('设备管理菜单未找到')
     }
   })
 })

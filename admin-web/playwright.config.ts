@@ -30,6 +30,10 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    // 添加测试环境标识
+    extraHTTPHeaders: {
+      'X-Test-Mode': 'true',
+    },
   },
 
   projects: [

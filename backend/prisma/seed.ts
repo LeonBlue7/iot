@@ -29,7 +29,31 @@ async function main() {
     },
   })
 
-  console.log('创建/更新管理员角色:', adminRole.name)
+  // 创建租户管理员角色
+  const tenantAdminRole = await prisma.adminRole.upsert({
+    where: { name: 'tenant_admin' },
+    update: {},
+    create: {
+      name: 'tenant_admin',
+      description: '租户管理员',
+      permissions: ['device:read', 'device:write', 'group:read', 'group:write', 'alarm:read', 'alarm:write', 'stats:read'],
+      isSystem: true,
+    },
+  })
+
+  // 创建只读角色
+  const viewerRole = await prisma.adminRole.upsert({
+    where: { name: 'viewer' },
+    update: {},
+    create: {
+      name: 'viewer',
+      description: '只读用户',
+      permissions: ['device:read', 'group:read', 'alarm:read', 'stats:read'],
+      isSystem: true,
+    },
+  })
+
+  console.log('创建/更新管理员角色:', adminRole.name, tenantAdminRole.name, viewerRole.name)
 
   // 检查是否已存在管理员
   const existingAdmin = await prisma.adminUser.findFirst({
@@ -51,6 +75,7 @@ async function main() {
         enabled: true,
         roleIds: [adminRole.id],
         mustChangePassword: true, // 强制首次登录修改密码
+        isSuperAdmin: true, // 超级管理员
       },
     })
 

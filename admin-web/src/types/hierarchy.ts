@@ -39,6 +39,7 @@ export interface HierarchyTreeNode {
   children?: HierarchyTreeNode[]
   deviceCount?: number
   onlineCount?: number
+  icon?: React.ReactNode
 }
 
 /**

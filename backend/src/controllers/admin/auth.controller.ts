@@ -45,7 +45,7 @@ async function handleLoginFailure(
  * 登录成功处理
  */
 async function handleLoginSuccess(
-  adminUser: { id: number; username: string; email: string; name: string | null; roleIds: number[] },
+  adminUser: { id: number; username: string; email: string; name: string | null; roleIds: number[]; isSuperAdmin: boolean; customerId: number | null },
   clientIp: string,
   userAgent: string | undefined
 ): Promise<{ token: string; user: unknown }> {
@@ -95,6 +95,8 @@ async function handleLoginSuccess(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       name: adminUser.name,
       permissions,
+      isSuperAdmin: adminUser.isSuperAdmin,
+      customerId: adminUser.customerId,
     },
   };
 }
@@ -117,6 +119,17 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   // 查找管理员用户
   const adminUser = await prisma.adminUser.findUnique({
     where: { username: username as string },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      name: true,
+      passwordHash: true,
+      roleIds: true,
+      enabled: true,
+      isSuperAdmin: true,
+      customerId: true,
+    },
   });
 
   // 用户不存在
@@ -180,6 +193,8 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
       roleIds: true,
       enabled: true,
       lastLoginAt: true,
+      isSuperAdmin: true,
+      customerId: true,
     },
   });
 

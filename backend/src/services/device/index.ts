@@ -11,6 +11,7 @@ import type {
   BatchOperationResult,
   SearchDevicesOptions,
 } from '../../types/index.js';
+import type { Prisma } from '@prisma/client';
 
 interface FindAllOptions {
   page?: number;
@@ -116,7 +117,9 @@ class DeviceService implements IDeviceService {
     });
   }
 
-  async addSensorData(data: import('../../types/index.js').CreateSensorDataInput): Promise<SensorData> {
+  async addSensorData(
+    data: import('../../types/index.js').CreateSensorDataInput
+  ): Promise<SensorData> {
     return prisma.sensorData.create({
       data,
     });
@@ -128,10 +131,7 @@ class DeviceService implements IDeviceService {
     });
   }
 
-  async updateParams(
-    deviceId: string,
-    params: Partial<DeviceParam>
-  ): Promise<DeviceParam> {
+  async updateParams(deviceId: string, params: Partial<DeviceParam>): Promise<DeviceParam> {
     return prisma.deviceParam.upsert({
       where: { deviceId },
       update: params,
@@ -142,11 +142,7 @@ class DeviceService implements IDeviceService {
     });
   }
 
-  async controlDevice(
-    deviceId: string,
-    action: string,
-    operator: string
-  ): Promise<void> {
+  async controlDevice(deviceId: string, action: string, operator: string): Promise<void> {
     // Log control command
     await prisma.controlLog.create({
       data: {
@@ -256,10 +252,7 @@ class DeviceService implements IDeviceService {
   /**
    * 批量移动设备到分组
    */
-  async batchMoveToGroup(
-    deviceIds: string[],
-    groupId: number
-  ): Promise<BatchOperationResult> {
+  async batchMoveToGroup(deviceIds: string[], groupId: number): Promise<BatchOperationResult> {
     // Validate input
     if (!deviceIds || deviceIds.length === 0) {
       throw new ValidationError('At least one device is required');
@@ -289,10 +282,7 @@ class DeviceService implements IDeviceService {
   /**
    * 批量切换设备启用状态
    */
-  async batchToggleEnabled(
-    deviceIds: string[],
-    enabled: boolean
-  ): Promise<BatchOperationResult> {
+  async batchToggleEnabled(deviceIds: string[], enabled: boolean): Promise<BatchOperationResult> {
     // Validate input
     if (!deviceIds || deviceIds.length === 0) {
       throw new ValidationError('At least one device is required');
@@ -315,19 +305,10 @@ class DeviceService implements IDeviceService {
    * 搜索设备
    */
   async searchDevices(options: SearchDevicesOptions): Promise<Device[]> {
-    const {
-      keyword,
-      customerId,
-      zoneId,
-      groupId,
-      online,
-      enabled,
-      page = 1,
-      limit = 50,
-    } = options;
+    const { keyword, customerId, zoneId, groupId, online, enabled, page = 1, limit = 50 } = options;
 
-    // Build where clause
-    const where: any = {};
+    // Build where clause with proper typing
+    const where: Prisma.DeviceWhereInput = {};
 
     // Keyword search
     if (keyword) {

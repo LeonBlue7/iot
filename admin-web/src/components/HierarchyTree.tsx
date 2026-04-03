@@ -25,12 +25,12 @@ export function HierarchyTree({ onSelect, initialSelected }: HierarchyTreeProps)
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
   const [expandedKeys, setExpandedKeys] = useState<string[]>([])
 
-  // Convert initial selection to key
+  // 将初始选择转换为key
   useEffect(() => {
     if (initialSelected) {
       const key = `${initialSelected.level}-${initialSelected.id}`
       setSelectedKeys([key])
-      // Expand parent nodes
+      // 展开父节点
       if (initialSelected.parentId) {
         const parentKey = initialSelected.level === 'group' ? `zone-${initialSelected.parentId}` : `customer-${initialSelected.parentId}`
         setExpandedKeys([parentKey])
@@ -38,14 +38,14 @@ export function HierarchyTree({ onSelect, initialSelected }: HierarchyTreeProps)
     }
   }, [initialSelected])
 
-  // Load hierarchy data
+  // 加载层级数据
   useEffect(() => {
     const loadHierarchy = async (): Promise<void> => {
       try {
         setLoading(true)
         const customers = await customerApi.getList()
 
-        // Build tree data with nested zones and groups
+        // 构建树形数据，包含嵌套的分区和分组
         const treeNodes: HierarchyTreeNode[] = await Promise.all(
           customers.map(async (customer: Customer) => {
             const zones = await zoneApi.getByCustomerId(customer.id)
@@ -61,6 +61,7 @@ export function HierarchyTree({ onSelect, initialSelected }: HierarchyTreeProps)
                   id: group.id,
                   parentId: zone.id,
                   deviceCount: group._count?.devices || 0,
+                  icon: <FolderOutlined />,
                 }))
 
                 return {
@@ -71,6 +72,7 @@ export function HierarchyTree({ onSelect, initialSelected }: HierarchyTreeProps)
                   parentId: customer.id,
                   children: groupChildren,
                   deviceCount: groupChildren.reduce((sum, g) => sum + (g.deviceCount || 0), 0),
+                  icon: <AppstoreOutlined />,
                 }
               })
             )
@@ -82,18 +84,19 @@ export function HierarchyTree({ onSelect, initialSelected }: HierarchyTreeProps)
               id: customer.id,
               children: zoneChildren,
               deviceCount: zoneChildren.reduce((sum, z) => sum + (z.deviceCount || 0), 0),
+              icon: <HomeOutlined />,
             }
           })
         )
 
         setTreeData(treeNodes)
 
-        // Auto-expand first customer if no initial selection
+        // 如果没有初始选择，自动展开第一个客户
         if (!initialSelected && treeNodes.length > 0) {
           setExpandedKeys([treeNodes[0].key])
         }
       } catch (error) {
-        // On error, show empty tree
+        // 出错时显示空树
         setTreeData([])
       } finally {
         setLoading(false)
@@ -103,7 +106,7 @@ export function HierarchyTree({ onSelect, initialSelected }: HierarchyTreeProps)
     loadHierarchy()
   }, [initialSelected])
 
-  // Handle tree selection
+  // 处理树节点选择
   const handleSelect: TreeProps['onSelect'] = useCallback(
     (keys: React.Key[], info: { node: unknown }) => {
       if (keys.length > 0 && info.node) {
@@ -119,7 +122,7 @@ export function HierarchyTree({ onSelect, initialSelected }: HierarchyTreeProps)
     [onSelect]
   )
 
-  // Handle tree expand
+  // 处理树节点展开
   const handleExpand: TreeProps['onExpand'] = useCallback(
     (keys: React.Key[]) => {
       setExpandedKeys(keys as string[])
@@ -127,21 +130,7 @@ export function HierarchyTree({ onSelect, initialSelected }: HierarchyTreeProps)
     []
   )
 
-  // Get icon based on level
-  const getNodeIcon = (level: string): JSX.Element => {
-    switch (level) {
-      case 'customer':
-        return <HomeOutlined />
-      case 'zone':
-        return <AppstoreOutlined />
-      case 'group':
-        return <FolderOutlined />
-      default:
-        return <FolderOutlined />
-    }
-  }
-
-  // Render tree node title with device count
+  // 渲染树节点标题，显示设备数量
   const renderTitle = (node: HierarchyTreeNode): string => {
     if (node.level === 'group' && node.deviceCount !== undefined) {
       return `${node.title} (${node.deviceCount})`
@@ -159,7 +148,6 @@ export function HierarchyTree({ onSelect, initialSelected }: HierarchyTreeProps)
         expandedKeys={expandedKeys}
         showIcon
         titleRender={(node: { title: string }) => renderTitle(node as HierarchyTreeNode)}
-        icon={(node: { level: string }) => getNodeIcon(node.level)}
       />
     </Spin>
   )
