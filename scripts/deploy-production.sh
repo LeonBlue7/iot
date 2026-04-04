@@ -106,7 +106,7 @@ if [ ! -f "$SQL_FILE" ]; then
 fi
 
 docker cp "$SQL_FILE" "${DB_CONTAINER}:/tmp/fix.sql"
-docker compose -f "$COMPOSE_FILE" exec -T postgres psql -U "$DB_USER" -d "$DB_NAME" -f /tmp/fix.sql -v ON_ERROR_STOP=1 > /dev/null 2>&1
+docker compose -f "$COMPOSE_FILE" exec -T postgres psql -U "$DB_USER" -d "$DB_NAME" -f /tmp/fix.sql -v ON_ERROR_STOP=1
 log_info "数据库结构已修复"
 
 # ===== 步骤5: 修复迁移记录 =====
