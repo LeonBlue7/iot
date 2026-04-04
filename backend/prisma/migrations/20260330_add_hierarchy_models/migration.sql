@@ -70,19 +70,21 @@ SELECT setval('groups_id_seq', COALESCE((SELECT MAX("id") FROM "groups"), 1), tr
 -- The groupId foreign key already points to the same id values
 -- No need to update device data as ids remain the same
 
--- Step 9: Create default group if no groups exist
+-- Step 9: Drop foreign key constraint from devices to device_groups FIRST
+-- This must be done BEFORE updating group_id to a value that doesn't exist in device_groups
+ALTER TABLE "devices" DROP CONSTRAINT IF EXISTS "devices_group_id_fkey";
+
+-- Step 10: Create default group if no groups exist
 INSERT INTO "groups" ("id", "name", "zone_id")
 SELECT 999, '默认分组', 1
 WHERE NOT EXISTS (SELECT 1 FROM "groups" WHERE "id" = 999);
 
--- Assign devices without group to default group
+-- Step 11: Assign devices without group to default group
+-- Now we can safely update group_id since FK constraint is dropped
 UPDATE "devices" SET "group_id" = 999 WHERE "group_id" IS NULL;
 
--- Step 10: Drop foreign key constraint from devices to device_groups
-ALTER TABLE "devices" DROP CONSTRAINT IF EXISTS "devices_group_id_fkey";
-
--- Step 11: Drop old device_groups table
+-- Step 12: Drop old device_groups table
 DROP TABLE "device_groups";
 
--- Step 12: Add foreign key constraint from devices to groups
+-- Step 13: Add foreign key constraint from devices to groups
 ALTER TABLE "devices" ADD CONSTRAINT "devices_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE SET NULL ON UPDATE CASCADE;
