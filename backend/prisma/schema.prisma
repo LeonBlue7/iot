@@ -266,7 +266,7 @@ model AdminRole {
 // 审计日志表
 model AuditLog {
   id            Int      @id @default(autoincrement())
-  adminUserId   Int      @map("admin_user_id") @db.Integer
+  adminUserId   Int?     @map("admin_user_id") @db.Integer // 可为NULL，用于记录登录失败等无用户的情况
   action        String   @map("action") @db.VarChar(50) // 操作类型
   resource      String   @map("resource") @db.VarChar(50) // 资源类型
   resourceId    String?  @map("resource_id") @db.VarChar(100) // 资源 ID
@@ -277,7 +277,7 @@ model AuditLog {
   createdAt     DateTime @default(now()) @map("created_at")
 
   // Relations
-  adminUser AdminUser @relation(fields: [adminUserId], references: [id])
+  adminUser AdminUser? @relation(fields: [adminUserId], references: [id])
 
   @@index([adminUserId])
   @@index([action])

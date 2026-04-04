@@ -118,3 +118,26 @@ DO $$ BEGIN
         ON DELETE SET NULL ON UPDATE CASCADE;
     END IF;
 END $$;
+
+-- 修复 audit_logs 表：允许 admin_user_id 为 NULL（用于登录失败等无用户场景）
+-- 先删除FK约束
+ALTER TABLE "audit_logs" DROP CONSTRAINT IF EXISTS "audit_logs_admin_user_id_fkey";
+
+-- 修改列允许NULL
+DO $$ BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'audit_logs' AND column_name = 'admin_user_id' AND is_nullable = 'NO'
+    ) THEN
+        ALTER TABLE "audit_logs" ALTER COLUMN "admin_user_id" DROP NOT NULL;
+    END IF;
+END $$;
+
+-- 重新添加FK约束（可为NULL）
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'audit_logs_admin_user_id_fkey') THEN
+        ALTER TABLE "audit_logs" ADD CONSTRAINT "audit_logs_admin_user_id_fkey"
+        FOREIGN KEY ("admin_user_id") REFERENCES "admin_users"("id")
+        ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END $$;

@@ -1,6 +1,10 @@
 // src/controllers/admin/auth.controller.ts
 import { Request, Response } from 'express';
-import { verifyPassword, generateToken, verifyRefreshToken } from '../../services/admin/auth.service.js';
+import {
+  verifyPassword,
+  generateToken,
+  verifyRefreshToken,
+} from '../../services/admin/auth.service.js';
 import { getUserPermissions } from '../../services/admin/rbac.service.js';
 import { createAuditLog } from '../../services/admin/audit.service.js';
 import prisma from '../../utils/database.js';
@@ -14,7 +18,7 @@ import { getClientIp, sanitizeForLogging } from '../../utils/sanitizer.js';
  * 登录失败处理
  */
 async function handleLoginFailure(
-  adminUserId: number,
+  adminUserId: number | null,
   username: string,
   reason: string,
   clientIp: string,
@@ -24,15 +28,19 @@ async function handleLoginFailure(
   if (logLevel === 'warn') {
     logger.warn(`Login failed: ${reason}`, sanitizeForLogging({ username, ip: clientIp }));
   } else {
-    logger.security(`Login failed - ${reason}`, sanitizeForLogging({
-      adminUserId: adminUserId || 0,
-      username,
-      ip: clientIp
-    }));
+    logger.security(
+      `Login failed - ${reason}`,
+      sanitizeForLogging({
+        adminUserId: adminUserId || null,
+        username,
+        ip: clientIp,
+      })
+    );
   }
 
+  // 只有当用户存在时才设置adminUserId，否则使用null避免FK约束错误
   await createAuditLog({
-    adminUserId: adminUserId || 0,
+    adminUserId: adminUserId || null,
     action: 'LOGIN_FAILED',
     resource: 'ADMIN_AUTH',
     details: { username, reason },
@@ -45,7 +53,15 @@ async function handleLoginFailure(
  * 登录成功处理
  */
 async function handleLoginSuccess(
-  adminUser: { id: number; username: string; email: string; name: string | null; roleIds: number[]; isSuperAdmin: boolean; customerId: number | null },
+  adminUser: {
+    id: number;
+    username: string;
+    email: string;
+    name: string | null;
+    roleIds: number[];
+    isSuperAdmin: boolean;
+    customerId: number | null;
+  },
   clientIp: string,
   userAgent: string | undefined
 ): Promise<{ token: string; user: unknown }> {
@@ -80,11 +96,14 @@ async function handleLoginSuccess(
     userAgent,
   });
 
-  logger.info('Login successful', sanitizeForLogging({
-    adminUserId: adminUser.id,
-    username: adminUser.username,
-    ip: clientIp
-  }));
+  logger.info(
+    'Login successful',
+    sanitizeForLogging({
+      adminUserId: adminUser.id,
+      username: adminUser.username,
+      ip: clientIp,
+    })
+  );
 
   return {
     token,
@@ -111,7 +130,14 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   // 验证输入
   if (!username || !password) {
-    await handleLoginFailure(0, username as string || '', 'MISSING_CREDENTIALS', clientIp, userAgent, 'warn');
+    await handleLoginFailure(
+      0,
+      (username as string) || '',
+      'MISSING_CREDENTIALS',
+      clientIp,
+      userAgent,
+      'warn'
+    );
     res.status(400).json(errorResponse('Username and password are required'));
     return;
   }
@@ -205,10 +231,12 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
 
   const permissions = await getUserPermissions(adminUser.id);
 
-  res.json(successResponse({
-    ...adminUser,
-    permissions,
-  }));
+  res.json(
+    successResponse({
+      ...adminUser,
+      permissions,
+    })
+  );
 });
 
 /**
@@ -242,7 +270,10 @@ export const refreshToken = asyncHandler(async (req: Request, res: Response) => 
     });
 
     if (!adminUser || !adminUser.enabled) {
-      logger.security('Refresh token failed - user not found or disabled', sanitizeForLogging({ ip: clientIp }));
+      logger.security(
+        'Refresh token failed - user not found or disabled',
+        sanitizeForLogging({ ip: clientIp })
+      );
       res.status(401).json(errorResponse('Invalid refresh token'));
       return;
     }
@@ -259,20 +290,28 @@ export const refreshToken = asyncHandler(async (req: Request, res: Response) => 
       permissions,
     });
 
-    logger.info('Token refreshed successfully', sanitizeForLogging({
-      adminUserId: adminUser.id,
-      username: adminUser.username,
-      ip: clientIp
-    }));
+    logger.info(
+      'Token refreshed successfully',
+      sanitizeForLogging({
+        adminUserId: adminUser.id,
+        username: adminUser.username,
+        ip: clientIp,
+      })
+    );
 
-    res.json(successResponse({
-      token: newToken,
-    }));
+    res.json(
+      successResponse({
+        token: newToken,
+      })
+    );
   } catch (error) {
-    logger.security('Refresh token failed - invalid token', sanitizeForLogging({
-      ip: clientIp,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }));
+    logger.security(
+      'Refresh token failed - invalid token',
+      sanitizeForLogging({
+        ip: clientIp,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
+    );
     res.status(401).json(errorResponse('Invalid refresh token'));
   }
 });
