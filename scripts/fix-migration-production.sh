@@ -69,8 +69,8 @@ echo "✅ SQL执行完成"
 # 6. 标记迁移为已完成
 echo "6. 标记迁移为已完成..."
 docker compose -f $COMPOSE_FILE exec -T postgres psql -U $DB_USER -d $DB_NAME -c \
-    "INSERT INTO _prisma_migrations (id, migration_name, started_at, finished_at, logs, success)
-     VALUES (gen_random_uuid(), '20260330_add_hierarchy_models', NOW(), NOW(), 'Applied via fix script', true);"
+    "INSERT INTO _prisma_migrations (id, migration_name, started_at, finished_at, logs)
+     VALUES (gen_random_uuid(), '20260330_add_hierarchy_models', NOW(), NOW(), 'Applied via fix script');"
 echo "✅ 迁移已标记完成"
 
 # 7. 运行后续迁移
@@ -94,7 +94,7 @@ docker compose -f $COMPOSE_FILE exec -T postgres psql -U $DB_USER -d $DB_NAME -c
 echo ""
 echo "最近迁移状态:"
 docker compose -f $COMPOSE_FILE exec -T postgres psql -U $DB_USER -d $DB_NAME -c \
-    "SELECT migration_name, success, finished_at FROM _prisma_migrations ORDER BY finished_at DESC LIMIT 5;"
+    "SELECT migration_name, finished_at FROM _prisma_migrations WHERE finished_at IS NOT NULL ORDER BY finished_at DESC LIMIT 5;"
 
 echo ""
 echo "=== ✅ 迁移修复完成 ==="

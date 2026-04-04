@@ -94,7 +94,7 @@ DO $$ BEGIN
         FROM "device_groups"
         ON CONFLICT (id) DO NOTHING;
 
-        SELECT setval('groups_id_seq', COALESCE((SELECT MAX("id") FROM "groups"), 1), true);
+        PERFORM setval('groups_id_seq', COALESCE((SELECT MAX("id") FROM "groups"), 1), true);
     END IF;
 END $$;
 
