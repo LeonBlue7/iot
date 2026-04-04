@@ -69,8 +69,8 @@ echo "✅ SQL执行完成"
 # 6. 标记迁移为已完成
 echo "6. 标记迁移为已完成..."
 docker compose -f $COMPOSE_FILE exec -T postgres psql -U $DB_USER -d $DB_NAME -c \
-    "INSERT INTO _prisma_migrations (id, migration_name, started_at, finished_at, logs)
-     VALUES (gen_random_uuid(), '20260330_add_hierarchy_models', NOW(), NOW(), 'Applied via fix script');"
+    "INSERT INTO _prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at)
+     VALUES (gen_random_uuid(), 'manual_fix', NOW(), '20260330_add_hierarchy_models', 'Applied via fix script', NOW(), NOW());"
 echo "✅ 迁移已标记完成"
 
 # 7. 运行后续迁移
