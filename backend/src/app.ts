@@ -46,7 +46,7 @@ const shouldSkipRateLimit = (req: express.Request): boolean => {
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: config.nodeEnv === 'production' ? 30 : 1000, // 1000 requests per 15 minutes in dev
+  max: config.nodeEnv === 'production' ? 300 : 1000, // 300 requests per 15 minutes in production
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: 'RATE_LIMIT_EXCEEDED', message: '请求过于频繁，请稍后重试' },
@@ -57,7 +57,7 @@ app.use('/api/', apiLimiter);
 // Stricter rate limiting for login endpoint (prevent brute force)
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: config.nodeEnv === 'production' ? 10 : 100, // 100 login attempts per 15 minutes in dev
+  max: config.nodeEnv === 'production' ? 50 : 100, // 50 login attempts per 15 minutes in production
   standardHeaders: true,
   legacyHeaders: false,
   message: {
