@@ -67,17 +67,22 @@ END $$;
 CREATE INDEX IF NOT EXISTS "devices_name_idx" ON "devices"("name");
 CREATE INDEX IF NOT EXISTS "devices_product_id_idx" ON "devices"("product_id");
 
+-- 修复现有数据中的NULL updated_at字段
+UPDATE "customers" SET "updated_at" = CURRENT_TIMESTAMP WHERE "updated_at" IS NULL;
+UPDATE "zones" SET "updated_at" = CURRENT_TIMESTAMP WHERE "updated_at" IS NULL;
+UPDATE "groups" SET "updated_at" = CURRENT_TIMESTAMP WHERE "updated_at" IS NULL;
+
 -- 创建默认客户（幂等）
-INSERT INTO "customers" ("id", "name")
-VALUES (1, '默认客户')
+INSERT INTO "customers" ("id", "name", "updated_at")
+VALUES (1, '默认客户', CURRENT_TIMESTAMP)
 ON CONFLICT (id) DO NOTHING;
 
 -- 更新序列
 SELECT setval('customers_id_seq', COALESCE((SELECT MAX("id") FROM "customers"), 1), true);
 
 -- 创建默认分区（幂等）
-INSERT INTO "zones" ("id", "name", "customer_id")
-VALUES (1, '默认分区', 1)
+INSERT INTO "zones" ("id", "name", "customer_id", "updated_at")
+VALUES (1, '默认分区', 1, CURRENT_TIMESTAMP)
 ON CONFLICT (id) DO NOTHING;
 
 -- 更新序列
@@ -87,7 +92,7 @@ SELECT setval('zones_id_seq', COALESCE((SELECT MAX("id") FROM "zones"), 1), true
 DO $$ BEGIN
     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'device_groups') THEN
         INSERT INTO "groups" ("id", "name", "zone_id", "created_at", "updated_at")
-        SELECT "id", "name", 1, "created_at", "updated_at"
+        SELECT "id", "name", 1, COALESCE("created_at", CURRENT_TIMESTAMP), COALESCE("updated_at", CURRENT_TIMESTAMP)
         FROM "device_groups"
         ON CONFLICT (id) DO NOTHING;
     END IF;
@@ -100,8 +105,8 @@ SELECT setval('groups_id_seq', COALESCE((SELECT MAX("id") FROM "groups"), 1), tr
 ALTER TABLE "devices" DROP CONSTRAINT IF EXISTS "devices_group_id_fkey";
 
 -- 创建默认分组 999（幂等）
-INSERT INTO "groups" ("id", "name", "zone_id")
-SELECT 999, '默认分组', 1
+INSERT INTO "groups" ("id", "name", "zone_id", "updated_at")
+SELECT 999, '默认分组', 1, CURRENT_TIMESTAMP
 WHERE NOT EXISTS (SELECT 1 FROM "groups" WHERE "id" = 999);
 
 -- 更新 NULL group_id 的设备（幂等）
