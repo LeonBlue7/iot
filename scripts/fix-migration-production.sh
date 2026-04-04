@@ -66,24 +66,28 @@ echo "5. 执行修复SQL..."
 docker compose -f $COMPOSE_FILE exec -T postgres psql -U $DB_USER -d $DB_NAME -f /tmp/fix.sql
 echo "✅ SQL执行完成"
 
-# 6. 标记迁移为已完成
-echo "6. 标记迁移为已完成..."
+# 6. 标记迁移记录（供参考，Prisma会使用migrate resolve）
+echo "6. 清理迁移记录..."
 docker compose -f $COMPOSE_FILE exec -T postgres psql -U $DB_USER -d $DB_NAME -c \
-    "INSERT INTO _prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at)
-     VALUES (gen_random_uuid(), 'manual_fix', NOW(), '20260330_add_hierarchy_models', 'Applied via fix script', NOW(), NOW());"
-echo "✅ 迁移已标记完成"
+    "DELETE FROM _prisma_migrations WHERE migration_name = '20260330_add_hierarchy_models';"
+echo "✅ 迁移记录已清理"
 
-# 7. 运行后续迁移
-echo "7. 运行后续迁移..."
+# 7. 使用Prisma标记迁移已应用（不重新执行SQL）
+echo "7. 标记迁移已应用..."
+docker compose -f $COMPOSE_FILE exec -T backend npx prisma migrate resolve --applied 20260330_add_hierarchy_models
+echo "✅ 迁移已标记应用"
+
+# 8. 运行后续迁移（不会重复执行已标记的迁移）
+echo "8. 运行后续迁移..."
 docker compose -f $COMPOSE_FILE exec -T backend npx prisma migrate deploy
 echo "✅ 后续迁移完成"
 
-# 8. 重启后端服务
-echo "8. 重启后端服务..."
+# 9. 重启后端服务
+echo "9. 重启后端服务..."
 docker compose -f $COMPOSE_FILE restart backend
 echo "✅ 后端服务已重启"
 
-# 9. 验证结果
+# 10. 验证结果
 echo ""
 echo "=== 验证结果 ==="
 
@@ -94,7 +98,7 @@ docker compose -f $COMPOSE_FILE exec -T postgres psql -U $DB_USER -d $DB_NAME -c
 echo ""
 echo "最近迁移状态:"
 docker compose -f $COMPOSE_FILE exec -T postgres psql -U $DB_USER -d $DB_NAME -c \
-    "SELECT migration_name, finished_at FROM _prisma_migrations WHERE finished_at IS NOT NULL ORDER BY finished_at DESC LIMIT 5;"
+    "SELECT migration_name FROM _prisma_migrations WHERE finished_at IS NOT NULL ORDER BY finished_at DESC LIMIT 10;"
 
 echo ""
 echo "=== ✅ 迁移修复完成 ==="
