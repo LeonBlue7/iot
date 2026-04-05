@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, Radio, DatePicker, Spin, Empty, Space } from 'antd'
 import dayjs from 'dayjs'
 import TrendChart from './TrendChart'
@@ -34,11 +34,7 @@ export default function HistoryChart({ device, height = 350 }: HistoryChartProps
   const [customRange, setCustomRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([dayjs().subtract(24, 'hour'), dayjs()])
   const [metric, setMetric] = useState<Metric>('temperature')
 
-  useEffect(() => {
-    loadHistoryData()
-  }, [device.id, timeRange, customRange])
-
-  async function loadHistoryData() {
+  const loadHistoryData = useCallback(async () => {
     setLoading(true)
     try {
       let startTime: string
@@ -79,7 +75,11 @@ export default function HistoryChart({ device, height = 350 }: HistoryChartProps
     } finally {
       setLoading(false)
     }
-  }
+  }, [device.id, timeRange, customRange])
+
+  useEffect(() => {
+    loadHistoryData()
+  }, [loadHistoryData])
 
   const handleTimeRangeChange = (value: TimeRange) => {
     setTimeRange(value)

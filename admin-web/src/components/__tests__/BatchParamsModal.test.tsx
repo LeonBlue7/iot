@@ -1,6 +1,6 @@
 // admin-web/src/components/__tests__/BatchParamsModal.test.tsx
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { BatchParamsModal } from '../BatchParamsModal'
 
 describe('BatchParamsModal', () => {

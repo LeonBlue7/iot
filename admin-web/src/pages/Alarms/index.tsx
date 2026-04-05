@@ -10,19 +10,7 @@ import {
 import { alarmApi } from '../../services/alarm.service'
 import AlarmDetailModal from '../../components/AlarmDetailModal'
 import type { AlarmRecord } from '../../types/alarm'
-
-const statusMap: Record<number, { text: string; color: string }> = {
-  0: { text: '未处理', color: 'red' },
-  1: { text: '已确认', color: 'blue' },
-  2: { text: '已解决', color: 'green' },
-}
-
-const typeMap: Record<string, string> = {
-  TEMP_HIGH: '温度过高',
-  TEMP_LOW: '温度过低',
-  HUMI_HIGH: '湿度过高',
-  HUMI_LOW: '湿度过低',
-}
+import { ALARM_STATUS_MAP, ALARM_TYPE_MAP } from '../../types/alarm'
 
 const statusFilterOptions = [
   { value: 0, label: '未处理' },
@@ -84,13 +72,20 @@ export default function Alarms() {
       title: '批量确认',
       content: `确定要确认选中的 ${selectedRowKeys.length} 个告警吗？`,
       onOk: async () => {
-        try {
-          await Promise.all(selectedRowKeys.map((id) => alarmApi.acknowledge(id)))
-          message.success('批量确认成功')
-          loadAlarms()
-        } catch (error) {
-          message.error('批量确认失败')
+        const results = await Promise.allSettled(
+          selectedRowKeys.map((id) => alarmApi.acknowledge(id))
+        )
+        const successCount = results.filter((r) => r.status === 'fulfilled').length
+        const failCount = results.filter((r) => r.status === 'rejected').length
+
+        if (failCount === 0) {
+          message.success(`批量确认成功：${successCount} 个告警`)
+        } else if (successCount === 0) {
+          message.error(`批量确认失败：${failCount} 个告警`)
+        } else {
+          message.warning(`部分成功：成功 ${successCount} 个，失败 ${failCount} 个`)
         }
+        loadAlarms()
       },
     })
   }, [selectedRowKeys])
@@ -102,13 +97,20 @@ export default function Alarms() {
       title: '批量解决',
       content: `确定要解决选中的 ${selectedRowKeys.length} 个告警吗？`,
       onOk: async () => {
-        try {
-          await Promise.all(selectedRowKeys.map((id) => alarmApi.resolve(id)))
-          message.success('批量解决成功')
-          loadAlarms()
-        } catch (error) {
-          message.error('批量解决失败')
+        const results = await Promise.allSettled(
+          selectedRowKeys.map((id) => alarmApi.resolve(id))
+        )
+        const successCount = results.filter((r) => r.status === 'fulfilled').length
+        const failCount = results.filter((r) => r.status === 'rejected').length
+
+        if (failCount === 0) {
+          message.success(`批量解决成功：${successCount} 个告警`)
+        } else if (successCount === 0) {
+          message.error(`批量解决失败：${failCount} 个告警`)
+        } else {
+          message.warning(`部分成功：成功 ${successCount} 个，失败 ${failCount} 个`)
         }
+        loadAlarms()
       },
     })
   }, [selectedRowKeys])
@@ -136,7 +138,7 @@ export default function Alarms() {
       dataIndex: 'alarmType',
       key: 'alarmType',
       render: (type: string) => (
-        <Tag color="orange">{typeMap[type] || type}</Tag>
+        <Tag color="orange">{ALARM_TYPE_MAP[type] || type}</Tag>
       ),
     },
     {
@@ -162,7 +164,7 @@ export default function Alarms() {
       dataIndex: 'status',
       key: 'status',
       render: (status: number) => {
-        const { text, color } = statusMap[status] || { text: '未知', color: 'default' }
+        const { text, color } = ALARM_STATUS_MAP[status] || { text: '未知', color: 'default' }
         return <Tag color={color} icon={status === 0 ? <ExclamationCircleOutlined /> : <CheckCircleOutlined />}>{text}</Tag>
       },
     },

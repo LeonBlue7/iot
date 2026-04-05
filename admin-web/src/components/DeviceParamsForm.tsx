@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, Form, InputNumber, Select, Button, Spin, message, Divider, Collapse } from 'antd'
+import { Card, Form, Input, InputNumber, Select, Button, Spin, message, Divider, Collapse } from 'antd'
 import { SaveOutlined } from '@ant-design/icons'
 import { deviceApi } from '../services/device.service'
 import type { DeviceParams, Device } from '../types/device'
@@ -188,17 +188,17 @@ export default function DeviceParamsForm({ device, onUpdate }: DeviceParamsFormP
 
           {/* 工作时间 */}
           <Collapse.Panel header="工作时间" key="worktime">
-            <Form.Item name="workTime" label="工作时间">
-              <InputNumber style={{ width: '100%' }} placeholder="如: 08:00-18:00" />
+            <Form.Item name="workTime" label="工作时间" extra="格式: 08:00-18:00">
+              <Input placeholder="如: 08:00-18:00" />
             </Form.Item>
-            <Form.Item name="overtime1" label="加班时段1">
-              <InputNumber style={{ width: '100%' }} placeholder="如: 18:00-20:00" />
+            <Form.Item name="overtime1" label="加班时段1" extra="格式: 18:00-20:00">
+              <Input placeholder="如: 18:00-20:00" />
             </Form.Item>
-            <Form.Item name="overtime2" label="加班时段2">
-              <InputNumber style={{ width: '100%' }} placeholder="如: 20:00-22:00" />
+            <Form.Item name="overtime2" label="加班时段2" extra="格式: 20:00-22:00">
+              <Input placeholder="如: 20:00-22:00" />
             </Form.Item>
-            <Form.Item name="overtime3" label="加班时段3">
-              <InputNumber style={{ width: '100%' }} placeholder="如: 22:00-24:00" />
+            <Form.Item name="overtime3" label="加班时段3" extra="格式: 22:00-24:00">
+              <Input placeholder="如: 22:00-24:00" />
             </Form.Item>
           </Collapse.Panel>
         </Collapse>

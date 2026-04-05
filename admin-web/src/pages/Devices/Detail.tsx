@@ -18,17 +18,11 @@ export default function DeviceDetail() {
   const [realtimeData, setRealtimeData] = useState<SensorData | null>(null)
   const [realtimeLoading, setRealtimeLoading] = useState(false)
 
-  useEffect(() => {
-    if (id) {
-      loadDevice()
-      loadRealtimeData()
-    }
-  }, [id])
-
-  async function loadDevice() {
+  const loadDevice = useCallback(async () => {
+    if (!id) return
     setLoading(true)
     try {
-      const data = await deviceApi.getById(id!)
+      const data = await deviceApi.getById(id)
       setDevice(data)
     } catch (error: any) {
       message.error(error.message || '加载设备详情失败')
@@ -36,9 +30,9 @@ export default function DeviceDetail() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id, navigate])
 
-  async function loadRealtimeData() {
+  const loadRealtimeData = useCallback(async () => {
     if (!id) return
     setRealtimeLoading(true)
     try {
@@ -50,12 +44,19 @@ export default function DeviceDetail() {
     } finally {
       setRealtimeLoading(false)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    if (id) {
+      loadDevice()
+      loadRealtimeData()
+    }
+  }, [id, loadDevice, loadRealtimeData])
 
   const handleRefresh = useCallback(() => {
     loadDevice()
     loadRealtimeData()
-  }, [id])
+  }, [loadDevice, loadRealtimeData])
 
   const handleBack = () => {
     navigate('/devices')

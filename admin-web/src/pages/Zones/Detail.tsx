@@ -41,12 +41,11 @@ export default function ZoneDetail() {
       const groupsData = await groupApi.getByZoneId(Number(id))
       setGroups(groupsData)
 
-      // 加载所有分组下的设备
-      const allDevices: Device[] = []
-      for (const group of groupsData) {
-        const groupDevices = await deviceApi.getList({ groupId: group.id })
-        allDevices.push(...groupDevices.data)
-      }
+      // 并行加载所有分组下的设备
+      const groupDevicesResults = await Promise.all(
+        groupsData.map((group) => deviceApi.getList({ groupId: group.id }))
+      )
+      const allDevices = groupDevicesResults.flatMap((result) => result.data)
       setDevices(allDevices)
     } catch (error: any) {
       message.error(error.message || '加载分区详情失败')

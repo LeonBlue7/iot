@@ -1,6 +1,7 @@
 import { Modal, Descriptions, Tag, Button, Space } from 'antd'
 import { CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import type { AlarmRecord } from '../types/alarm'
+import { ALARM_STATUS_MAP, ALARM_TYPE_MAP } from '../types/alarm'
 
 interface AlarmDetailModalProps {
   visible: boolean
@@ -8,19 +9,6 @@ interface AlarmDetailModalProps {
   onClose: () => void
   onAcknowledge?: (id: number) => void
   onResolve?: (id: number) => void
-}
-
-const statusMap: Record<number, { text: string; color: string }> = {
-  0: { text: '未处理', color: 'red' },
-  1: { text: '已确认', color: 'blue' },
-  2: { text: '已解决', color: 'green' },
-}
-
-const typeMap: Record<string, string> = {
-  TEMP_HIGH: '温度过高',
-  TEMP_LOW: '温度过低',
-  HUMI_HIGH: '湿度过高',
-  HUMI_LOW: '湿度过低',
 }
 
 export default function AlarmDetailModal({
@@ -32,7 +20,7 @@ export default function AlarmDetailModal({
 }: AlarmDetailModalProps) {
   if (!alarm) return null
 
-  const statusInfo = statusMap[alarm.status] || { text: '未知', color: 'default' }
+  const statusInfo = ALARM_STATUS_MAP[alarm.status] || { text: '未知', color: 'default' }
 
   const handleAcknowledge = () => {
     if (onAcknowledge) {
@@ -77,7 +65,7 @@ export default function AlarmDetailModal({
         </Descriptions.Item>
         <Descriptions.Item label="设备ID">{alarm.deviceId}</Descriptions.Item>
         <Descriptions.Item label="告警类型">
-          <Tag color="orange">{typeMap[alarm.alarmType] || alarm.alarmType}</Tag>
+          <Tag color="orange">{ALARM_TYPE_MAP[alarm.alarmType] || alarm.alarmType}</Tag>
         </Descriptions.Item>
         <Descriptions.Item label="告警值">
           {alarm.alarmValue}{alarm.alarmType.includes('TEMP') ? '°C' : '%'}

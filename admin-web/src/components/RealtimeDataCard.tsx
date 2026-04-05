@@ -1,7 +1,5 @@
-import { useState } from 'react'
-import { Card, Descriptions, Button, Tag, Empty } from 'antd'
+import { Card, Descriptions, Button, Tag, Empty, Tooltip } from 'antd'
 import { ReloadOutlined } from '@ant-design/icons'
-import { deviceApi } from '../services/device.service'
 import type { SensorData } from '../types/device'
 import type { Device } from '../types/device'
 
@@ -39,33 +37,34 @@ function getAcStateColor(acState?: number): string {
 }
 
 export default function RealtimeDataCard({ device, data, loading, onRefresh }: RealtimeDataCardProps) {
-  const [refreshing, setRefreshing] = useState(false)
-
-  const handleRefresh = async () => {
+  const handleRefresh = () => {
     if (onRefresh) {
       onRefresh()
-      return
-    }
-    setRefreshing(true)
-    try {
-      // 如果没有提供 onRefresh，则自己刷新
-      await deviceApi.getRealtimeData(device.id)
-      // 这里只是触发刷新，数据由父组件管理
-    } finally {
-      setRefreshing(false)
     }
   }
 
+  const refreshButton = onRefresh ? (
+    <Button icon={<ReloadOutlined />} onClick={handleRefresh} loading={loading}>
+      刷新
+    </Button>
+  ) : (
+    <Tooltip title="请从父组件刷新数据">
+      <Button icon={<ReloadOutlined />} disabled>
+        刷新
+      </Button>
+    </Tooltip>
+  )
+
   if (!device.online) {
     return (
-      <Card title="实时数据" extra={<Button icon={<ReloadOutlined />} onClick={handleRefresh} loading={refreshing}>刷新</Button>}>
+      <Card title="实时数据" extra={refreshButton}>
         <Empty description="设备离线，无法获取实时数据" />
       </Card>
     )
   }
 
   return (
-    <Card title="实时数据" extra={<Button icon={<ReloadOutlined />} onClick={handleRefresh} loading={refreshing || loading}>刷新</Button>} loading={loading}>
+    <Card title="实时数据" extra={refreshButton} loading={loading}>
       {data ? (
         <Descriptions column={2} bordered size="small">
           <Descriptions.Item label="温度">

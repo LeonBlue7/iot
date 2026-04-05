@@ -35,22 +35,18 @@ export default function CustomerDetail() {
       const zonesData = await zoneApi.getByCustomerId(Number(id))
       setZones(zonesData)
 
-      // 加载所有分区下的分组和设备
-      const allGroups: DeviceGroup[] = []
-      const allDevices: Device[] = []
-
-      for (const zone of zonesData) {
-        const zoneGroups = await groupApi.getByZoneId(zone.id)
-        allGroups.push(...zoneGroups)
-
-        // 加载分组下的设备
-        for (const group of zoneGroups) {
-          const groupDevices = await deviceApi.getList({ groupId: group.id })
-          allDevices.push(...groupDevices.data)
-        }
-      }
-
+      // 并行加载所有分区下的分组
+      const zoneGroupsResults = await Promise.all(
+        zonesData.map((zone) => groupApi.getByZoneId(zone.id))
+      )
+      const allGroups = zoneGroupsResults.flat()
       setGroups(allGroups)
+
+      // 并行加载所有分组下的设备
+      const groupDevicesResults = await Promise.all(
+        allGroups.map((group) => deviceApi.getList({ groupId: group.id }))
+      )
+      const allDevices = groupDevicesResults.flatMap((result) => result.data)
       setDevices(allDevices)
     } catch (error: any) {
       message.error(error.message || '加载客户详情失败')
