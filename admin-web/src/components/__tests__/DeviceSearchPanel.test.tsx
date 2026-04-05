@@ -73,25 +73,25 @@ describe('DeviceSearchPanel', () => {
       render(<DeviceSearchPanel onSearch={mockOnSearch} onReset={mockOnReset} filters={defaultFilters} />)
 
       expect(screen.getByTestId('search-input')).toBeInTheDocument()
-      expect(screen.getByPlaceholderText('Search devices...')).toBeInTheDocument()
+      expect(screen.getByPlaceholderText('搜索设备...')).toBeInTheDocument()
     })
 
     it('should render customer select', () => {
       render(<DeviceSearchPanel onSearch={mockOnSearch} onReset={mockOnReset} filters={defaultFilters} />)
 
-      expect(screen.getByTestId('select-select-customer')).toBeInTheDocument()
+      expect(screen.getByTestId('select-选择客户')).toBeInTheDocument()
     })
 
     it('should render zone select', () => {
       render(<DeviceSearchPanel onSearch={mockOnSearch} onReset={mockOnReset} filters={defaultFilters} />)
 
-      expect(screen.getByTestId('select-select-zone')).toBeInTheDocument()
+      expect(screen.getByTestId('select-选择分区')).toBeInTheDocument()
     })
 
     it('should render group select', () => {
       render(<DeviceSearchPanel onSearch={mockOnSearch} onReset={mockOnReset} filters={defaultFilters} />)
 
-      expect(screen.getByTestId('select-select-group')).toBeInTheDocument()
+      expect(screen.getByTestId('select-选择分组')).toBeInTheDocument()
     })
 
     it('should render search button', () => {
@@ -131,7 +131,7 @@ describe('DeviceSearchPanel', () => {
     it('should call onSearch with customer filter', async () => {
       render(<DeviceSearchPanel onSearch={mockOnSearch} onReset={mockOnReset} filters={defaultFilters} />)
 
-      const select = screen.getByTestId('select-select-customer')
+      const select = screen.getByTestId('select-选择客户')
       fireEvent.change(select, { target: { value: '1' } })
       fireEvent.click(screen.getByTestId('btn-primary'))
 
@@ -164,7 +164,7 @@ describe('DeviceSearchPanel', () => {
 
       render(<DeviceSearchPanel onSearch={mockOnSearch} onReset={mockOnReset} filters={filters} />)
 
-      const select = screen.getByTestId('select-select-customer')
+      const select = screen.getByTestId('select-选择客户')
       expect(select.querySelector('option[value="1"]')?.textContent).toBe('Customer A')
       expect(select.querySelector('option[value="2"]')?.textContent).toBe('Customer B')
     })
@@ -172,7 +172,8 @@ describe('DeviceSearchPanel', () => {
     it('should handle empty filters', () => {
       render(<DeviceSearchPanel onSearch={mockOnSearch} onReset={mockOnReset} filters={{ customers: [], zones: [], groups: [] }} />)
 
-      const select = screen.getByTestId('select-select-customer')
+      const select = screen.getByTestId('select-选择客户')
+      // The mock Select always returns "All" for empty option
       expect(select.querySelector('option[value=""]')?.textContent).toBe('All')
     })
   })

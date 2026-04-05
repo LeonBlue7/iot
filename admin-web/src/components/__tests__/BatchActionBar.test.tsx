@@ -25,17 +25,17 @@ describe('BatchActionBar', () => {
 
     it('should display selected count when items are selected', () => {
       render(<BatchActionBar {...mockProps} selectedCount={5} />)
-      expect(screen.getByText('5 items selected')).toBeInTheDocument()
+      expect(screen.getByText(/已选中.*5.*项设备/)).toBeInTheDocument()
     })
 
     it('should display singular form when one item is selected', () => {
       render(<BatchActionBar {...mockProps} selectedCount={1} />)
-      expect(screen.getByText('1 item selected')).toBeInTheDocument()
+      expect(screen.getByText(/已选中.*1.*项设备/)).toBeInTheDocument()
     })
 
     it('should display plural form when zero items are selected', () => {
       render(<BatchActionBar {...mockProps} selectedCount={0} />)
-      expect(screen.getByText('0 items selected')).toBeInTheDocument()
+      expect(screen.getByText(/已选中.*0.*项设备/)).toBeInTheDocument()
     })
 
     it('should render all action buttons', () => {
@@ -182,13 +182,13 @@ describe('BatchActionBar', () => {
   describe('edge cases', () => {
     it('should handle large selected counts', () => {
       render(<BatchActionBar {...mockProps} selectedCount={1000} />)
-      expect(screen.getByText('1000 items selected')).toBeInTheDocument()
+      expect(screen.getByText(/已选中.*1000.*项设备/)).toBeInTheDocument()
     })
 
     it('should handle negative selected count gracefully', () => {
       // Negative counts should be treated as 0
       render(<BatchActionBar {...mockProps} selectedCount={-1} />)
-      expect(screen.getByText('0 items selected')).toBeInTheDocument()
+      expect(screen.getByText(/已选中.*0.*项设备/)).toBeInTheDocument()
     })
 
     it('should have danger styling on delete button', () => {

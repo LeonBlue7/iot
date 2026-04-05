@@ -6,6 +6,8 @@ export interface AlarmListParams {
   page?: number
   limit?: number
   status?: number
+  deviceId?: string
+  alarmType?: string
 }
 
 export const alarmApi = {
@@ -35,6 +37,19 @@ export const alarmApi = {
 
     if (!response.data.success) {
       throw new Error((response.data as any).error || '确认告警失败')
+    }
+  },
+
+  /**
+   * Resolve alarm
+   */
+  async resolve(id: number): Promise<void> {
+    const response = await axios.put<ApiResponse<void>>(
+      `/alarms/${id}/resolve`,
+    )
+
+    if (!response.data.success) {
+      throw new Error((response.data as any).error || '解决告警失败')
     }
   },
 }

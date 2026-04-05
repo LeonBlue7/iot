@@ -6,6 +6,9 @@ export interface DeviceListParams {
   page?: number
   limit?: number
   online?: boolean
+  groupId?: number
+  customerId?: number
+  zoneId?: number
 }
 
 export interface DeviceListResponse {

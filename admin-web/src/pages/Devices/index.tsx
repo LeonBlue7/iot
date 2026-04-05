@@ -1,8 +1,10 @@
 // admin-web/src/pages/Devices/index.tsx
 import { useState, useEffect, useCallback } from 'react'
-import { Card, Table, Breadcrumb, Tag, Button, Modal, Select, message } from 'antd'
+import { useNavigate } from 'react-router-dom'
+import { Card, Table, Breadcrumb, Tag, Button, Modal, Select, message, Space, Dropdown } from 'antd'
 import type { ColumnsType, TableProps } from 'antd/es/table'
-import { HomeOutlined, ReloadOutlined } from '@ant-design/icons'
+import { HomeOutlined, ReloadOutlined, EyeOutlined, MoreOutlined } from '@ant-design/icons'
+import type { MenuProps } from 'antd'
 import { DeviceSearchPanel } from '../../components/DeviceSearchPanel'
 import { BatchActionBar } from '../../components/BatchActionBar'
 import { BatchParamsModal } from '../../components/BatchParamsModal'
@@ -15,6 +17,7 @@ import type { Device } from '../../types/device'
 import type { DeviceSearchParams, Customer, Zone, DeviceGroup } from '../../types/hierarchy'
 
 export default function Devices(): JSX.Element {
+  const navigate = useNavigate()
   // 从store获取层级选择状态
   const selectedNode = useHierarchyStore((state) => state.selectedNode)
 
@@ -249,6 +252,55 @@ export default function Devices(): JSX.Element {
     )
   }
 
+  // 单设备控制
+  const handleSingleControl = useCallback(async (deviceId: string, action: 'on' | 'off' | 'reset') => {
+    try {
+      await deviceApi.controlDevice(deviceId, action)
+      message.success(`${action === 'on' ? '开启' : action === 'off' ? '关闭' : '重启'}指令已发送`)
+      loadDevices()
+    } catch (error: any) {
+      message.error(error.message || '控制失败')
+    }
+  }, [loadDevices])
+
+  // 查看设备详情
+  const handleViewDetail = useCallback((deviceId: string) => {
+    navigate(`/devices/${deviceId}`)
+  }, [navigate])
+
+  // 获取单设备操作菜单
+  const getDeviceActionMenu = (device: Device): MenuProps['items'] => [
+    {
+      key: 'view',
+      label: '查看详情',
+      icon: <EyeOutlined />,
+      onClick: () => handleViewDetail(device.id),
+    },
+    {
+      key: 'control',
+      label: '设备控制',
+      type: 'group',
+    },
+    {
+      key: 'on',
+      label: '开启空调',
+      disabled: !device.online,
+      onClick: () => handleSingleControl(device.id, 'on'),
+    },
+    {
+      key: 'off',
+      label: '关闭空调',
+      disabled: !device.online,
+      onClick: () => handleSingleControl(device.id, 'off'),
+    },
+    {
+      key: 'reset',
+      label: '重启设备',
+      disabled: !device.online,
+      onClick: () => handleSingleControl(device.id, 'reset'),
+    },
+  ]
+
   // 表格列定义
   const columns: ColumnsType<Device> = [
     {
@@ -256,6 +308,11 @@ export default function Devices(): JSX.Element {
       dataIndex: 'id',
       key: 'id',
       width: 180,
+      render: (id: string) => (
+        <a onClick={() => handleViewDetail(id)} style={{ color: '#1890ff' }}>
+          {id}
+        </a>
+      ),
     },
     {
       title: '名称',
@@ -295,6 +352,26 @@ export default function Devices(): JSX.Element {
       key: 'lastSeenAt',
       render: (lastSeenAt?: string) =>
         lastSeenAt ? new Date(lastSeenAt).toLocaleString() : '从未上线',
+    },
+    {
+      title: '操作',
+      key: 'action',
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <Button
+            type="link"
+            size="small"
+            icon={<EyeOutlined />}
+            onClick={() => handleViewDetail(record.id)}
+          >
+            详情
+          </Button>
+          <Dropdown menu={{ items: getDeviceActionMenu(record) }} trigger={['click']}>
+            <Button type="link" size="small" icon={<MoreOutlined />} />
+          </Dropdown>
+        </Space>
+      ),
     },
   ]
 

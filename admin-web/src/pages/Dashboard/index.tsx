@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
-import { Card, Row, Col, Statistic, Table, Spin, Alert, message } from 'antd'
+import { Card, Row, Col, Statistic, Table, Spin, Alert, message, Button } from 'antd'
 import {
   MobileOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   WarningOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons'
 import { statsApi } from '../../services/stats.service'
 import { alarmApi } from '../../services/alarm.service'
+import { customerApi } from '../../services/customer.service'
+import QuickActionsPanel from '../../components/QuickActionsPanel'
 import type { AlarmRecord } from '../../types/alarm'
+import type { Customer } from '../../types/hierarchy'
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true)
@@ -20,6 +24,7 @@ export default function Dashboard() {
     unacknowledgedAlarms: 0,
   })
   const [recentAlarms, setRecentAlarms] = useState<AlarmRecord[]>([])
+  const [customers, setCustomers] = useState<Customer[]>([])
 
   useEffect(() => {
     loadData()
@@ -28,12 +33,14 @@ export default function Dashboard() {
   async function loadData() {
     setLoading(true)
     try {
-      const [statsData, alarmsData] = await Promise.all([
+      const [statsData, alarmsData, customersData] = await Promise.all([
         statsApi.getOverview(),
         alarmApi.getList({ page: 1, limit: 5 }),
+        customerApi.getList(),
       ])
       setStats(statsData)
       setRecentAlarms(alarmsData || [])
+      setCustomers(customersData || [])
     } catch (error) {
       message.error('加载仪表盘数据失败')
     } finally {
@@ -92,11 +99,21 @@ export default function Dashboard() {
     return <Spin tip="加载中..." size="large" />
   }
 
+  const onlineRate = stats.totalDevices > 0
+    ? ((stats.onlineDevices / stats.totalDevices) * 100).toFixed(1)
+    : '0'
+
   return (
     <div>
-      <h1 style={{ marginBottom: 24 }}>仪表盘</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <h1 style={{ margin: 0 }}>仪表盘</h1>
+        <Button icon={<ReloadOutlined />} onClick={loadData} loading={loading}>
+          刷新
+        </Button>
+      </div>
 
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+      <Row gutter={[16, 16]}>
+        {/* 统计卡片 */}
         <Col xs={24} sm={12} lg={6}>
           <Card>
             <Statistic
@@ -114,6 +131,7 @@ export default function Dashboard() {
               value={stats.onlineDevices}
               prefix={<CheckCircleOutlined />}
               valueStyle={{ color: '#52c41a' }}
+              suffix={<span style={{ fontSize: 14, color: '#999' }}>/ {stats.totalDevices}</span>}
             />
           </Card>
         </Col>
@@ -133,13 +151,52 @@ export default function Dashboard() {
               title="未处理告警"
               value={stats.unacknowledgedAlarms}
               prefix={<WarningOutlined />}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: stats.unacknowledgedAlarms > 0 ? '#faad14' : '#52c41a' }}
             />
           </Card>
         </Col>
       </Row>
 
-      <Card title="最近告警">
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        {/* 系统状态 */}
+        <Col xs={24} lg={12}>
+          <Card title="系统状态">
+            <Row gutter={16}>
+              <Col span={8}>
+                <Statistic
+                  title="在线率"
+                  value={onlineRate}
+                  suffix="%"
+                  valueStyle={{ color: Number(onlineRate) >= 80 ? '#52c41a' : '#faad14' }}
+                />
+              </Col>
+              <Col span={8}>
+                <Statistic
+                  title="客户数量"
+                  value={customers.length}
+                />
+              </Col>
+              <Col span={8}>
+                <Statistic
+                  title="告警总数"
+                  value={stats.totalAlarms}
+                />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        {/* 快捷操作 */}
+        <Col xs={24} lg={12}>
+          <QuickActionsPanel
+            onRefresh={loadData}
+            unacknowledgedAlarms={stats.unacknowledgedAlarms}
+          />
+        </Col>
+      </Row>
+
+      {/* 最近告警 */}
+      <Card title="最近告警" style={{ marginTop: 16 }}>
         {recentAlarms.length > 0 ? (
           <Table
             columns={alarmColumns}
