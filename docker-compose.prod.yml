@@ -48,13 +48,9 @@ services:
       EMQX_DASHBOARD__DEFAULT_PASSWORD: ${EMQX_PASSWORD:-public}
       EMQX_LISTENERS__TCP__DEFAULT__BIND: 1883
       EMQX_LISTENERS__WS__DEFAULT__BIND: 8083
-      # MQTT认证配置 - 使用内置数据库认证
-      EMQX_AUTHENTICATION__1__BACKEND: built_in_database
-      EMQX_AUTHENTICATION__1__MECHANISM: password_based
-      EMQX_AUTHENTICATION__1__PASSWORD_HASH_ALGORITHM__NAME: plain
-      EMQX_AUTHENTICATION__1__USER_ID_TYPE: username
-      # 关联认证器到TCP监听器
-      EMQX_LISTENERS__TCP__DEFAULT__AUTHENTICATIONS: '["authentication:1"]'
+      # 允许匿名MQTT连接（IoT设备场景）
+      # 注意：生产环境建议配置认证器
+      EMQX_ALLOW_ANONYMOUS: "true"
     volumes:
       - emqx_data:/opt/emqx/data
       - emqx_log:/opt/emqx/log
