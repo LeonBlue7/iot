@@ -75,9 +75,10 @@ export default function Devices(): JSX.Element {
       const alarms = await alarmApi.getList({ status: 0, limit: 1000 })
       const alarmDeviceIds = new Set(alarms.map((a) => a.deviceId))
 
-      // 批量获取在线设备的实时数据（使用并发限制）
+      // 批量获取在线设备的实时数据（使用并发限制和延迟避免速率限制）
       const onlineDevices = deviceList.filter((d) => d.online)
-      const BATCH_SIZE = 10 // 最多同时10个请求
+      const BATCH_SIZE = 5 // 减少批次大小，避免触发速率限制
+      const BATCH_DELAY = 200 // 批次间延迟200ms
 
       const realtimeMap = new Map<string, SensorData | null>()
 
@@ -89,6 +90,11 @@ export default function Devices(): JSX.Element {
         batch.forEach((d, idx) => {
           realtimeMap.set(d.id, results[idx])
         })
+
+        // 批次间添加延迟，避免触发速率限制
+        if (i + BATCH_SIZE < onlineDevices.length) {
+          await new Promise(resolve => setTimeout(resolve, BATCH_DELAY))
+        }
       }
 
       // 组合数据

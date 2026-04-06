@@ -484,9 +484,8 @@ describe('Devices', () => {
 
       await renderDevices()
 
-      await waitFor(() => {
-        expect(screen.getByText('device-0')).toBeInTheDocument()
-      })
+      // 使用findByText增加超时时间，因为批次延迟会增加加载时间
+      await screen.findByText('device-0', {}, { timeout: 5000 })
 
       // 表格应该存在
       expect(screen.getByTestId('devices-table')).toBeInTheDocument()
