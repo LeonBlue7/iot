@@ -68,12 +68,12 @@ export default function Devices(): JSX.Element {
   }, [])
 
   // 加载告警状态（用于高亮显示有告警的设备）
-  const loadAlarmStatus = useCallback(async (deviceList: Device[]): Promise<Set<string>> => {
+  const loadAlarmStatus = useCallback(async (): Promise<Set<string>> => {
     try {
-      const alarms = await alarmApi.getList({ status: 0, limit: 1000 })
+      const alarms = await alarmApi.getList({ status: 0, limit: 100 })
       return new Set(alarms.map((a) => a.deviceId))
-    } catch (error) {
-      console.error('Failed to load alarm status:', error)
+    } catch {
+      // 告警状态加载失败时静默处理，不影响设备列表显示
       return new Set()
     }
   }, [])
@@ -109,10 +109,10 @@ export default function Devices(): JSX.Element {
         // 搜索模式：使用batch API
         const searchResults = await batchApi.search(params)
         // 搜索结果需要单独获取实时数据
-        const alarmDeviceIds = await loadAlarmStatus(searchResults)
+        const alarmDeviceIds = await loadAlarmStatus()
         deviceList = searchResults.map((d) => ({
           ...d,
-          realtimeData: (d as any).realtimeData || null,
+          realtimeData: d.realtimeData ?? null,
           hasAlarm: alarmDeviceIds.has(d.id),
         }))
         total = searchResults.length
@@ -123,10 +123,10 @@ export default function Devices(): JSX.Element {
           limit: pagination.pageSize,
           includeRealtime: true,
         })
-        const alarmDeviceIds = await loadAlarmStatus(result.data)
-        deviceList = result.data.map((d: any) => ({
+        const alarmDeviceIds = await loadAlarmStatus()
+        deviceList = result.data.map((d) => ({
           ...d,
-          realtimeData: d.realtimeData || null,
+          realtimeData: d.realtimeData ?? null,
           hasAlarm: alarmDeviceIds.has(d.id),
         }))
         total = result.total

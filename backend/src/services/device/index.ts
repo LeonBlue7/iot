@@ -46,7 +46,7 @@ const VALID_ACTIONS = ['on', 'off', 'reset'];
 
 class DeviceService implements IDeviceService {
   async findAll(options: FindAllOptions = {}): Promise<FindAllResult> {
-    const { page = 1, limit = 50, online, includeRealtime = false } = options;
+    const { page = 1, limit = 50, online, includeRealtime = true } = options;
 
     const where = online !== undefined ? { online } : undefined;
 

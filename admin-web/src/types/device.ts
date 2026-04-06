@@ -9,6 +9,7 @@ export interface Device {
   createdAt: string
   groupId?: number | null
   params?: DeviceParams | null
+  realtimeData?: SensorData | null // Backend-provided realtime sensor data
 }
 
 export interface DeviceParams {
