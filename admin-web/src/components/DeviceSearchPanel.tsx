@@ -1,13 +1,15 @@
 // admin-web/src/components/DeviceSearchPanel.tsx
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Input, Select, Button, Space } from 'antd'
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons'
+import { zoneApi } from '../services/zone.service'
+import { groupApi } from '../services/group.service'
 import type { DeviceSearchParams, Customer, Zone, DeviceGroup } from '../types/hierarchy'
 
 interface DeviceSearchFilters {
   customers: Customer[]
-  zones: Zone[]
-  groups: DeviceGroup[]
+  zones?: Zone[]
+  groups?: DeviceGroup[]
 }
 
 interface DeviceSearchPanelProps {
@@ -27,6 +29,58 @@ export function DeviceSearchPanel({
   const [customerId, setCustomerId] = useState<number | undefined>(initialParams?.customerId)
   const [zoneId, setZoneId] = useState<number | undefined>(initialParams?.zoneId)
   const [groupId, setGroupId] = useState<number | undefined>(initialParams?.groupId)
+
+  // 动态加载的分区和分组
+  const [zones, setZones] = useState<Zone[]>(filters?.zones || [])
+  const [groups, setGroups] = useState<DeviceGroup[]>(filters?.groups || [])
+  const [loadingZones, setLoadingZones] = useState(false)
+  const [loadingGroups, setLoadingGroups] = useState(false)
+
+  // 当选择客户时，动态加载该客户的分区
+  useEffect(() => {
+    const loadZones = async () => {
+      if (customerId) {
+        setLoadingZones(true)
+        try {
+          const zonesData = await zoneApi.getByCustomerId(customerId)
+          setZones(zonesData)
+        } catch (error) {
+          setZones([])
+        } finally {
+          setLoadingZones(false)
+        }
+      } else {
+        setZones([])
+      }
+      // 清空分区和分组选择
+      setZoneId(undefined)
+      setGroupId(undefined)
+      setGroups([])
+    }
+    loadZones()
+  }, [customerId])
+
+  // 当选择分区时，动态加载该分区的分组
+  useEffect(() => {
+    const loadGroups = async () => {
+      if (zoneId) {
+        setLoadingGroups(true)
+        try {
+          const groupsData = await groupApi.getByZoneId(zoneId)
+          setGroups(groupsData)
+        } catch (error) {
+          setGroups([])
+        } finally {
+          setLoadingGroups(false)
+        }
+      } else {
+        setGroups([])
+      }
+      // 清空分组选择
+      setGroupId(undefined)
+    }
+    loadGroups()
+  }, [zoneId])
 
   const handleSearch = useCallback(() => {
     const params: DeviceSearchParams = {}
@@ -51,20 +105,30 @@ export function DeviceSearchPanel({
     setCustomerId(undefined)
     setZoneId(undefined)
     setGroupId(undefined)
+    setZones([])
+    setGroups([])
     onReset()
   }, [onReset])
+
+  const handleCustomerChange = useCallback((value: number | undefined) => {
+    setCustomerId(value)
+  }, [])
+
+  const handleZoneChange = useCallback((value: number | undefined) => {
+    setZoneId(value)
+  }, [])
 
   const customerOptions = (filters?.customers || []).map((c) => ({
     value: c.id,
     label: c.name,
   }))
 
-  const zoneOptions = (filters?.zones || []).map((z) => ({
+  const zoneOptions = zones.map((z) => ({
     value: z.id,
     label: z.name,
   }))
 
-  const groupOptions = (filters?.groups || []).map((g) => ({
+  const groupOptions = groups.map((g) => ({
     value: g.id,
     label: g.name,
   }))
@@ -85,7 +149,7 @@ export function DeviceSearchPanel({
         data-testid="search-select"
         placeholder="选择客户"
         value={customerId}
-        onChange={(value) => setCustomerId(value as number | undefined)}
+        onChange={handleCustomerChange}
         options={customerOptions}
         allowClear
         style={{ width: 150 }}
@@ -94,9 +158,11 @@ export function DeviceSearchPanel({
       <Select
         placeholder="选择分区"
         value={zoneId}
-        onChange={(value) => setZoneId(value as number | undefined)}
+        onChange={handleZoneChange}
         options={zoneOptions}
         allowClear
+        loading={loadingZones}
+        disabled={!customerId}
         style={{ width: 150 }}
       />
 
@@ -106,6 +172,8 @@ export function DeviceSearchPanel({
         onChange={(value) => setGroupId(value as number | undefined)}
         options={groupOptions}
         allowClear
+        loading={loadingGroups}
+        disabled={!zoneId}
         style={{ width: 150 }}
       />
 
