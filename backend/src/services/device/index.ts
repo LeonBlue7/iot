@@ -82,11 +82,11 @@ class DeviceService implements IDeviceService {
           recordedAt: Date;
         }>
       >`
-        SELECT DISTINCT ON ("deviceId")
-          "deviceId", id, temperature, humidity, current, "signalStrength", "acState", "acError", "tempAlarm", "humiAlarm", "recordedAt"
-        FROM "SensorData"
-        WHERE "deviceId" IN (${Prisma.join(deviceIds)})
-        ORDER BY "deviceId", "recordedAt" DESC
+        SELECT DISTINCT ON ("device_id")
+          "device_id" as "deviceId", id, temperature, humidity, current, "signal_strength" as "signalStrength", "ac_state" as "acState", "ac_error" as "acError", "temp_alarm" as "tempAlarm", "humi_alarm" as "humiAlarm", "recorded_at" as "recordedAt"
+        FROM "sensor_data"
+        WHERE "device_id" IN (${Prisma.join(deviceIds)})
+        ORDER BY "device_id", "recorded_at" DESC
       `;
 
       // 创建映射
