@@ -19,20 +19,40 @@ interface FindAllOptions {
   online?: boolean;
 }
 
+interface FindAllResult {
+  devices: Device[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 // Valid control actions
 const VALID_ACTIONS = ['on', 'off', 'reset'];
 
 class DeviceService implements IDeviceService {
-  async findAll(options: FindAllOptions = {}): Promise<Device[]> {
-    const { page = 1, limit = 1000, online } = options;
+  async findAll(options: FindAllOptions = {}): Promise<FindAllResult> {
+    const { page = 1, limit = 50, online } = options;
 
-    return prisma.device.findMany({
-      where: online !== undefined ? { online } : undefined,
+    const where = online !== undefined ? { online } : undefined;
+
+    // 获取总数
+    const total = await prisma.device.count({ where });
+
+    // 获取分页数据
+    const devices = await prisma.device.findMany({
+      where,
       orderBy: { createdAt: 'desc' },
-      take: Math.min(limit, 1000), // 最大 1000 条
+      take: Math.min(limit, 100), // 最大 100 条
       skip: (page - 1) * limit,
       include: { params: true },
     });
+
+    return {
+      devices,
+      total,
+      page,
+      limit,
+    };
   }
 
   async findById(id: string): Promise<Device | null> {

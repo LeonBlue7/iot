@@ -32,11 +32,13 @@ export const deviceApi = {
       throw new Error((response.data as any).error || '获取设备列表失败')
     }
 
+    // 后端返回的分页信息
+    const responseData = response.data as any
     return {
-      data: response.data.data,
-      page: 1,
-      limit: 50,
-      total: response.data.data.length,
+      data: responseData.data,
+      page: responseData.page || 1,
+      limit: responseData.limit || 50,
+      total: responseData.total || responseData.data.length,
     }
   },
 

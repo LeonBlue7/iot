@@ -14,8 +14,14 @@ const controlSchema = z.object({
 });
 
 const historyQuerySchema = z.object({
-  startTime: z.string().transform((v) => new Date(v)).optional(),
-  endTime: z.string().transform((v) => new Date(v)).optional(),
+  startTime: z
+    .string()
+    .transform((v) => new Date(v))
+    .optional(),
+  endTime: z
+    .string()
+    .transform((v) => new Date(v))
+    .optional(),
   limit: z
     .string()
     .transform((v) => {
@@ -55,7 +61,10 @@ const listQuerySchema = z.object({
     .refine((v) => v >= 1 && v <= 100, 'limit must be between 1 and 100')
     .optional()
     .default('50'),
-  online: z.string().transform((v) => v === 'true').optional(),
+  online: z
+    .string()
+    .transform((v) => v === 'true')
+    .optional(),
 });
 
 export const getDevices = asyncHandler(async (req: Request, res: Response): Promise<void> => {
@@ -64,7 +73,7 @@ export const getDevices = asyncHandler(async (req: Request, res: Response): Prom
   const page = Math.max(1, query.page);
   const limit = Math.min(100, Math.max(1, query.limit));
 
-  const devices = await deviceService.findAll({
+  const result = await deviceService.findAll({
     page,
     limit,
     online: query.online,
@@ -72,10 +81,10 @@ export const getDevices = asyncHandler(async (req: Request, res: Response): Prom
 
   res.json({
     success: true,
-    data: devices,
-    page,
-    limit,
-    total: devices.length,
+    data: result.devices,
+    page: result.page,
+    limit: result.limit,
+    total: result.total,
   });
 });
 

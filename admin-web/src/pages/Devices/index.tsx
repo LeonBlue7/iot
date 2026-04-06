@@ -52,6 +52,7 @@ export default function Devices(): JSX.Element {
 
   // 分页配置
   const [pagination, setPagination] = useState({ page: 1, pageSize: 50 })
+  const [totalDevices, setTotalDevices] = useState(0)
 
   // 加载搜索筛选器
   useEffect(() => {
@@ -135,16 +136,23 @@ export default function Devices(): JSX.Element {
       }
 
       let deviceList: Device[]
+      let total = 0
       if (Object.keys(params).length > 0) {
         deviceList = await batchApi.search(params)
+        total = deviceList.length
       } else {
-        const result = await deviceApi.getList({ limit: pagination.pageSize })
+        const result = await deviceApi.getList({
+          page: pagination.page,
+          limit: pagination.pageSize
+        })
         deviceList = result.data
+        total = result.total
       }
 
       // 加载额外数据（实时数据和告警状态）
       const devicesWithExtras = await loadDeviceExtras(deviceList)
       setDevices(devicesWithExtras)
+      setTotalDevices(total)
     } catch (error) {
       message.error('加载设备列表失败')
       setDevices([])
@@ -486,8 +494,10 @@ export default function Devices(): JSX.Element {
           pagination={{
             current: pagination.page,
             pageSize: pagination.pageSize,
+            total: totalDevices,
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '50', '100'],
+            showTotal: (total) => `共 ${total} 条`,
             onChange: (page, newPageSize) => {
               setPagination({ page, pageSize: newPageSize })
             },

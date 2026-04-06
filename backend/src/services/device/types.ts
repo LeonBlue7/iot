@@ -1,9 +1,23 @@
 // src/services/device/types.ts
-import type { Device, CreateDeviceInput, UpdateDeviceInput, SensorData, DeviceParam, CreateSensorDataInput } from '../../types/index.js';
+import type {
+  Device,
+  CreateDeviceInput,
+  UpdateDeviceInput,
+  SensorData,
+  DeviceParam,
+  CreateSensorDataInput,
+} from '../../types/index.js';
+
+export interface FindAllResult {
+  devices: Device[];
+  total: number;
+  page: number;
+  limit: number;
+}
 
 export interface IDeviceService {
   // Device CRUD
-  findAll(): Promise<Device[]>;
+  findAll(options?: { page?: number; limit?: number; online?: boolean }): Promise<FindAllResult>;
   findById(id: string): Promise<Device | null>;
   create(data: CreateDeviceInput): Promise<Device>;
   update(id: string, data: UpdateDeviceInput): Promise<Device>;
@@ -15,7 +29,12 @@ export interface IDeviceService {
 
   // Sensor data
   getLatestData(deviceId: string): Promise<SensorData | null>;
-  getHistoryData(deviceId: string, startTime: Date, endTime: Date, limit?: number): Promise<SensorData[]>;
+  getHistoryData(
+    deviceId: string,
+    startTime: Date,
+    endTime: Date,
+    limit?: number
+  ): Promise<SensorData[]>;
   addSensorData(data: CreateSensorDataInput): Promise<SensorData>;
 
   // Parameters
