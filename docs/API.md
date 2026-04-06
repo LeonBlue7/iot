@@ -4,7 +4,7 @@
 
 **Base URL**: `https://www.jxbonner.cloud/api`
 
-> **最后更新**: 2026-04-03（添加四层层级管理API）
+> **最后更新**: 2026-04-06（添加批量操作API、Token刷新端点）
 
 ## 系统架构
 
@@ -621,6 +621,240 @@ POST /api/admin/auth/logout
 
 ---
 
+### Token 刷新
+
+```http
+POST /api/admin/auth/refresh
+```
+
+**请求体**:
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIs..."
+}
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIs...",
+    "expiresIn": "7d"
+  }
+}
+```
+
+---
+
+## 用户管理 API
+
+> 管理员用户管理，包含 CRUD 和客户分配功能。
+> 所有端点需要认证和相应权限。
+
+### 获取用户列表
+
+```http
+GET /api/admin/users
+```
+
+**查询参数**:
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| customerId | number | 否 | 按客户筛选 |
+| enabled | boolean | 否 | 按启用状态筛选 |
+| search | string | 否 | 关键词搜索 |
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "username": "admin",
+      "name": "管理员",
+      "email": "admin@example.com",
+      "enabled": true,
+      "isSuperAdmin": true,
+      "createdAt": "2026-03-26T10:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### 获取用户详情
+
+```http
+GET /api/admin/users/:id
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "username": "admin",
+    "name": "管理员",
+    "email": "admin@example.com",
+    "enabled": true,
+    "isSuperAdmin": true
+  }
+}
+```
+
+---
+
+### 创建用户
+
+```http
+POST /api/admin/users
+```
+
+**请求体**:
+
+```json
+{
+  "username": "newuser",
+  "password": "password123",
+  "name": "新用户",
+  "email": "newuser@example.com",
+  "customerId": 1,
+  "isSuperAdmin": false
+}
+```
+
+**响应示例** (201):
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 2,
+    "username": "newuser",
+    "name": "新用户",
+    "email": "newuser@example.com"
+  }
+}
+```
+
+---
+
+### 更新用户
+
+```http
+PUT /api/admin/users/:id
+```
+
+**请求体**:
+
+```json
+{
+  "name": "更新后的名称",
+  "email": "updated@example.com",
+  "enabled": true
+}
+```
+
+---
+
+### 删除用户
+
+```http
+DELETE /api/admin/users/:id
+```
+
+> **注意**: 只有超级管理员可以删除用户，且不能删除自己。
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "message": "用户已删除"
+}
+```
+
+---
+
+### 获取用户的客户列表
+
+```http
+GET /api/admin/users/:id/customers
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "customerId": 1,
+      "customerName": "客户A",
+      "role": "manager"
+    }
+  ]
+}
+```
+
+---
+
+### 分配客户给用户
+
+```http
+POST /api/admin/users/:id/customers
+```
+
+**请求体**:
+
+```json
+{
+  "customerId": 1,
+  "role": "viewer"
+}
+```
+
+**响应示例** (201):
+
+```json
+{
+  "success": true,
+  "data": {
+    "userId": 2,
+    "customerId": 1,
+    "role": "viewer"
+  }
+}
+```
+
+---
+
+### 移除用户客户分配
+
+```http
+DELETE /api/admin/users/:id/customers/:customerId
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "message": "已移除客户分配"
+}
+```
+
+---
+
 ## 分组管理 API
 
 > 四层层级管理的第三层：Group (分组)
@@ -1051,6 +1285,181 @@ GET /api/stats/daily
 
 ---
 
+## 批量操作 API
+
+> 批量操作允许同时对多个设备执行控制、参数设置、移动等操作。
+
+### 批量控制设备
+
+```http
+POST /api/batch/control
+```
+
+**请求体**:
+
+```json
+{
+  "deviceIds": ["862471030000001", "862471030000002"],
+  "action": "on"
+}
+```
+
+**支持的动作**:
+
+| 动作 | 说明 |
+|------|------|
+| `on` | 批量开启空调 |
+| `off` | 批量关闭空调 |
+| `reset` | 批量重启设备 |
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "total": 2,
+    "success": 2,
+    "failed": 0,
+    "results": [
+      { "deviceId": "862471030000001", "status": "success" },
+      { "deviceId": "862471030000002", "status": "success" }
+    ]
+  }
+}
+```
+
+---
+
+### 批量参数设置
+
+```http
+POST /api/batch/params
+```
+
+**请求体**:
+
+```json
+{
+  "deviceIds": ["862471030000001", "862471030000002"],
+  "params": {
+    "mode": 1,
+    "summerTempOn": 28.0,
+    "summerTempSet": 26.0
+  }
+}
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "total": 2,
+    "success": 2,
+    "failed": 0
+  }
+}
+```
+
+---
+
+### 批量移动到分组
+
+```http
+POST /api/batch/move
+```
+
+**请求体**:
+
+```json
+{
+  "deviceIds": ["862471030000001", "862471030000002"],
+  "groupId": 5
+}
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "total": 2,
+    "success": 2,
+    "failed": 0
+  }
+}
+```
+
+---
+
+### 批量启用/禁用
+
+```http
+POST /api/batch/toggle
+```
+
+**请求体**:
+
+```json
+{
+  "deviceIds": ["862471030000001", "862471030000002"],
+  "enabled": true
+}
+```
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "total": 2,
+    "success": 2,
+    "failed": 0
+  }
+}
+```
+
+---
+
+### 设备搜索
+
+```http
+GET /api/batch/search
+```
+
+**查询参数**:
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| keyword | string | 否 | 关键词搜索（名称、IMEI） |
+| customerId | number | 否 | 按客户筛选 |
+| zoneId | number | 否 | 按分区筛选 |
+| groupId | number | 否 | 按分组筛选 |
+| online | boolean | 否 | 按在线状态筛选 |
+| enabled | boolean | 否 | 按启用状态筛选 |
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "862471030000001",
+      "name": "办公室空调 1",
+      "online": true,
+      "groupId": 5
+    }
+  ]
+}
+```
+
+---
+
 ## HTTP 状态码
 
 | 状态码 | 说明 |
@@ -1071,11 +1480,13 @@ GET /api/stats/daily
 
 | 端点类型 | 限制 |
 |----------|------|
-| 读取操作 | 30 请求/15 分钟 |
-| 控制操作 | 5 请求/分钟 |
-| 参数设置 | 10 请求/分钟 |
+| API 总请求 | 300 请求/15 分钟（生产环境） |
+| 登录端点 | 50 请求/15 分钟（防暴力破解） |
+| 开发环境 | 1000 请求/15 分钟 |
 
 超过限制将返回 `429 Too Many Requests` 响应。
+
+> **注意**: 测试环境自动跳过速率限制（`X-Test-Mode: true` 头或 `SKIP_RATE_LIMIT=true` 环境变量）。
 
 ---
 
