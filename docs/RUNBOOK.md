@@ -95,22 +95,39 @@
 
 ### 服务管理
 
+**⚠️ 重要：生产环境必须使用 `-f docker-compose.prod.yml` 指定配置文件！**
+
 ```bash
+# ========== 生产环境 ==========
 # 查看所有服务状态
-docker-compose ps
+sudo docker-compose -f docker-compose.prod.yml ps
 
 # 启动所有服务
-docker-compose up -d
+sudo docker-compose -f docker-compose.prod.yml up -d
 
 # 停止所有服务
-docker-compose down
+sudo docker-compose -f docker-compose.prod.yml down
 
 # 重启单个服务
-docker-compose restart backend
+sudo docker-compose -f docker-compose.prod.yml restart backend
+sudo docker-compose -f docker-compose.prod.yml restart admin-web
+sudo docker-compose -f docker-compose.prod.yml restart nginx
 
 # 查看服务日志
-docker-compose logs -f backend
-docker-compose logs -f --tail=100 emqx
+sudo docker-compose -f docker-compose.prod.yml logs -f backend
+sudo docker-compose -f docker-compose.prod.yml logs -f --tail=100 emqx
+sudo docker-compose -f docker-compose.prod.yml logs -f nginx
+
+# 重新构建并启动服务（代码更新后）
+sudo docker-compose -f docker-compose.prod.yml up -d --build backend
+sudo docker-compose -f docker-compose.prod.yml up -d --build admin-web
+
+# ========== 开发环境（本地开发）==========
+# 开发环境使用默认 docker-compose.yml
+docker compose ps
+docker compose up -d
+docker compose down
+docker compose logs -f backend
 ```
 
 ### 一键部署脚本
@@ -152,7 +169,7 @@ docker-compose logs -f --tail=100 emqx
 
 ```bash
 # 进入数据库容器
-docker-compose exec postgres psql -U iot_user -d iot_db
+sudo docker-compose -f docker-compose.prod.yml exec postgres psql -U iot_user -d iot_db
 
 # 备份数据库
 ./scripts/backup.sh
@@ -161,20 +178,20 @@ docker-compose exec postgres psql -U iot_user -d iot_db
 ./scripts/restore.sh /opt/iot/backups/db_20260327_020000.sql.gz
 
 # 查看 Prisma 迁移状态
-docker-compose exec backend npx prisma migrate status
+sudo docker-compose -f docker-compose.prod.yml exec backend npx prisma migrate status
 ```
 
 ### Redis 操作
 
 ```bash
 # 连接 Redis
-docker-compose exec redis redis-cli -a <REDIS_PASSWORD>
+sudo docker-compose -f docker-compose.prod.yml exec redis redis-cli -a <REDIS_PASSWORD>
 
 # 查看所有键
-docker-compose exec redis redis-cli -a <REDIS_PASSWORD> KEYS '*'
+sudo docker-compose -f docker-compose.prod.yml exec redis redis-cli -a <REDIS_PASSWORD> KEYS '*'
 
 # 清空缓存
-docker-compose exec redis redis-cli -a <REDIS_PASSWORD> FLUSHDB
+sudo docker-compose -f docker-compose.prod.yml exec redis redis-cli -a <REDIS_PASSWORD> FLUSHDB
 ```
 
 ---
@@ -253,13 +270,13 @@ docker-compose exec redis redis-cli -a <REDIS_PASSWORD> FLUSHDB
 curl -s https://www.jxbonner.cloud/health | jq
 
 # 数据库连接检查
-docker-compose exec postgres pg_isready
+sudo docker-compose -f docker-compose.prod.yml exec postgres pg_isready
 
 # Redis 连接检查
-docker-compose exec redis redis-cli -a <REDIS_PASSWORD> PING
+sudo docker-compose -f docker-compose.prod.yml exec redis redis-cli -a <REDIS_PASSWORD> PING
 
 # EMQX 状态检查
-docker-compose exec emqx emqx_ctl status
+sudo docker-compose -f docker-compose.prod.yml exec emqx emqx_ctl status
 ```
 
 ### 使用部署脚本健康检查
@@ -321,13 +338,13 @@ http://<server>:3003
 
 ```bash
 # 查看服务日志
-docker-compose logs backend
+sudo docker-compose -f docker-compose.prod.yml logs backend
 
 # 检查端口占用
 sudo netstat -tlnp | grep 3000
 
 # 检查容器状态
-docker-compose ps
+sudo docker-compose -f docker-compose.prod.yml ps
 
 # 检查资源使用
 docker stats
@@ -337,16 +354,16 @@ docker stats
 
 ```bash
 # 检查 PostgreSQL 状态
-docker-compose exec postgres pg_isready
+sudo docker-compose -f docker-compose.prod.yml exec postgres pg_isready
 
 # 检查连接字符串
-docker-compose exec backend env | grep DATABASE
+sudo docker-compose -f docker-compose.prod.yml exec backend env | grep DATABASE
 
 # 检查数据库日志
-docker-compose logs postgres
+sudo docker-compose -f docker-compose.prod.yml logs postgres
 
 # 测试连接
-docker-compose exec backend node -e "
+sudo docker-compose -f docker-compose.prod.yml exec backend node -e "
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 prisma.\$connect().then(() => console.log('OK')).catch(console.error);
@@ -357,13 +374,13 @@ prisma.\$connect().then(() => console.log('OK')).catch(console.error);
 
 ```bash
 # 检查 EMQX 状态
-docker-compose exec emqx emqx_ctl status
+sudo docker-compose -f docker-compose.prod.yml exec emqx emqx_ctl status
 
 # 查看连接数
-docker-compose exec emqx emqx_ctl listeners
+sudo docker-compose -f docker-compose.prod.yml exec emqx emqx_ctl listeners
 
 # 查看 EMQX 日志
-docker-compose logs emqx
+sudo docker-compose -f docker-compose.prod.yml logs emqx
 
 # 测试 MQTT 连接（使用设备认证凭据）
 # 用户名: test1, 密码: test123
@@ -377,13 +394,13 @@ mosquitto_pub -h localhost -p 1883 -u test1 -P test123 -t test -m "hello"
 
 ```bash
 # 检查后端日志
-docker-compose logs backend | grep -i "slow\|timeout"
+sudo docker-compose -f docker-compose.prod.yml logs backend | grep -i "slow\|timeout"
 
 # 检查数据库慢查询
-docker-compose exec postgres psql -c "SELECT * FROM pg_stat_statements ORDER BY total_time DESC LIMIT 10;"
+sudo docker-compose -f docker-compose.prod.yml exec postgres psql -c "SELECT * FROM pg_stat_statements ORDER BY total_time DESC LIMIT 10;"
 
 # 检查 Redis 延迟
-docker-compose exec redis redis-cli --latency
+sudo docker-compose -f docker-compose.prod.yml exec redis redis-cli --latency
 ```
 
 ### 日志分析
@@ -393,10 +410,10 @@ docker-compose exec redis redis-cli --latency
 ./scripts/logs.sh
 
 # 查看错误日志
-docker-compose logs backend 2>&1 | grep -i error
+sudo docker-compose -f docker-compose.prod.yml logs backend 2>&1 | grep -i error
 
 # 实时监控
-docker-compose logs -f --tail=100 backend
+sudo docker-compose -f docker-compose.prod.yml logs -f --tail=100 backend
 ```
 
 ---
@@ -420,14 +437,14 @@ docker-compose logs -f --tail=100 backend
 
 ```bash
 # 1. 停止当前服务
-docker-compose down
+sudo docker-compose -f docker-compose.prod.yml down
 
 # 2. 切换到上一版本
 git log --oneline -5
 git checkout <previous-commit>
 
 # 3. 重新部署
-docker-compose up -d
+sudo docker-compose -f docker-compose.prod.yml up -d --build
 
 # 4. 恢复数据库（如需要）
 ./scripts/restore.sh /opt/iot/backups/db_<timestamp>.sql.gz
@@ -473,16 +490,16 @@ crontab -l
 
 ```bash
 # 1. 停止服务
-docker-compose stop backend
+sudo docker-compose -f docker-compose.prod.yml stop backend
 
 # 2. 恢复数据库
 ./scripts/restore.sh /opt/iot/backups/db_20260327_020000.sql.gz
 
 # 3. 验证数据
-docker-compose exec postgres psql -c "SELECT COUNT(*) FROM devices;"
+sudo docker-compose -f docker-compose.prod.yml exec postgres psql -c "SELECT COUNT(*) FROM devices;"
 
 # 4. 重启服务
-docker-compose start backend
+sudo docker-compose -f docker-compose.prod.yml start backend
 
 # 5. 验证服务
 ./scripts/deploy.sh health
@@ -502,7 +519,8 @@ docker-compose start backend
 
 2. **尝试快速恢复**
    ```bash
-   docker-compose restart backend
+   sudo docker-compose -f docker-compose.prod.yml restart backend
+   sudo docker-compose -f docker-compose.prod.yml restart nginx
    ```
 
 3. **如果重启失败，执行回滚**
@@ -520,7 +538,7 @@ docker-compose start backend
 1. **收集诊断信息**
    ```bash
    docker stats
-   docker-compose logs --tail=500 backend
+   sudo docker-compose -f docker-compose.prod.yml logs --tail=500 backend
    ```
 
 2. **检查资源使用**
@@ -531,7 +549,7 @@ docker-compose start backend
 
 3. **临时扩容**
    ```bash
-   docker-compose up -d --scale backend=2
+   sudo docker-compose -f docker-compose.prod.yml up -d --scale backend=2
    ```
 
 ---

@@ -298,39 +298,57 @@ docker-compose version   # 独立版本
 
 ## 常用操作
 
+**⚠️ 重要：生产环境必须使用 `-f docker-compose.prod.yml` 指定配置文件！**
+
 ### 查看日志
 
 ```bash
+# ========== 生产环境 ==========
 # 查看所有服务日志
-docker-compose logs -f
+sudo docker-compose -f docker-compose.prod.yml logs -f
 
 # 查看特定服务日志
-docker-compose logs -f backend
-docker-compose logs -f emqx
-docker-compose logs -f nginx
+sudo docker-compose -f docker-compose.prod.yml logs -f backend
+sudo docker-compose -f docker-compose.prod.yml logs -f emqx
+sudo docker-compose -f docker-compose.prod.yml logs -f nginx
+
+# ========== 开发环境（本地）==========
+docker compose logs -f backend
 ```
 
 ### 重启服务
 
 ```bash
+# ========== 生产环境 ==========
 # 重启所有服务
-docker-compose restart
+sudo docker-compose -f docker-compose.prod.yml restart
 
 # 重启特定服务
-docker-compose restart backend
-docker-compose restart nginx
+sudo docker-compose -f docker-compose.prod.yml restart backend
+sudo docker-compose -f docker-compose.prod.yml restart nginx
+
+# ========== 开发环境（本地）==========
+docker compose restart backend
 ```
 
 ### 停止服务
 
 ```bash
-docker-compose down
+# 生产环境
+sudo docker-compose -f docker-compose.prod.yml down
+
+# 开发环境
+docker compose down
 ```
 
 ### 启动服务
 
 ```bash
-docker-compose up -d
+# 生产环境
+sudo docker-compose -f docker-compose.prod.yml up -d
+
+# 开发环境
+docker compose up -d
 ```
 
 ---
@@ -355,14 +373,16 @@ ls -la /opt/iot/backups/
 
 ## 故障排查
 
+**⚠️ 重要：生产环境必须使用 `-f docker-compose.prod.yml` 指定配置文件！**
+
 ### 服务无法启动
 
 ```bash
 # 检查服务状态
-docker-compose ps
+sudo docker-compose -f docker-compose.prod.yml ps
 
 # 查看日志
-docker-compose logs backend
+sudo docker-compose -f docker-compose.prod.yml logs backend
 
 # 检查端口占用
 sudo netstat -tlnp | grep -E '80|443|3000|1883'
@@ -372,20 +392,20 @@ sudo netstat -tlnp | grep -E '80|443|3000|1883'
 
 ```bash
 # 检查 PostgreSQL 状态
-docker-compose exec postgres pg_isready
+sudo docker-compose -f docker-compose.prod.yml exec postgres pg_isready
 
 # 检查连接
-docker-compose exec backend env | grep DATABASE
+sudo docker-compose -f docker-compose.prod.yml exec backend env | grep DATABASE
 ```
 
 ### MQTT 连接失败
 
 ```bash
 # 检查 EMQX 状态
-docker-compose exec emqx emqx_ctl status
+sudo docker-compose -f docker-compose.prod.yml exec emqx emqx_ctl status
 
 # 查看 EMQX 日志
-docker-compose logs emqx
+sudo docker-compose -f docker-compose.prod.yml logs emqx
 
 # 检查设备认证
 # 用户名: test1, 密码: test123
@@ -395,10 +415,10 @@ docker-compose logs emqx
 
 ```bash
 # 检查 Nginx 配置
-docker-compose exec nginx nginx -t
+sudo docker-compose -f docker-compose.prod.yml exec nginx nginx -t
 
 # 查看 Nginx 日志
-docker-compose logs nginx
+sudo docker-compose -f docker-compose.prod.yml logs nginx
 
 # 检查 SSL 证书
 ls -la nginx/ssl/
@@ -410,9 +430,15 @@ ls -la nginx/ssl/
 
 ```bash
 # 拉取最新代码
-git pull origin main
+sudo git pull origin main
 
-# 重新部署
+# 重新构建并部署后端
+sudo docker-compose -f docker-compose.prod.yml up -d --build backend
+
+# 重新构建并部署前端
+sudo docker-compose -f docker-compose.prod.yml up -d --build admin-web
+
+# 或使用部署脚本
 ./scripts/deploy.sh deploy
 ```
 
