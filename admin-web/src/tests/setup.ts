@@ -63,7 +63,7 @@ vi.mock('../utils/axios', async (importOriginal) => {
           use: vi.fn(),
         },
         response: {
-          use: vi.fn((successCallback, errorCallback) => {
+          use: vi.fn((_successCallback, _errorCallback) => {
             // Mock response interceptor - don't navigate on 401
             return 0
           }),
