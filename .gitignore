@@ -8,6 +8,7 @@ CLAUDE.md
 .env.local
 .env.*.local
 backend/.env
+admin-web/.env.e2e
 
 # 依赖
 node_modules/
