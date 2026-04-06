@@ -9,6 +9,7 @@ export interface DeviceListParams {
   groupId?: number
   customerId?: number
   zoneId?: number
+  includeRealtime?: boolean
 }
 
 export interface DeviceListResponse {

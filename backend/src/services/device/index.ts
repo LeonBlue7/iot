@@ -11,16 +11,31 @@ import type {
   BatchOperationResult,
   SearchDevicesOptions,
 } from '../../types/index.js';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 interface FindAllOptions {
   page?: number;
   limit?: number;
   online?: boolean;
+  includeRealtime?: boolean;
+}
+
+interface DeviceWithRealtime extends Device {
+  realtimeData?: {
+    temperature: number | null;
+    humidity: number | null;
+    current: number | null;
+    signalStrength: number | null;
+    acState: number | null;
+    acError: number | null;
+    tempAlarm: number | null;
+    humiAlarm: number | null;
+    recordedAt: Date;
+  } | null;
 }
 
 interface FindAllResult {
-  devices: Device[];
+  devices: Device[] | DeviceWithRealtime[];
   total: number;
   page: number;
   limit: number;
@@ -31,7 +46,7 @@ const VALID_ACTIONS = ['on', 'off', 'reset'];
 
 class DeviceService implements IDeviceService {
   async findAll(options: FindAllOptions = {}): Promise<FindAllResult> {
-    const { page = 1, limit = 50, online } = options;
+    const { page = 1, limit = 50, online, includeRealtime = false } = options;
 
     const where = online !== undefined ? { online } : undefined;
 
@@ -46,6 +61,50 @@ class DeviceService implements IDeviceService {
       skip: (page - 1) * limit,
       include: { params: true },
     });
+
+    // 如果需要实时数据，批量获取
+    if (includeRealtime && devices.length > 0) {
+      const deviceIds = devices.map((d) => d.id);
+
+      // 使用子查询获取每个设备的最新数据
+      const latestData = await prisma.$queryRaw<
+        Array<{
+          deviceId: string;
+          id: number;
+          temperature: number | null;
+          humidity: number | null;
+          current: number | null;
+          signalStrength: number | null;
+          acState: number | null;
+          acError: number | null;
+          tempAlarm: number | null;
+          humiAlarm: number | null;
+          recordedAt: Date;
+        }>
+      >`
+        SELECT DISTINCT ON ("deviceId")
+          "deviceId", id, temperature, humidity, current, "signalStrength", "acState", "acError", "tempAlarm", "humiAlarm", "recordedAt"
+        FROM "SensorData"
+        WHERE "deviceId" IN (${Prisma.join(deviceIds)})
+        ORDER BY "deviceId", "recordedAt" DESC
+      `;
+
+      // 创建映射
+      const realtimeMap = new Map(latestData.map((d) => [d.deviceId, d]));
+
+      // 合并数据
+      const devicesWithRealtime: DeviceWithRealtime[] = devices.map((device) => ({
+        ...device,
+        realtimeData: realtimeMap.get(device.id) || null,
+      }));
+
+      return {
+        devices: devicesWithRealtime,
+        total,
+        page,
+        limit,
+      };
+    }
 
     return {
       devices,

@@ -65,6 +65,11 @@ const listQuerySchema = z.object({
     .string()
     .transform((v) => v === 'true')
     .optional(),
+  includeRealtime: z
+    .string()
+    .transform((v) => v === 'true')
+    .optional()
+    .default('true'),
 });
 
 export const getDevices = asyncHandler(async (req: Request, res: Response): Promise<void> => {
@@ -77,6 +82,7 @@ export const getDevices = asyncHandler(async (req: Request, res: Response): Prom
     page,
     limit,
     online: query.online,
+    includeRealtime: query.includeRealtime,
   });
 
   res.json({

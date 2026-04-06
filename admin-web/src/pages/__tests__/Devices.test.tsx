@@ -190,18 +190,18 @@ describe('Devices', () => {
           lastSeenAt: new Date().toISOString(),
           createdAt: new Date().toISOString(),
           enabled: true,
+          realtimeData: {
+            id: 1,
+            deviceId: '123456789012345',
+            temperature: 25.5,
+            humidity: 60,
+            recordedAt: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+          },
         },
       ]
 
-      setupBasicMocks(mockDevices, [])
-      vi.mocked(deviceApi.getRealtimeData).mockResolvedValue({
-        id: 1,
-        deviceId: '123456789012345',
-        temperature: 25.5,
-        humidity: 60,
-        recordedAt: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-      })
+      setupBasicMocks(mockDevices)
 
       await renderDevices()
 
@@ -215,22 +215,22 @@ describe('Devices', () => {
         {
           id: '123456789012345',
           name: 'Test Device',
-          online: false,
+          online: true,
           lastSeenAt: new Date().toISOString(),
           createdAt: new Date().toISOString(),
           enabled: true,
+          realtimeData: null, // 无实时数据
         },
       ]
 
-      setupBasicMocks(mockDevices, [])
-      vi.mocked(deviceApi.getRealtimeData).mockResolvedValue(null)
+      setupBasicMocks(mockDevices)
 
       await renderDevices()
 
       await waitFor(() => {
         expect(screen.getByText('123456789012345')).toBeInTheDocument()
       })
-      // 离线设备应该显示 "-" 作为温度
+      // 无实时数据应该显示 "-" 作为温度
       const tempCells = screen.getAllByText('-')
       expect(tempCells.length).toBeGreaterThan(0)
     })

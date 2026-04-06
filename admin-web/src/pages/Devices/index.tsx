@@ -67,47 +67,14 @@ export default function Devices(): JSX.Element {
     loadFilters()
   }, [])
 
-  // 加载设备实时数据和告警状态（使用并发限制避免N+1问题）
-  const loadDeviceExtras = useCallback(async (deviceList: Device[]): Promise<DeviceWithExtras[]> => {
-    if (deviceList.length === 0) return []
-
+  // 加载告警状态（用于高亮显示有告警的设备）
+  const loadAlarmStatus = useCallback(async (deviceList: Device[]): Promise<Set<string>> => {
     try {
-      // 获取未处理告警列表（限制最大数量）
       const alarms = await alarmApi.getList({ status: 0, limit: 1000 })
-      const alarmDeviceIds = new Set(alarms.map((a) => a.deviceId))
-
-      // 批量获取在线设备的实时数据（使用并发限制和延迟避免速率限制）
-      const onlineDevices = deviceList.filter((d) => d.online)
-      const BATCH_SIZE = 5 // 减少批次大小，避免触发速率限制
-      const BATCH_DELAY = 200 // 批次间延迟200ms
-
-      const realtimeMap = new Map<string, SensorData | null>()
-
-      for (let i = 0; i < onlineDevices.length; i += BATCH_SIZE) {
-        const batch = onlineDevices.slice(i, i + BATCH_SIZE)
-        const results = await Promise.all(
-          batch.map((d) => deviceApi.getRealtimeData(d.id).catch(() => null))
-        )
-        batch.forEach((d, idx) => {
-          realtimeMap.set(d.id, results[idx])
-        })
-
-        // 批次间添加延迟，避免触发速率限制
-        if (i + BATCH_SIZE < onlineDevices.length) {
-          await new Promise(resolve => setTimeout(resolve, BATCH_DELAY))
-        }
-      }
-
-      // 组合数据
-      return deviceList.map((device) => ({
-        ...device,
-        realtimeData: realtimeMap.get(device.id) ?? null,
-        hasAlarm: alarmDeviceIds.has(device.id),
-      }))
+      return new Set(alarms.map((a) => a.deviceId))
     } catch (error) {
-      console.error('Failed to load device extras:', error)
-      // 如果获取额外数据失败，返回原始设备列表
-      return deviceList.map((d) => ({ ...d, realtimeData: null, hasAlarm: false }))
+      console.error('Failed to load alarm status:', error)
+      return new Set()
     }
   }, [])
 
@@ -135,23 +102,37 @@ export default function Devices(): JSX.Element {
         params.keyword = searchParams.keyword
       }
 
-      let deviceList: Device[]
+      let deviceList: DeviceWithExtras[]
       let total = 0
+
       if (Object.keys(params).length > 0) {
-        deviceList = await batchApi.search(params)
-        total = deviceList.length
+        // 搜索模式：使用batch API
+        const searchResults = await batchApi.search(params)
+        // 搜索结果需要单独获取实时数据
+        const alarmDeviceIds = await loadAlarmStatus(searchResults)
+        deviceList = searchResults.map((d) => ({
+          ...d,
+          realtimeData: (d as any).realtimeData || null,
+          hasAlarm: alarmDeviceIds.has(d.id),
+        }))
+        total = searchResults.length
       } else {
+        // 列表模式：后端直接返回实时数据
         const result = await deviceApi.getList({
           page: pagination.page,
-          limit: pagination.pageSize
+          limit: pagination.pageSize,
+          includeRealtime: true,
         })
-        deviceList = result.data
+        const alarmDeviceIds = await loadAlarmStatus(result.data)
+        deviceList = result.data.map((d: any) => ({
+          ...d,
+          realtimeData: d.realtimeData || null,
+          hasAlarm: alarmDeviceIds.has(d.id),
+        }))
         total = result.total
       }
 
-      // 加载额外数据（实时数据和告警状态）
-      const devicesWithExtras = await loadDeviceExtras(deviceList)
-      setDevices(devicesWithExtras)
+      setDevices(deviceList)
       setTotalDevices(total)
     } catch (error) {
       message.error('加载设备列表失败')
@@ -159,7 +140,7 @@ export default function Devices(): JSX.Element {
     } finally {
       setLoading(false)
     }
-  }, [selectedNode, searchParams, pagination.pageSize, loadDeviceExtras])
+  }, [selectedNode, searchParams, pagination.page, pagination.pageSize, loadAlarmStatus])
 
   // 组件挂载和层级/搜索变化时加载设备
   useEffect(() => {
