@@ -1,20 +1,26 @@
 // admin-web/src/pages/Devices/index.tsx
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Card, Table, Breadcrumb, Tag, Button, Modal, Select, message, Space, Dropdown } from 'antd'
+import { Card, Table, Breadcrumb, Tag, Button, Modal, Select, message, Space } from 'antd'
 import type { ColumnsType, TableProps } from 'antd/es/table'
-import { HomeOutlined, ReloadOutlined, EyeOutlined, MoreOutlined } from '@ant-design/icons'
-import type { MenuProps } from 'antd'
+import { HomeOutlined, ReloadOutlined, EyeOutlined } from '@ant-design/icons'
 import { DeviceSearchPanel } from '../../components/DeviceSearchPanel'
 import { BatchActionBar } from '../../components/BatchActionBar'
 import { BatchParamsModal } from '../../components/BatchParamsModal'
 import { deviceApi } from '../../services/device.service'
+import { alarmApi } from '../../services/alarm.service'
 import { batchApi } from '../../services/batch.service'
 import { customerApi } from '../../services/customer.service'
 import { groupApi } from '../../services/group.service'
 import { useHierarchyStore } from '../../store/hierarchyStore'
-import type { Device } from '../../types/device'
+import type { Device, SensorData } from '../../types/device'
 import type { DeviceSearchParams, Customer, Zone, DeviceGroup } from '../../types/hierarchy'
+
+// 扩展Device类型以包含实时数据和告警状态
+interface DeviceWithExtras extends Device {
+  realtimeData?: SensorData | null
+  hasAlarm?: boolean
+}
 
 export default function Devices(): JSX.Element {
   const navigate = useNavigate()
@@ -22,7 +28,7 @@ export default function Devices(): JSX.Element {
   const selectedNode = useHierarchyStore((state) => state.selectedNode)
 
   // 设备状态
-  const [devices, setDevices] = useState<Device[]>([])
+  const [devices, setDevices] = useState<DeviceWithExtras[]>([])
   const [loading, setLoading] = useState(false)
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([])
 
@@ -44,6 +50,9 @@ export default function Devices(): JSX.Element {
   // 当前搜索参数
   const [searchParams, setSearchParams] = useState<DeviceSearchParams | null>(null)
 
+  // 分页配置
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 50 })
+
   // 加载搜索筛选器
   useEffect(() => {
     const loadFilters = async (): Promise<void> => {
@@ -55,6 +64,44 @@ export default function Devices(): JSX.Element {
       }
     }
     loadFilters()
+  }, [])
+
+  // 加载设备实时数据和告警状态（使用并发限制避免N+1问题）
+  const loadDeviceExtras = useCallback(async (deviceList: Device[]): Promise<DeviceWithExtras[]> => {
+    if (deviceList.length === 0) return []
+
+    try {
+      // 获取未处理告警列表（限制最大数量）
+      const alarms = await alarmApi.getList({ status: 0, limit: 1000 })
+      const alarmDeviceIds = new Set(alarms.map((a) => a.deviceId))
+
+      // 批量获取在线设备的实时数据（使用并发限制）
+      const onlineDevices = deviceList.filter((d) => d.online)
+      const BATCH_SIZE = 10 // 最多同时10个请求
+
+      const realtimeMap = new Map<string, SensorData | null>()
+
+      for (let i = 0; i < onlineDevices.length; i += BATCH_SIZE) {
+        const batch = onlineDevices.slice(i, i + BATCH_SIZE)
+        const results = await Promise.all(
+          batch.map((d) => deviceApi.getRealtimeData(d.id).catch(() => null))
+        )
+        batch.forEach((d, idx) => {
+          realtimeMap.set(d.id, results[idx])
+        })
+      }
+
+      // 组合数据
+      return deviceList.map((device) => ({
+        ...device,
+        realtimeData: realtimeMap.get(device.id) ?? null,
+        hasAlarm: alarmDeviceIds.has(device.id),
+      }))
+    } catch (error) {
+      console.error('Failed to load device extras:', error)
+      // 如果获取额外数据失败，返回原始设备列表
+      return deviceList.map((d) => ({ ...d, realtimeData: null, hasAlarm: false }))
+    }
   }, [])
 
   // 根据层级选择和搜索参数加载设备
@@ -81,20 +128,24 @@ export default function Devices(): JSX.Element {
         params.keyword = searchParams.keyword
       }
 
+      let deviceList: Device[]
       if (Object.keys(params).length > 0) {
-        const result = await batchApi.search(params)
-        setDevices(result)
+        deviceList = await batchApi.search(params)
       } else {
-        const result = await deviceApi.getList()
-        setDevices(result.data)
+        const result = await deviceApi.getList({ limit: pagination.pageSize })
+        deviceList = result.data
       }
+
+      // 加载额外数据（实时数据和告警状态）
+      const devicesWithExtras = await loadDeviceExtras(deviceList)
+      setDevices(devicesWithExtras)
     } catch (error) {
       message.error('加载设备列表失败')
       setDevices([])
     } finally {
       setLoading(false)
     }
-  }, [selectedNode, searchParams])
+  }, [selectedNode, searchParams, pagination.pageSize, loadDeviceExtras])
 
   // 组件挂载和层级/搜索变化时加载设备
   useEffect(() => {
@@ -256,7 +307,8 @@ export default function Devices(): JSX.Element {
   const handleSingleControl = useCallback(async (deviceId: string, action: 'on' | 'off' | 'reset') => {
     try {
       await deviceApi.controlDevice(deviceId, action)
-      message.success(`${action === 'on' ? '开启' : action === 'off' ? '关闭' : '重启'}指令已发送`)
+      const actionText = action === 'on' ? '开启' : action === 'off' ? '关闭' : '重启'
+      message.success(`${actionText}指令已发送`)
       loadDevices()
     } catch (error: any) {
       message.error(error.message || '控制失败')
@@ -268,41 +320,8 @@ export default function Devices(): JSX.Element {
     navigate(`/devices/${deviceId}`)
   }, [navigate])
 
-  // 获取单设备操作菜单
-  const getDeviceActionMenu = (device: Device): MenuProps['items'] => [
-    {
-      key: 'view',
-      label: '查看详情',
-      icon: <EyeOutlined />,
-      onClick: () => handleViewDetail(device.id),
-    },
-    {
-      key: 'control',
-      label: '设备控制',
-      type: 'group',
-    },
-    {
-      key: 'on',
-      label: '开启空调',
-      disabled: !device.online,
-      onClick: () => handleSingleControl(device.id, 'on'),
-    },
-    {
-      key: 'off',
-      label: '关闭空调',
-      disabled: !device.online,
-      onClick: () => handleSingleControl(device.id, 'off'),
-    },
-    {
-      key: 'reset',
-      label: '重启设备',
-      disabled: !device.online,
-      onClick: () => handleSingleControl(device.id, 'reset'),
-    },
-  ]
-
   // 表格列定义
-  const columns: ColumnsType<Device> = [
+  const columns: ColumnsType<DeviceWithExtras> = useMemo(() => [
     {
       title: '设备ID',
       dataIndex: 'id',
@@ -321,10 +340,20 @@ export default function Devices(): JSX.Element {
       render: (name?: string) => name || '未命名',
     },
     {
-      title: 'SIM卡号',
-      dataIndex: 'simCard',
-      key: 'simCard',
-      render: (simCard?: string) => simCard || '-',
+      title: '温度',
+      key: 'temperature',
+      width: 80,
+      render: (_, record) => {
+        const temp = record.realtimeData?.temperature
+        if (temp !== undefined && temp !== null) {
+          return (
+            <span style={{ fontWeight: 'bold', color: record.hasAlarm ? '#ff4d4f' : undefined }}>
+              {typeof temp === 'number' ? temp.toFixed(1) : temp}
+            </span>
+          )
+        }
+        return <span style={{ color: '#999' }}>-</span>
+      },
     },
     {
       title: '状态',
@@ -347,18 +376,11 @@ export default function Devices(): JSX.Element {
       ),
     },
     {
-      title: '最后在线',
-      dataIndex: 'lastSeenAt',
-      key: 'lastSeenAt',
-      render: (lastSeenAt?: string) =>
-        lastSeenAt ? new Date(lastSeenAt).toLocaleString() : '从未上线',
-    },
-    {
       title: '操作',
       key: 'action',
-      width: 100,
+      width: 200,
       render: (_, record) => (
-        <Space>
+        <Space size="small">
           <Button
             type="link"
             size="small"
@@ -367,21 +389,51 @@ export default function Devices(): JSX.Element {
           >
             详情
           </Button>
-          <Dropdown menu={{ items: getDeviceActionMenu(record) }} trigger={['click']}>
-            <Button type="link" size="small" icon={<MoreOutlined />} />
-          </Dropdown>
+          <Button
+            type="primary"
+            size="small"
+            disabled={!record.online}
+            title={!record.online ? '设备离线，无法操作' : undefined}
+            onClick={() => handleSingleControl(record.id, 'on')}
+          >
+            开启
+          </Button>
+          <Button
+            size="small"
+            disabled={!record.online}
+            title={!record.online ? '设备离线，无法操作' : undefined}
+            onClick={() => handleSingleControl(record.id, 'off')}
+          >
+            关闭
+          </Button>
+          <Button
+            size="small"
+            disabled={!record.online}
+            title={!record.online ? '设备离线，无法操作' : undefined}
+            onClick={() => handleSingleControl(record.id, 'reset')}
+          >
+            重启
+          </Button>
         </Space>
       ),
     },
-  ]
+  ], [handleViewDetail, handleSingleControl])
 
   // 表格行选择配置
-  const rowSelection: TableProps<Device>['rowSelection'] = {
+  const rowSelection: TableProps<DeviceWithExtras>['rowSelection'] = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys: React.Key[]) => {
       setSelectedRowKeys(newSelectedRowKeys as string[])
     },
   }
+
+  // 表格行样式 - 告警高亮
+  const getRowClassName = useCallback((record: DeviceWithExtras): string => {
+    if (record.hasAlarm) {
+      return 'alarm-row'
+    }
+    return ''
+  }, [])
 
   return (
     <div data-testid="devices-page" style={{ padding: 24 }}>
@@ -424,8 +476,26 @@ export default function Devices(): JSX.Element {
           rowKey="id"
           loading={loading}
           rowSelection={rowSelection}
-          pagination={{ pageSize: 10 }}
+          rowClassName={getRowClassName}
+          pagination={{
+            current: pagination.page,
+            pageSize: pagination.pageSize,
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '20', '50', '100'],
+            onChange: (page, newPageSize) => {
+              setPagination({ page, pageSize: newPageSize })
+            },
+          }}
         />
+        {/* 告警行样式 */}
+        <style>{`
+          .alarm-row {
+            background-color: #fff1f0 !important;
+          }
+          .alarm-row:hover td {
+            background-color: #ffe7e6 !important;
+          }
+        `}</style>
       </Card>
 
       {/* 批量参数设置弹窗 */}
