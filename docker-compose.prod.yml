@@ -73,8 +73,9 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       MQTT_BROKER_URL: mqtt://emqx:1883
-      MQTT_USERNAME: ${MQTT_USERNAME:-device_user}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
+      # MQTT设备认证凭据（嵌入式程序已硬编码test1/test123）
+      MQTT_USERNAME: ${MQTT_USERNAME:-test1}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:-test123}
       PORT: 3000
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: 24h
