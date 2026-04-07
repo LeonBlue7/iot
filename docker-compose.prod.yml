@@ -39,18 +39,18 @@ services:
 
   # EMQX MQTT Broker
   emqx:
-    image: emqx/emqx:5.0.22
+    image: emqx/emqx:5.5.0
     container_name: iot-emqx
     environment:
       EMQX_NODE__NAME: emqx@127.0.0.1
       EMQX_NODE__COOKIE: iot_emqx_secret_2026
       EMQX_DASHBOARD__DEFAULT_USERNAME: ${EMQX_USERNAME:-admin}
       EMQX_DASHBOARD__DEFAULT_PASSWORD: ${EMQX_PASSWORD:-public}
-      EMQX_LISTENERS__TCP__DEFAULT__BIND: 1883
-      EMQX_LISTENERS__WS__DEFAULT__BIND: 8083
-      # 允许匿名MQTT连接（IoT设备场景）
-      # 注意：生产环境建议配置认证器
-      EMQX_ALLOW_ANONYMOUS: "true"
+      # MQTT认证配置 - 内置数据库认证器
+      EMQX_AUTHENTICATION__1__BACKEND: built_in_database
+      EMQX_AUTHENTICATION__1__MECHANISM: password_based
+      EMQX_AUTHENTICATION__1__PASSWORD_HASH_ALGORITHM__NAME: plain
+      EMQX_AUTHENTICATION__1__USER_ID_TYPE: username
     volumes:
       - emqx_data:/opt/emqx/data
       - emqx_log:/opt/emqx/log
