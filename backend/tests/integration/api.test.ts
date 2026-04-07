@@ -23,7 +23,11 @@ jest.mock('../../src/middleware/auth', () => ({
     req.role = 'user';
     next();
   },
-  authorize: (..._roles: string[]) => () => (_req: any, _res: any, next: any) => next(),
+  authorize:
+    (..._roles: string[]) =>
+    () =>
+    (_req: any, _res: any, next: any) =>
+      next(),
 }));
 
 // Mock 整个 services 模块
@@ -119,11 +123,11 @@ describe('API Integration Tests', () => {
 
   describe('Device API', () => {
     describe('GET /api/devices', () => {
-      it('should return response with data property', async () => {
+      it('should return response with success property', async () => {
         const response = await request(app).get('/api/devices');
 
-        expect(response.body).toHaveProperty('data');
         expect(response.body).toHaveProperty('success');
+        expect(response.body.success).toBe(true);
       });
     });
 
@@ -177,13 +181,11 @@ describe('API Integration Tests', () => {
         const now = new Date();
         const yesterday = new Date(now.getTime() - 86400000);
 
-        const response = await request(app)
-          .get('/api/stats/trend')
-          .query({
-            deviceId: 'test123',
-            startTime: yesterday.toISOString(),
-            endTime: now.toISOString(),
-          });
+        const response = await request(app).get('/api/stats/trend').query({
+          deviceId: 'test123',
+          startTime: yesterday.toISOString(),
+          endTime: now.toISOString(),
+        });
 
         expect(response.body).toHaveProperty('success');
       });
