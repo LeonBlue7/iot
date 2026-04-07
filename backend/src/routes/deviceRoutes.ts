@@ -12,6 +12,10 @@ router.get('/:id/realtime', authenticate, deviceController.getRealtimeData);
 router.get('/:id/history', authenticate, deviceController.getHistoryData);
 router.get('/:id/params', authenticate, deviceController.getDeviceParams);
 
+// Request device to send data/params
+router.post('/:id/request-data', authenticate, deviceController.requestDeviceData);
+router.post('/:id/request-params', authenticate, deviceController.requestDeviceParams);
+
 // Write operations - require authentication
 router.put('/:id', authenticate, deviceController.updateDevice);
 router.put('/:id/params', authenticate, deviceController.updateDeviceParams);

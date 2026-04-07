@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import { deviceService } from '../services/index.js';
 import { asyncHandler, successResponse, NotFoundError } from '../utils/index.js';
+import { requestToDevice, requestParameters } from '../services/mqtt/publishers.js';
 
 const updateDeviceSchema = z.object({
   name: z.string().nullable().optional(),
@@ -150,5 +151,43 @@ export const updateDeviceParams = asyncHandler(
     const id = req.params.id as string;
     const params = await deviceService.updateParams(id, req.body as Record<string, unknown>);
     res.json(successResponse(params, 'Parameters updated'));
+  }
+);
+
+/**
+ * 请求设备上报数据
+ * 发送 getdatas 命令到设备，触发设备上报传感器数据
+ */
+export const requestDeviceData = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const id = req.params.id as string;
+
+    // 检查设备是否存在
+    const device = await deviceService.findById(id);
+    if (!device) {
+      throw new NotFoundError(`Device ${id} not found`);
+    }
+
+    await requestToDevice(id);
+    res.json(successResponse(null, 'Data request sent to device'));
+  }
+);
+
+/**
+ * 请求设备上报参数
+ * 发送 getparam 命令到设备，触发设备上报配置参数
+ */
+export const requestDeviceParams = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const id = req.params.id as string;
+
+    // 检查设备是否存在
+    const device = await deviceService.findById(id);
+    if (!device) {
+      throw new NotFoundError(`Device ${id} not found`);
+    }
+
+    await requestParameters(id);
+    res.json(successResponse(null, 'Parameter request sent to device'));
   }
 );

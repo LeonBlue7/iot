@@ -261,6 +261,12 @@ export async function handleLogin(deviceId: string, payload: string): Promise<vo
  * 2. 旧格式: { "temp": 23.8, "humi": 53.0, ... }
  */
 export async function handleDataUpload(deviceId: string, payload: string): Promise<void> {
+  // 使用 warn 级别日志以便在生产环境中追踪消息
+  logger.warn(`[MQTT] Data upload received from ${deviceId}`, {
+    payloadLength: payload.length,
+    payloadPreview: payload.substring(0, 200),
+  });
+
   let rawData: z.infer<typeof sensorDataSchema>;
 
   try {
@@ -506,7 +512,13 @@ export function handleMessage(topic: string, payload: Buffer): void {
   const { deviceId, action } = parsed;
   const payloadStr = payload.toString();
 
-  logger.debug(`Message received`, { topic, deviceId, action });
+  // 使用 warn 级别日志以便在生产环境中追踪消息
+  logger.warn(`[MQTT] Message received`, {
+    topic,
+    deviceId,
+    action,
+    payloadLength: payloadStr.length,
+  });
 
   switch (action) {
     case 'login':
