@@ -39,16 +39,30 @@ export default function Dashboard() {
   async function loadData() {
     setLoading(true)
     try {
-      const [statsData, alarmsData, customersData, devicesData] = await Promise.all([
+      // 先获取统计数据和告警数据
+      const [statsData, alarmsData, customersData] = await Promise.all([
         statsApi.getOverview(),
         alarmApi.getList({ page: 1, limit: 5 }),
         customerApi.getList(),
-        deviceApi.getList({ page: 1, limit: 200, includeRealtime: true }),
       ])
+
+      // 获取所有设备数据（分页请求，limit最大100）
+      const allDevices: Device[] = [];
+      const firstPageData = await deviceApi.getList({ page: 1, limit: 100, includeRealtime: true });
+      allDevices.push(...(firstPageData.data || []));
+
+      // 如果有更多页，继续获取
+      if (firstPageData.total > 100) {
+        const remainingPages = Math.ceil((firstPageData.total - 100) / 100);
+        for (let p = 2; p <= remainingPages + 1; p++) {
+          const pageData = await deviceApi.getList({ page: p, limit: 100, includeRealtime: true });
+          allDevices.push(...(pageData.data || []));
+        }
+      }
 
       // 根据 lastSeenAt 计算真实在线设备数量（30分钟内有数据）
       const now = Date.now()
-      const devices = devicesData.data || []
+      const devices = allDevices
 
       const trulyOnlineDevices = devices.filter((d: Device) => {
         if (!d.lastSeenAt) return false
