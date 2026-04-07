@@ -24,8 +24,9 @@ export default function DeviceDetail() {
     try {
       const data = await deviceApi.getById(id)
       setDevice(data)
-    } catch (error: any) {
-      message.error(error.message || '加载设备详情失败')
+    } catch (error) {
+      const message_ = error instanceof Error ? error.message : '加载设备详情失败'
+      message.error(message_)
       navigate('/devices')
     } finally {
       setLoading(false)

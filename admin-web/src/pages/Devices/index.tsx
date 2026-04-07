@@ -305,8 +305,9 @@ export default function Devices(): JSX.Element {
       const actionText = action === 'on' ? '开启' : action === 'off' ? '关闭' : '重启'
       message.success(`${actionText}指令已发送`)
       loadDevices()
-    } catch (error: any) {
-      message.error(error.message || '控制失败')
+    } catch (error) {
+      const message_ = error instanceof Error ? error.message : '控制失败'
+      message.error(message_)
     }
   }, [loadDevices])
 

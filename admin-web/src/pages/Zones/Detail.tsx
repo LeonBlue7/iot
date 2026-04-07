@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Card, Descriptions, Button, Spin, message, Breadcrumb, Space, Table, Tag, Statistic, Row, Col } from 'antd'
 import { ArrowLeftOutlined, ReloadOutlined } from '@ant-design/icons'
@@ -19,13 +19,8 @@ export default function ZoneDetail() {
   const [groups, setGroups] = useState<DeviceGroup[]>([])
   const [devices, setDevices] = useState<Device[]>([])
 
-  useEffect(() => {
-    if (id) {
-      loadZone()
-    }
-  }, [id])
-
-  async function loadZone() {
+  const loadZone = useCallback(async () => {
+    if (!id) return
     setLoading(true)
     try {
       const zoneData = await zoneApi.getById(Number(id))
@@ -47,13 +42,18 @@ export default function ZoneDetail() {
       )
       const allDevices = groupDevicesResults.flatMap((result) => result.data)
       setDevices(allDevices)
-    } catch (error: any) {
-      message.error(error.message || '加载分区详情失败')
+    } catch (error) {
+      const message_ = error instanceof Error ? error.message : '加载分区详情失败'
+      message.error(message_)
       navigate('/zones')
     } finally {
       setLoading(false)
     }
-  }
+  }, [id, navigate])
+
+  useEffect(() => {
+    loadZone()
+  }, [loadZone])
 
   const handleBack = () => {
     navigate('/zones')

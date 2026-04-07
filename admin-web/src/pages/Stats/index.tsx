@@ -73,8 +73,9 @@ export default function Stats() {
         date: today,
       })
       setDailyStats(daily)
-    } catch (err: any) {
-      setError(err.message || '加载统计数据失败')
+    } catch (err) {
+      const message_ = err instanceof Error ? err.message : '加载统计数据失败'
+      setError(message_)
       setTrendData([])
       setDailyStats(null)
     } finally {
@@ -83,9 +84,7 @@ export default function Stats() {
   }, [selectedDeviceId, selectedMetric, timeRange])
 
   useEffect(() => {
-    if (selectedDeviceId) {
-      loadTrendData()
-    }
+    loadTrendData()
   }, [loadTrendData])
 
   const handleDeviceChange = (deviceId: string) => {

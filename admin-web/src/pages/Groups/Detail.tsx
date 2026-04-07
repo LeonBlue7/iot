@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Card, Descriptions, Button, Spin, message, Breadcrumb, Space, Statistic, Row, Col } from 'antd'
 import { ArrowLeftOutlined, ReloadOutlined } from '@ant-design/icons'
@@ -20,13 +20,8 @@ export default function GroupDetail() {
   const [customer, setCustomer] = useState<Customer | null>(null)
   const [devices, setDevices] = useState<Device[]>([])
 
-  useEffect(() => {
-    if (id) {
-      loadGroup()
-    }
-  }, [id])
-
-  async function loadGroup() {
+  const loadGroup = useCallback(async () => {
+    if (!id) return
     setLoading(true)
     try {
       const groupData = await groupApi.getById(Number(id))
@@ -47,13 +42,18 @@ export default function GroupDetail() {
       // 加载分组设备
       const devicesResult = await deviceApi.getList({ groupId: Number(id) })
       setDevices(devicesResult.data)
-    } catch (error: any) {
-      message.error(error.message || '加载分组详情失败')
+    } catch (error) {
+      const message_ = error instanceof Error ? error.message : '加载分组详情失败'
+      message.error(message_)
       navigate('/groups')
     } finally {
       setLoading(false)
     }
-  }
+  }, [id, navigate])
+
+  useEffect(() => {
+    loadGroup()
+  }, [loadGroup])
 
   const handleBack = () => {
     navigate('/groups')

@@ -30,9 +30,10 @@ export default function DeviceControlPanel({ device, onControl }: DeviceControlP
           if (onControl) {
             onControl()
           }
-        } catch (error: any) {
-          message.error(error.message || '控制失败')
-          setControlResult(`控制失败: ${error.message}`)
+        } catch (error) {
+          const message_ = error instanceof Error ? error.message : '控制失败'
+          message.error(message_)
+          setControlResult(`控制失败: ${message_}`)
         } finally {
           setLoading(false)
         }

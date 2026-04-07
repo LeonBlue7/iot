@@ -26,22 +26,22 @@ export default function Alarms() {
   const [detailVisible, setDetailVisible] = useState(false)
   const [selectedAlarm, setSelectedAlarm] = useState<AlarmRecord | null>(null)
 
-  useEffect(() => {
-    loadAlarms()
-  }, [statusFilter])
-
-  async function loadAlarms() {
+  const loadAlarms = useCallback(async () => {
     setLoading(true)
     setSelectedRowKeys([])
     try {
       const data = await alarmApi.getList({ status: statusFilter })
       setAlarms(data)
-    } catch (error) {
+    } catch {
       message.error('加载告警列表失败')
     } finally {
       setLoading(false)
     }
-  }
+  }, [statusFilter])
+
+  useEffect(() => {
+    loadAlarms()
+  }, [loadAlarms])
 
   const handleAcknowledge = useCallback(async (id: number) => {
     try {
@@ -49,10 +49,10 @@ export default function Alarms() {
       message.success('告警已确认')
       setDetailVisible(false)
       loadAlarms()
-    } catch (error) {
+    } catch {
       message.error('确认告警失败')
     }
-  }, [])
+  }, [loadAlarms])
 
   const handleResolve = useCallback(async (id: number) => {
     try {
@@ -60,10 +60,10 @@ export default function Alarms() {
       message.success('告警已解决')
       setDetailVisible(false)
       loadAlarms()
-    } catch (error) {
+    } catch {
       message.error('解决告警失败')
     }
-  }, [])
+  }, [loadAlarms])
 
   const handleBatchAcknowledge = useCallback(async () => {
     if (selectedRowKeys.length === 0) return
@@ -88,7 +88,7 @@ export default function Alarms() {
         loadAlarms()
       },
     })
-  }, [selectedRowKeys])
+  }, [selectedRowKeys, loadAlarms])
 
   const handleBatchResolve = useCallback(async () => {
     if (selectedRowKeys.length === 0) return
@@ -113,7 +113,7 @@ export default function Alarms() {
         loadAlarms()
       },
     })
-  }, [selectedRowKeys])
+  }, [selectedRowKeys, loadAlarms])
 
   const handleViewDetail = useCallback((alarm: AlarmRecord) => {
     setSelectedAlarm(alarm)

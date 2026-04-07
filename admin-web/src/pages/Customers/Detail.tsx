@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Card, Descriptions, Button, Spin, message, Breadcrumb, Space, Table, Tag, Statistic, Row, Col } from 'antd'
 import { ArrowLeftOutlined, ReloadOutlined } from '@ant-design/icons'
@@ -19,13 +19,8 @@ export default function CustomerDetail() {
   const [groups, setGroups] = useState<DeviceGroup[]>([])
   const [devices, setDevices] = useState<Device[]>([])
 
-  useEffect(() => {
-    if (id) {
-      loadCustomer()
-    }
-  }, [id])
-
-  async function loadCustomer() {
+  const loadCustomer = useCallback(async () => {
+    if (!id) return
     setLoading(true)
     try {
       const customerData = await customerApi.getById(Number(id))
@@ -48,13 +43,18 @@ export default function CustomerDetail() {
       )
       const allDevices = groupDevicesResults.flatMap((result) => result.data)
       setDevices(allDevices)
-    } catch (error: any) {
-      message.error(error.message || '加载客户详情失败')
+    } catch (error) {
+      const message_ = error instanceof Error ? error.message : '加载客户详情失败'
+      message.error(message_)
       navigate('/customers')
     } finally {
       setLoading(false)
     }
-  }
+  }, [id, navigate])
+
+  useEffect(() => {
+    loadCustomer()
+  }, [loadCustomer])
 
   const handleBack = () => {
     navigate('/customers')

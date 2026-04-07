@@ -19,6 +19,16 @@ interface TrendChartProps {
   showLegend?: boolean
 }
 
+interface ChartDataPoint {
+  time: string
+  value: number
+  fullTime: string
+}
+
+interface TooltipPayload {
+  payload?: ChartDataPoint
+}
+
 const metricConfig: Record<TrendMetric, { label: string; color: string; unit: string }> = {
   temperature: { label: '温度', color: '#ff4d4f', unit: '°C' },
   humidity: { label: '湿度', color: '#1890ff', unit: '%' },
@@ -83,7 +93,7 @@ export default function TrendChart({
         <Tooltip
           contentStyle={{ fontSize: 12 }}
           formatter={(value: number) => [`${value} ${config.unit}`, config.label]}
-          labelFormatter={(label: string, payload: any[]) => {
+          labelFormatter={(label: string, payload: TooltipPayload[]) => {
             if (payload?.[0]?.payload?.fullTime) {
               return new Date(payload[0].payload.fullTime).toLocaleString('zh-CN')
             }

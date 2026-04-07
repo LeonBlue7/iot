@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, Form, Input, InputNumber, Select, Button, Spin, message, Divider, Collapse } from 'antd'
 import { SaveOutlined } from '@ant-design/icons'
 import { deviceApi } from '../services/device.service'
@@ -36,11 +36,7 @@ export default function DeviceParamsForm({ device, onUpdate }: DeviceParamsFormP
   const [saving, setSaving] = useState(false)
   const [params, setParams] = useState<DeviceParams | null>(null)
 
-  useEffect(() => {
-    loadParams()
-  }, [device.id])
-
-  async function loadParams() {
+  const loadParams = useCallback(async () => {
     setLoading(true)
     try {
       const data = await deviceApi.getParams(device.id)
@@ -48,12 +44,16 @@ export default function DeviceParamsForm({ device, onUpdate }: DeviceParamsFormP
       if (data) {
         form.setFieldsValue(data)
       }
-    } catch (error) {
+    } catch {
       message.error('加载参数失败')
     } finally {
       setLoading(false)
     }
-  }
+  }, [device.id, form])
+
+  useEffect(() => {
+    loadParams()
+  }, [loadParams])
 
   async function handleSave() {
     try {
@@ -65,11 +65,13 @@ export default function DeviceParamsForm({ device, onUpdate }: DeviceParamsFormP
         onUpdate()
       }
       loadParams()
-    } catch (error: any) {
-      if (error.errorFields) {
+    } catch (error) {
+      // Check if it's a form validation error
+      if (error && typeof error === 'object' && 'errorFields' in error) {
         return
       }
-      message.error(error.message || '参数更新失败')
+      const message_ = error instanceof Error ? error.message : '参数更新失败'
+      message.error(message_)
     } finally {
       setSaving(false)
     }

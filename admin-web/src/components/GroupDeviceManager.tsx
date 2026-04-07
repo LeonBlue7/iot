@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, Table, Button, Tag, Transfer, message, Modal, Spin } from 'antd'
 import type { TransferProps } from 'antd'
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
@@ -19,31 +19,31 @@ export default function GroupDeviceManager({ groupId, groupName, onUpdate }: Gro
   const [transferVisible, setTransferVisible] = useState(false)
   const [targetKeys, setTargetKeys] = useState<string[]>([])
 
-  useEffect(() => {
-    loadDevices()
-    loadAllDevices()
-  }, [groupId])
-
-  async function loadDevices() {
+  const loadDevices = useCallback(async () => {
     setLoading(true)
     try {
       const result = await deviceApi.getList({ groupId })
       setDevices(result.data)
-    } catch (error) {
+    } catch {
       message.error('加载分组设备失败')
     } finally {
       setLoading(false)
     }
-  }
+  }, [groupId])
 
-  async function loadAllDevices() {
+  const loadAllDevices = useCallback(async () => {
     try {
       const result = await deviceApi.getList()
       setAllDevices(result.data)
-    } catch (error) {
+    } catch {
       // 忽略
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    loadDevices()
+    loadAllDevices()
+  }, [loadDevices, loadAllDevices])
 
   const handleOpenTransfer = () => {
     // 初始化当前分组的设备ID为已选
@@ -64,8 +64,9 @@ export default function GroupDeviceManager({ groupId, groupName, onUpdate }: Gro
       if (onUpdate) {
         onUpdate()
       }
-    } catch (error: any) {
-      message.error(error.message || '设备分配失败')
+    } catch (error) {
+      const message_ = error instanceof Error ? error.message : '设备分配失败'
+      message.error(message_)
     }
   }
 
@@ -82,8 +83,9 @@ export default function GroupDeviceManager({ groupId, groupName, onUpdate }: Gro
           if (onUpdate) {
             onUpdate()
           }
-        } catch (error: any) {
-          message.error(error.message || '移除失败')
+        } catch (error) {
+          const message_ = error instanceof Error ? error.message : '移除失败'
+          message.error(message_)
         }
       },
     })
