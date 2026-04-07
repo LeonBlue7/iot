@@ -69,16 +69,16 @@ export default function RealtimeDataCard({ device, data, loading, onRefresh }: R
         <Descriptions column={2} bordered size="small">
           <Descriptions.Item label="温度">
             <span style={{ fontSize: 18, fontWeight: 'bold', color: '#ff4d4f' }}>
-              {data.temperature?.toFixed(1) ?? '-'} °C
+              {data.temperature != null ? Number(data.temperature).toFixed(1) : '-'} °C
             </span>
           </Descriptions.Item>
           <Descriptions.Item label="湿度">
             <span style={{ fontSize: 18, fontWeight: 'bold', color: '#1890ff' }}>
-              {data.humidity?.toFixed(1) ?? '-'} %
+              {data.humidity != null ? Number(data.humidity).toFixed(1) : '-'} %
             </span>
           </Descriptions.Item>
           <Descriptions.Item label="电流">
-            {data.current?.toFixed(2) ?? '-'} A
+            {data.current != null ? Number(data.current).toFixed(2) : '-'} A
           </Descriptions.Item>
           <Descriptions.Item label="信号强度">
             {data.signalStrength ?? '-'} dBm

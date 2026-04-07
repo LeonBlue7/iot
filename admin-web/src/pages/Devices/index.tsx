@@ -341,10 +341,10 @@ export default function Devices(): JSX.Element {
       width: 80,
       render: (_, record) => {
         const temp = record.realtimeData?.temperature
-        if (temp !== undefined && temp !== null) {
+        if (temp != null) {
           return (
             <span style={{ fontWeight: 'bold', color: record.hasAlarm ? '#ff4d4f' : undefined }}>
-              {typeof temp === 'number' ? temp.toFixed(1) : temp}
+              {Number(temp).toFixed(1)}
             </span>
           )
         }

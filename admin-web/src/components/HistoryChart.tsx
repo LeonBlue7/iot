@@ -99,10 +99,10 @@ export default function HistoryChart({ device, height = 350 }: HistoryChartProps
   const trendData = historyData.map((item) => ({
     time: item.recordedAt,
     value: metric === 'temperature'
-      ? item.temperature ?? null
+      ? (item.temperature != null ? Number(item.temperature) : null)
       : metric === 'humidity'
-        ? item.humidity ?? null
-        : item.current ?? null,
+        ? (item.humidity != null ? Number(item.humidity) : null)
+        : (item.current != null ? Number(item.current) : null),
   }))
 
   return (
