@@ -4,15 +4,20 @@ import {
   MobileOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  WarningOutlined,
   ReloadOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons'
 import { statsApi } from '../../services/stats.service'
 import { alarmApi } from '../../services/alarm.service'
 import { customerApi } from '../../services/customer.service'
+import { deviceApi } from '../../services/device.service'
 import QuickActionsPanel from '../../components/QuickActionsPanel'
 import type { AlarmRecord } from '../../types/alarm'
 import type { Customer } from '../../types/hierarchy'
+import type { Device } from '../../types/device'
+
+// 30分钟无数据更新则判断为离线
+const OFFLINE_THRESHOLD_MS = 30 * 60 * 1000
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true)
@@ -22,6 +27,7 @@ export default function Dashboard() {
     offlineDevices: 0,
     totalAlarms: 0,
     unacknowledgedAlarms: 0,
+    acPowerOnCount: 0, // 空调开机数量
   })
   const [recentAlarms, setRecentAlarms] = useState<AlarmRecord[]>([])
   const [customers, setCustomers] = useState<Customer[]>([])
@@ -33,12 +39,36 @@ export default function Dashboard() {
   async function loadData() {
     setLoading(true)
     try {
-      const [statsData, alarmsData, customersData] = await Promise.all([
+      const [statsData, alarmsData, customersData, devicesData] = await Promise.all([
         statsApi.getOverview(),
         alarmApi.getList({ page: 1, limit: 5 }),
         customerApi.getList(),
+        deviceApi.getList({ page: 1, limit: 200, includeRealtime: true }),
       ])
-      setStats(statsData)
+
+      // 根据 lastSeenAt 计算真实在线设备数量（30分钟内有数据）
+      const now = Date.now()
+      const devices = devicesData.data || []
+
+      const trulyOnlineDevices = devices.filter((d: Device) => {
+        if (!d.lastSeenAt) return false
+        const lastSeen = new Date(d.lastSeenAt).getTime()
+        return (now - lastSeen) < OFFLINE_THRESHOLD_MS
+      })
+
+      // 计算空调开机数量（在线且 acState === 1）
+      const acPowerOnCount = trulyOnlineDevices.filter((d: Device) => {
+        return d.realtimeData?.acState === 1
+      }).length
+
+      setStats({
+        totalDevices: devices.length,
+        onlineDevices: trulyOnlineDevices.length,
+        offlineDevices: devices.length - trulyOnlineDevices.length,
+        totalAlarms: statsData.totalAlarms,
+        unacknowledgedAlarms: statsData.unacknowledgedAlarms,
+        acPowerOnCount,
+      })
       setRecentAlarms(alarmsData || [])
       setCustomers(customersData || [])
     } catch (error) {
@@ -148,10 +178,11 @@ export default function Dashboard() {
         <Col xs={24} sm={12} lg={6}>
           <Card>
             <Statistic
-              title="未处理告警"
-              value={stats.unacknowledgedAlarms}
-              prefix={<WarningOutlined />}
-              valueStyle={{ color: stats.unacknowledgedAlarms > 0 ? '#faad14' : '#52c41a' }}
+              title="空调开机"
+              value={stats.acPowerOnCount}
+              prefix={<ThunderboltOutlined />}
+              valueStyle={{ color: '#1890ff' }}
+              suffix={<span style={{ fontSize: 14, color: '#999' }}>台</span>}
             />
           </Card>
         </Col>
@@ -162,7 +193,7 @@ export default function Dashboard() {
         <Col xs={24} lg={12}>
           <Card title="系统状态">
             <Row gutter={16}>
-              <Col span={8}>
+              <Col span={6}>
                 <Statistic
                   title="在线率"
                   value={onlineRate}
@@ -170,16 +201,23 @@ export default function Dashboard() {
                   valueStyle={{ color: Number(onlineRate) >= 80 ? '#52c41a' : '#faad14' }}
                 />
               </Col>
-              <Col span={8}>
+              <Col span={6}>
                 <Statistic
                   title="客户数量"
                   value={customers.length}
                 />
               </Col>
-              <Col span={8}>
+              <Col span={6}>
                 <Statistic
                   title="告警总数"
                   value={stats.totalAlarms}
+                />
+              </Col>
+              <Col span={6}>
+                <Statistic
+                  title="未处理告警"
+                  value={stats.unacknowledgedAlarms}
+                  valueStyle={{ color: stats.unacknowledgedAlarms > 0 ? '#faad14' : '#52c41a' }}
                 />
               </Col>
             </Row>

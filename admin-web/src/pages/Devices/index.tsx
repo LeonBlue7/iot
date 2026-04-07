@@ -352,9 +352,24 @@ export default function Devices(): JSX.Element {
       },
     },
     {
-      title: '状态',
+      title: '空调状态',
+      key: 'acState',
+      width: 90,
+      render: (_, record) => {
+        const acState = record.realtimeData?.acState
+        if (acState === 1) {
+          return <Tag color="success">开启</Tag>
+        } else if (acState === 0) {
+          return <Tag color="default">关闭</Tag>
+        }
+        return <Tag color="default">未知</Tag>
+      },
+    },
+    {
+      title: '在线状态',
       dataIndex: 'online',
       key: 'online',
+      width: 90,
       render: (online: boolean) => (
         <Tag color={online ? 'success' : 'default'}>
           {online ? '在线' : '离线'}
@@ -365,6 +380,7 @@ export default function Devices(): JSX.Element {
       title: '启用状态',
       dataIndex: 'enabled',
       key: 'enabled',
+      width: 90,
       render: (enabled: boolean) => (
         <Tag color={enabled ? 'success' : 'warning'}>
           {enabled ? '已启用' : '已禁用'}
@@ -478,6 +494,7 @@ export default function Devices(): JSX.Element {
             pageSize: pagination.pageSize,
             total: totalDevices,
             showSizeChanger: true,
+            showQuickJumper: true,
             pageSizeOptions: ['10', '20', '50', '100'],
             showTotal: (total) => `共 ${total} 条`,
             onChange: (page, newPageSize) => {
