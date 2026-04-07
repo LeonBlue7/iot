@@ -1,0 +1,19 @@
+- generic [ref=e4]:
+  - generic [ref=e6]:
+    - img "emqx-dashboard" [ref=e7]
+    - link "awskubernetesazuregcp" [ref=e9] [cursor=pointer]:
+      - /url: https://accounts.emqx.com/signup?utm_source=emqx-dashboard&utm_medium=referral&utm_campaign=dashboard-to-cloud&continue=https%3A%2F%2Fcloud-intl.emqx.com%2Fconsole%2F
+      - img "aws" [ref=e10]
+      - img "kubernetes" [ref=e11]
+      - img "azure" [ref=e12]
+      - img "gcp" [ref=e13]
+  - generic [ref=e15]:
+    - heading "Login" [level=1] [ref=e17]
+    - generic [ref=e18]:
+      - textbox "Username" [ref=e23]
+      - textbox "Password" [ref=e28]
+      - generic [ref=e31]:
+        - button "Login" [ref=e32] [cursor=pointer]:
+          - generic [ref=e33]: Login
+        - link "Forgot your password?" [ref=e34] [cursor=pointer]:
+          - /url: https://www.emqx.io/docs/en/v5.0/admin/cli.html#admins

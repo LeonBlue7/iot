@@ -15,23 +15,41 @@ import { z } from 'zod';
  */
 const loginSchema = z.object({
   IMEI: z.string().regex(/^\d{15}$/, 'IMEI 必须为 15 位数字'),
-  ICCID: z.string().regex(/^\d{19,20}$/, 'ICCID 格式错误').optional(),
+  ICCID: z
+    .string()
+    .regex(/^\d{19,20}$/, 'ICCID 格式错误')
+    .optional(),
 });
 
 /**
- * 传感器数据消息验证
- * 所有传感器值都有合理的范围限制
+ * 传感器数据消息验证（实际设备格式）
+ * 设备发送格式: { "mid": 163, "data": { "temp": 23.8, ... }, "timestamp": "..." }
  */
 const sensorDataSchema = z.object({
-  temp: z.number().min(-50).max(100).optional(), // 温度：-50°C 到 100°C
-  humi: z.number().min(0).max(100).optional(), // 湿度：0% 到 100%
-  curr: z.number().min(0).max(10000).optional(), // 电流：0 到 10000mA
-  sig: z.number().min(0).max(100).optional(), // 信号强度：0 到 100
-  acState: z.number().min(0).max(1).optional(), // 空调状态：0 或 1
-  acErr: z.number().min(0).max(255).optional(), // 空调故障码：0-255
-  tempAlm: z.number().min(0).max(1).optional(), // 温度告警：0 或 1
-  humiAlm: z.number().min(0).max(1).optional(), // 湿度告警：0 或 1
-  ts: z.number().positive().optional(), // 时间戳：正数
+  mid: z.number().optional(), // 消息ID
+  data: z
+    .object({
+      temp: z.number().min(-50).max(100).optional(), // 温度：-50°C 到 100°C
+      humi: z.number().min(0).max(100).optional(), // 湿度：0% 到 100%
+      airstate: z.number().min(0).max(1).optional(), // 空调状态：0 或 1
+      current: z.number().min(0).max(10000).optional(), // 电流：0 到 10000mA
+      CSQ: z.number().min(0).max(100).optional(), // 信号强度：0 到 100
+      air_err: z.number().min(0).max(255).optional(), // 空调故障码：0-255
+      alarmtemp: z.number().min(0).max(1).optional(), // 温度告警：0 或 1
+      temperr: z.number().min(0).max(1).optional(), // 温度错误：0 或 1
+    })
+    .optional(),
+  timestamp: z.string().optional(), // 时间戳字符串
+  // 兼容旧格式（直接在顶层）
+  temp: z.number().min(-50).max(100).optional(),
+  humi: z.number().min(0).max(100).optional(),
+  curr: z.number().min(0).max(10000).optional(),
+  sig: z.number().min(0).max(100).optional(),
+  acState: z.number().min(0).max(1).optional(),
+  acErr: z.number().min(0).max(255).optional(),
+  tempAlm: z.number().min(0).max(1).optional(),
+  humiAlm: z.number().min(0).max(1).optional(),
+  ts: z.number().positive().optional(),
 });
 
 /**
@@ -185,7 +203,7 @@ export async function handleLogin(deviceId: string, payload: string): Promise<vo
 
     if (!result.success) {
       logger.warn(`Login validation failed for ${deviceId}`, {
-        errors: result.error.errors.map(e => e.message).join(', '),
+        errors: result.error.errors.map((e) => e.message).join(', '),
       });
       return;
     }
@@ -238,9 +256,12 @@ export async function handleLogin(deviceId: string, payload: string): Promise<vo
  * 处理设备数据上传消息
  *
  * 验证传感器数据范围，存储到数据库，检查告警
+ * 支持两种格式：
+ * 1. 新格式: { "mid": 163, "data": { "temp": 23.8, ... }, "timestamp": "..." }
+ * 2. 旧格式: { "temp": 23.8, "humi": 53.0, ... }
  */
 export async function handleDataUpload(deviceId: string, payload: string): Promise<void> {
-  let data: SensorData;
+  let rawData: z.infer<typeof sensorDataSchema>;
 
   try {
     const parsed: unknown = JSON.parse(payload);
@@ -248,12 +269,12 @@ export async function handleDataUpload(deviceId: string, payload: string): Promi
 
     if (!result.success) {
       logger.warn(`Data validation failed for ${deviceId}`, {
-        errors: result.error.errors.map(e => e.message).join(', '),
+        errors: result.error.errors.map((e) => e.message).join(', '),
       });
       return;
     }
 
-    data = result.data;
+    rawData = result.data;
   } catch (error) {
     if (error instanceof SyntaxError) {
       logger.warn(`Invalid JSON in data payload from ${deviceId}`);
@@ -264,6 +285,33 @@ export async function handleDataUpload(deviceId: string, payload: string): Promi
     });
     return;
   }
+
+  // 提取传感器数据，支持新旧两种格式
+  const sensorValues = rawData.data
+    ? {
+        // 新格式：数据在 data 字段内
+        temp: rawData.data.temp,
+        humi: rawData.data.humi,
+        current: rawData.data.current,
+        signalStrength: rawData.data.CSQ,
+        acState: rawData.data.airstate,
+        acError: rawData.data.air_err,
+        tempAlarm: rawData.data.alarmtemp,
+        humiAlarm: rawData.data.temperr, // temperr 用作 humiAlarm
+        recordedAt: rawData.timestamp ? new Date(parseInt(rawData.timestamp) * 1000) : new Date(),
+      }
+    : {
+        // 旧格式：数据在顶层
+        temp: rawData.temp,
+        humi: rawData.humi,
+        current: rawData.curr,
+        signalStrength: rawData.sig,
+        acState: rawData.acState,
+        acError: rawData.acErr,
+        tempAlarm: rawData.tempAlm,
+        humiAlarm: rawData.humiAlm,
+        recordedAt: rawData.ts ? new Date(rawData.ts * 1000) : new Date(),
+      };
 
   try {
     // 先确保设备存在（自动创建设备记录）
@@ -276,15 +324,15 @@ export async function handleDataUpload(deviceId: string, payload: string): Promi
     const sensorData = await prisma.sensorData.create({
       data: {
         deviceId,
-        temperature: data.temp,
-        humidity: data.humi,
-        current: data.curr,
-        signalStrength: data.sig,
-        acState: data.acState,
-        acError: data.acErr,
-        tempAlarm: data.tempAlm,
-        humiAlarm: data.humiAlm,
-        recordedAt: data.ts ? new Date(data.ts * 1000) : new Date(),
+        temperature: sensorValues.temp,
+        humidity: sensorValues.humi,
+        current: sensorValues.current,
+        signalStrength: sensorValues.signalStrength,
+        acState: sensorValues.acState,
+        acError: sensorValues.acError,
+        tempAlarm: sensorValues.tempAlarm,
+        humiAlarm: sensorValues.humiAlarm,
+        recordedAt: sensorValues.recordedAt,
       },
     });
 
@@ -300,14 +348,21 @@ export async function handleDataUpload(deviceId: string, payload: string): Promi
       CacheTTL.deviceData
     );
 
-    // 异步检查告警（不阻塞主流程）
-    checkAlarms(deviceId, data).catch(err => {
+    // 异步检查告警（不阻塞主流程）- 使用提取后的数据
+    checkAlarms(deviceId, {
+      temp: sensorValues.temp,
+      humi: sensorValues.humi,
+    }).catch((err) => {
       logger.error(`Error checking alarms for ${deviceId}`, {
         error: err instanceof Error ? err.message : String(err),
       });
     });
 
-    logger.debug(`Data received from device`, { deviceId, temp: data.temp, humi: data.humi });
+    logger.debug(`Data received from device`, {
+      deviceId,
+      temp: sensorValues.temp,
+      humi: sensorValues.humi,
+    });
   } catch (error) {
     logger.error(`Database error handling data from ${deviceId}`, {
       error: error instanceof Error ? error.message : String(error),
@@ -330,7 +385,7 @@ export async function handleParameterUpload(deviceId: string, payload: string): 
 
     if (!result.success) {
       logger.warn(`Parameter validation failed for ${deviceId}`, {
-        errors: result.error.errors.map(e => e.message).join(', '),
+        errors: result.error.errors.map((e) => e.message).join(', '),
       });
       return;
     }
@@ -455,7 +510,7 @@ export function handleMessage(topic: string, payload: Buffer): void {
 
   switch (action) {
     case 'login':
-      handleLogin(deviceId, payloadStr).catch(err => {
+      handleLogin(deviceId, payloadStr).catch((err) => {
         logger.error(`Unhandled login error for ${deviceId}`, {
           error: err instanceof Error ? err.message : String(err),
         });
@@ -463,7 +518,7 @@ export function handleMessage(topic: string, payload: Buffer): void {
       break;
     case 'datas':
     case 'getdatas_reply':
-      handleDataUpload(deviceId, payloadStr).catch(err => {
+      handleDataUpload(deviceId, payloadStr).catch((err) => {
         logger.error(`Unhandled data error for ${deviceId}`, {
           error: err instanceof Error ? err.message : String(err),
         });
@@ -471,7 +526,7 @@ export function handleMessage(topic: string, payload: Buffer): void {
       break;
     case 'parameter':
     case 'getparam_reply':
-      handleParameterUpload(deviceId, payloadStr).catch(err => {
+      handleParameterUpload(deviceId, payloadStr).catch((err) => {
         logger.error(`Unhandled parameter error for ${deviceId}`, {
           error: err instanceof Error ? err.message : String(err),
         });

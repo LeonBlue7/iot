@@ -1,0 +1,121 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: 物联网管理系统
+      - menu [ref=e7]:
+        - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]:
+            - img [ref=e10]
+          - generic [ref=e12]: 仪表盘
+        - menuitem "home 客户管理" [ref=e13] [cursor=pointer]:
+          - img "home" [ref=e14]:
+            - img [ref=e15]
+          - generic [ref=e17]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e18] [cursor=pointer]:
+          - img "appstore" [ref=e19]:
+            - img [ref=e20]
+          - generic [ref=e22]: 分区管理
+        - menuitem "folder 分组管理" [ref=e23] [cursor=pointer]:
+          - img "folder" [ref=e24]:
+            - img [ref=e25]
+          - generic [ref=e27]: 分组管理
+        - menuitem "mobile 设备管理" [ref=e28] [cursor=pointer]:
+          - img "mobile" [ref=e29]:
+            - img [ref=e30]
+          - generic [ref=e32]: 设备管理
+        - menuitem "warning 告警管理" [ref=e33] [cursor=pointer]:
+          - img "warning" [ref=e34]:
+            - img [ref=e35]
+          - generic [ref=e37]: 告警管理
+        - menuitem "bar-chart 统计分析" [ref=e38] [cursor=pointer]:
+          - img "bar-chart" [ref=e39]:
+            - img [ref=e40]
+          - generic [ref=e42]: 统计分析
+        - menuitem "team 用户管理" [active] [ref=e43] [cursor=pointer]:
+          - img "team" [ref=e44]:
+            - img [ref=e45]
+          - generic [ref=e47]: 用户管理
+      - generic [ref=e48]:
+        - separator [ref=e49]
+        - text: 层级结构
+        - generic [ref=e80]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e81]:
+            - treeitem "caret-down home 景德镇电信 (144) plus" [ref=e85]:
+              - img "caret-down" [ref=e87] [cursor=pointer]:
+                - img [ref=e88]
+              - generic "景德镇电信" [ref=e90] [cursor=pointer]:
+                - img "home" [ref=e92]:
+                  - img [ref=e93]
+                - generic [ref=e96]:
+                  - generic [ref=e98]: 景德镇电信 (144)
+                  - button "plus" [ref=e100]:
+                    - img "plus" [ref=e102]:
+                      - img [ref=e103]
+  - generic [ref=e56]:
+    - banner [ref=e57]:
+      - img "menu-fold" [ref=e59] [cursor=pointer]:
+        - img [ref=e60]
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - img "user" [ref=e64]:
+            - img [ref=e65]
+          - text: 系统管理员
+        - img "logout" [ref=e67] [cursor=pointer]:
+          - img [ref=e68]
+    - main [ref=e70]:
+      - generic [ref=e726]:
+        - generic [ref=e728]:
+          - generic [ref=e730]:
+            - img "user" [ref=e732]:
+              - img [ref=e733]
+            - generic [ref=e735]: 用户管理
+          - button "plus 新建用户" [ref=e737] [cursor=pointer]:
+            - img "plus" [ref=e739]:
+              - img [ref=e740]
+            - generic [ref=e743]: 新建用户
+        - generic [ref=e747]:
+          - table [ref=e751]:
+            - rowgroup [ref=e761]:
+              - row "用户名 姓名 邮箱 所属客户 类型 状态 最后登录 操作" [ref=e762]:
+                - columnheader "用户名" [ref=e763]
+                - columnheader "姓名" [ref=e764]
+                - columnheader "邮箱" [ref=e765]
+                - columnheader "所属客户" [ref=e766]
+                - columnheader "类型" [ref=e767]
+                - columnheader "状态" [ref=e768]
+                - columnheader "最后登录" [ref=e769]
+                - columnheader "操作" [ref=e770]
+            - rowgroup [ref=e771]:
+              - row "admin 系统管理员 admin@example.com - 普通用户 启用 2026/4/6 00:12:37 edit 编辑 delete 删除" [ref=e772]:
+                - cell "admin" [ref=e773]
+                - cell "系统管理员" [ref=e774]
+                - cell "admin@example.com" [ref=e775]
+                - cell "-" [ref=e776]
+                - cell "普通用户" [ref=e777]:
+                  - generic [ref=e778]: 普通用户
+                - cell "启用" [ref=e779]:
+                  - generic [ref=e780]: 启用
+                - cell "2026/4/6 00:12:37" [ref=e781]
+                - cell "edit 编辑 delete 删除" [ref=e782]:
+                  - generic [ref=e783]:
+                    - button "edit 编辑" [ref=e785] [cursor=pointer]:
+                      - img "edit" [ref=e787]:
+                        - img [ref=e788]
+                      - generic [ref=e790]: 编辑
+                    - button "delete 删除" [ref=e792] [cursor=pointer]:
+                      - img "delete" [ref=e794]:
+                        - img [ref=e795]
+                      - generic [ref=e797]: 删除
+          - list [ref=e798]:
+            - listitem "上一页" [ref=e799]:
+              - button "left" [disabled] [ref=e800]:
+                - img "left" [ref=e801]:
+                  - img [ref=e802]
+            - listitem "1" [ref=e804] [cursor=pointer]:
+              - generic [ref=e805]: "1"
+            - listitem "下一页" [ref=e806]:
+              - button "right" [disabled] [ref=e807]:
+                - img "right" [ref=e808]:
+                  - img [ref=e809]

@@ -1,0 +1,133 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e55]:
+    - complementary [ref=e56]:
+      - generic [ref=e57]:
+        - generic [ref=e58]: 物联网管理系统
+        - menu [ref=e59]:
+          - menuitem "dashboard 仪表盘" [ref=e60] [cursor=pointer]:
+            - img "dashboard" [ref=e61]:
+              - img [ref=e62]
+            - generic [ref=e64]: 仪表盘
+          - menuitem "home 客户管理" [ref=e65] [cursor=pointer]:
+            - img "home" [ref=e66]:
+              - img [ref=e67]
+            - generic [ref=e69]: 客户管理
+          - menuitem "appstore 分区管理" [ref=e70] [cursor=pointer]:
+            - img "appstore" [ref=e71]:
+              - img [ref=e72]
+            - generic [ref=e74]: 分区管理
+          - menuitem "folder 分组管理" [ref=e75] [cursor=pointer]:
+            - img "folder" [ref=e76]:
+              - img [ref=e77]
+            - generic [ref=e79]: 分组管理
+          - menuitem "mobile 设备管理" [ref=e80] [cursor=pointer]:
+            - img "mobile" [ref=e81]:
+              - img [ref=e82]
+            - generic [ref=e84]: 设备管理
+          - menuitem "warning 告警管理" [ref=e85] [cursor=pointer]:
+            - img "warning" [ref=e86]:
+              - img [ref=e87]
+            - generic [ref=e89]: 告警管理
+          - menuitem "bar-chart 统计分析" [ref=e90] [cursor=pointer]:
+            - img "bar-chart" [ref=e91]:
+              - img [ref=e92]
+            - generic [ref=e94]: 统计分析
+          - menuitem "team 用户管理" [ref=e95] [cursor=pointer]:
+            - img "team" [ref=e96]:
+              - img [ref=e97]
+            - generic [ref=e99]: 用户管理
+        - generic [ref=e100]:
+          - separator [ref=e101]
+          - text: 层级结构
+          - generic [ref=e102]:
+            - generic:
+              - generic:
+                - generic:
+                  - textbox "for screen reader"
+                - tree:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - treeitem "caret-down home 景德镇电信 (144) plus" [expanded]:
+                          - generic:
+                            - img "caret-down":
+                              - img
+                          - generic "景德镇电信":
+                            - generic:
+                              - img "home":
+                                - img
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: 景德镇电信 (144)
+                                - generic:
+                                  - button "plus":
+                                    - generic:
+                                      - img "plus":
+                                        - img
+                        - treeitem "caret-down appstore 电信大楼本部 (144) plus":
+                          - generic:
+                            - img "caret-down":
+                              - img
+                          - generic "电信大楼本部":
+                            - generic:
+                              - img "appstore":
+                                - img
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: 电信大楼本部 (144)
+                                - generic:
+                                  - button "plus":
+                                    - generic:
+                                      - img "plus":
+                                        - img
+    - generic [ref=e110]:
+      - banner [ref=e111]:
+        - img "menu-fold" [ref=e113] [cursor=pointer]:
+          - img [ref=e114]
+        - generic [ref=e116]:
+          - generic [ref=e117]:
+            - img "user" [ref=e118]:
+              - img [ref=e119]
+            - text: 系统管理员
+          - img "logout" [ref=e121] [cursor=pointer]:
+            - img [ref=e122]
+      - main [ref=e124]:
+        - generic [ref=e125]:
+          - heading "仪表盘" [level=1] [ref=e126]
+          - generic [ref=e127]:
+            - generic [ref=e131]:
+              - generic [ref=e132]: 设备总数
+              - generic [ref=e133]:
+                - img "mobile" [ref=e135]:
+                  - img [ref=e136]
+                - generic [ref=e138]: "144"
+            - generic [ref=e142]:
+              - generic [ref=e143]: 在线设备
+              - generic [ref=e144]:
+                - img "check-circle" [ref=e146]:
+                  - img [ref=e147]
+                - generic [ref=e150]: "144"
+            - generic [ref=e154]:
+              - generic [ref=e155]: 离线设备
+              - generic [ref=e156]:
+                - img "close-circle" [ref=e158]:
+                  - img [ref=e159]
+                - generic [ref=e161]: "0"
+            - generic [ref=e165]:
+              - generic [ref=e166]: 未处理告警
+              - generic [ref=e167]:
+                - img "warning" [ref=e169]:
+                  - img [ref=e170]
+                - generic [ref=e172]: "0"
+          - generic [ref=e173]:
+            - generic [ref=e176]: 最近告警
+            - alert [ref=e178]:
+              - img "check-circle" [ref=e179]:
+                - img [ref=e180]
+              - generic [ref=e183]: 暂无告警记录
+  - generic [ref=e185]:
+    - img "check-circle" [ref=e186]:
+      - img [ref=e187]
+    - generic [ref=e189]: 登录成功

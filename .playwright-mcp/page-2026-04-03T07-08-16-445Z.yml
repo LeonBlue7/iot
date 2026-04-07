@@ -1,0 +1,197 @@
+- generic [ref=e44]:
+  - complementary [ref=e45]:
+    - generic [ref=e46]:
+      - generic [ref=e47]: 物联网管理系统
+      - menu [ref=e48]:
+        - menuitem "dashboard 仪表盘" [ref=e49] [cursor=pointer]:
+          - img "dashboard" [ref=e50]:
+            - img [ref=e51]
+          - generic [ref=e53]: 仪表盘
+        - menuitem "home 客户管理" [ref=e54] [cursor=pointer]:
+          - img "home" [ref=e55]:
+            - img [ref=e56]
+          - generic [ref=e58]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e59] [cursor=pointer]:
+          - img "appstore" [ref=e60]:
+            - img [ref=e61]
+          - generic [ref=e63]: 分区管理
+        - menuitem "folder 分组管理" [ref=e64] [cursor=pointer]:
+          - img "folder" [ref=e65]:
+            - img [ref=e66]
+          - generic [ref=e68]: 分组管理
+        - menuitem "mobile 设备管理" [active] [ref=e69] [cursor=pointer]:
+          - img "mobile" [ref=e70]:
+            - img [ref=e71]
+          - generic [ref=e73]: 设备管理
+        - menuitem "warning 告警管理" [ref=e74] [cursor=pointer]:
+          - img "warning" [ref=e75]:
+            - img [ref=e76]
+          - generic [ref=e78]: 告警管理
+        - menuitem "bar-chart 统计分析" [ref=e79] [cursor=pointer]:
+          - img "bar-chart" [ref=e80]:
+            - img [ref=e81]
+          - generic [ref=e83]: 统计分析
+        - menuitem "team 用户管理" [ref=e84] [cursor=pointer]:
+          - img "team" [ref=e85]:
+            - img [ref=e86]
+          - generic [ref=e88]: 用户管理
+      - generic [ref=e89]:
+        - separator [ref=e90]
+        - text: 层级结构
+        - generic [ref=e93]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e94]:
+            - generic [ref=e97]:
+              - treeitem "caret-down home 默认客户 (0) plus" [expanded] [ref=e98]:
+                - img "caret-down" [ref=e100] [cursor=pointer]:
+                  - img [ref=e101]
+                - generic "默认客户" [ref=e103] [cursor=pointer]:
+                  - img "home" [ref=e105]:
+                    - img [ref=e106]
+                  - generic [ref=e109]:
+                    - generic [ref=e111]: 默认客户 (0)
+                    - button "plus" [ref=e113]:
+                      - img "plus" [ref=e115]:
+                        - img [ref=e116]
+              - treeitem "appstore 测试分区 (0) plus" [ref=e510]:
+                - generic "测试分区" [ref=e513] [cursor=pointer]:
+                  - img "appstore" [ref=e515]:
+                    - img [ref=e516]
+                  - generic [ref=e519]:
+                    - generic [ref=e521]: 测试分区 (0)
+                    - button "plus" [ref=e523]:
+                      - img "plus" [ref=e525]:
+                        - img [ref=e526]
+              - treeitem "caret-down appstore 默认分区 (0) plus" [ref=e119]:
+                - img "caret-down" [ref=e122] [cursor=pointer]:
+                  - img [ref=e123]
+                - generic "默认分区" [ref=e125] [cursor=pointer]:
+                  - img "appstore" [ref=e127]:
+                    - img [ref=e128]
+                  - generic [ref=e131]:
+                    - generic [ref=e133]: 默认分区 (0)
+                    - button "plus" [ref=e135]:
+                      - img "plus" [ref=e137]:
+                        - img [ref=e138]
+  - generic [ref=e141]:
+    - banner [ref=e142]:
+      - img "menu-fold" [ref=e144] [cursor=pointer]:
+        - img [ref=e145]
+      - generic [ref=e147]:
+        - generic [ref=e148]:
+          - img "user" [ref=e149]:
+            - img [ref=e150]
+          - text: 系统管理员
+        - img "logout" [ref=e152] [cursor=pointer]:
+          - img [ref=e153]
+    - main [ref=e155]:
+      - generic [ref=e535]:
+        - generic [ref=e536]:
+          - generic [ref=e537]:
+            - heading "设备管理" [level=1] [ref=e538]
+            - navigation [ref=e539]:
+              - list [ref=e540]:
+                - listitem [ref=e541]:
+                  - generic [ref=e542]:
+                    - img "home" [ref=e543]:
+                      - img [ref=e544]
+                    - text: 全部设备
+                - listitem [ref=e546]: /
+                - listitem [ref=e547]: 分区
+          - button "reload 刷新" [ref=e548] [cursor=pointer]:
+            - img "reload" [ref=e550]:
+              - img [ref=e551]
+            - generic [ref=e553]: 刷新
+        - generic [ref=e556]:
+          - textbox "搜索设备..." [ref=e558]
+          - generic [ref=e560] [cursor=pointer]:
+            - generic [ref=e562]:
+              - combobox [ref=e564]
+              - generic: 选择客户
+            - generic:
+              - img:
+                - img
+          - generic [ref=e566] [cursor=pointer]:
+            - generic [ref=e568]:
+              - combobox [ref=e570]
+              - generic: 选择分区
+            - generic:
+              - img:
+                - img
+          - generic [ref=e572] [cursor=pointer]:
+            - generic [ref=e574]:
+              - combobox [ref=e576]
+              - generic: 选择分组
+            - generic:
+              - img:
+                - img
+          - button "search 搜索" [ref=e578] [cursor=pointer]:
+            - img "search" [ref=e580]:
+              - img [ref=e581]
+            - generic [ref=e583]: 搜索
+          - button "reload 重置" [ref=e585] [cursor=pointer]:
+            - img "reload" [ref=e587]:
+              - img [ref=e588]
+            - generic [ref=e590]: 重置
+        - generic [ref=e592]:
+          - generic [ref=e594]: 已选中 0 项设备
+          - button "poweroff 开启" [disabled] [ref=e596]:
+            - generic:
+              - img "poweroff":
+                - img
+            - generic: 开启
+          - button "poweroff 关闭" [disabled] [ref=e598]:
+            - generic:
+              - img "poweroff":
+                - img
+            - generic: 关闭
+          - button "reload 重启" [disabled] [ref=e600]:
+            - generic:
+              - img "reload":
+                - img
+            - generic: 重启
+          - button "folder 移动分组" [disabled] [ref=e602]:
+            - generic:
+              - img "folder":
+                - img
+            - generic: 移动分组
+          - button "setting 设置参数" [disabled] [ref=e604]:
+            - generic:
+              - img "setting":
+                - img
+            - generic: 设置参数
+          - button "check-circle 启用" [disabled] [ref=e606]:
+            - generic:
+              - img "check-circle":
+                - img
+            - generic: 启用
+          - button "stop 禁用" [disabled] [ref=e608]:
+            - generic:
+              - img "stop":
+                - img
+            - generic: 禁用
+          - button "delete 删除" [disabled] [ref=e610]:
+            - generic:
+              - img "delete":
+                - img
+            - generic: 删除
+        - table [ref=e619]:
+          - rowgroup [ref=e623]:
+            - row "Select all 设备ID 名称 SIM卡号 状态 启用状态 最后在线" [ref=e624]:
+              - columnheader "Select all" [ref=e625]:
+                - generic [ref=e627]:
+                  - generic:
+                    - checkbox "Select all" [disabled]
+              - columnheader "设备ID" [ref=e628]
+              - columnheader "名称" [ref=e629]
+              - columnheader "SIM卡号" [ref=e630]
+              - columnheader "状态" [ref=e631]
+              - columnheader "启用状态" [ref=e632]
+              - columnheader "最后在线" [ref=e633]
+          - rowgroup [ref=e634]:
+            - row "暂无数据 暂无数据" [ref=e635]:
+              - cell "暂无数据 暂无数据" [ref=e636]:
+                - generic [ref=e637]:
+                  - img "暂无数据" [ref=e639]
+                  - generic [ref=e645]: 暂无数据

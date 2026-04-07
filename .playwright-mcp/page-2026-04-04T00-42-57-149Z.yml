@@ -1,0 +1,179 @@
+- generic [ref=e44]:
+  - complementary [ref=e45]:
+    - generic [ref=e46]:
+      - generic [ref=e47]: 物联网管理系统
+      - menu [ref=e48]:
+        - menuitem "dashboard 仪表盘" [ref=e49] [cursor=pointer]:
+          - img "dashboard" [ref=e50]:
+            - img [ref=e51]
+          - generic [ref=e53]: 仪表盘
+        - menuitem "home 客户管理" [ref=e54] [cursor=pointer]:
+          - img "home" [ref=e55]:
+            - img [ref=e56]
+          - generic [ref=e58]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e59] [cursor=pointer]:
+          - img "appstore" [ref=e60]:
+            - img [ref=e61]
+          - generic [ref=e63]: 分区管理
+        - menuitem "folder 分组管理" [active] [ref=e64] [cursor=pointer]:
+          - img "folder" [ref=e65]:
+            - img [ref=e66]
+          - generic [ref=e68]: 分组管理
+        - menuitem "mobile 设备管理" [ref=e69] [cursor=pointer]:
+          - img "mobile" [ref=e70]:
+            - img [ref=e71]
+          - generic [ref=e73]: 设备管理
+        - menuitem "warning 告警管理" [ref=e74] [cursor=pointer]:
+          - img "warning" [ref=e75]:
+            - img [ref=e76]
+          - generic [ref=e78]: 告警管理
+        - menuitem "bar-chart 统计分析" [ref=e79] [cursor=pointer]:
+          - img "bar-chart" [ref=e80]:
+            - img [ref=e81]
+          - generic [ref=e83]: 统计分析
+        - menuitem "team 用户管理" [ref=e84] [cursor=pointer]:
+          - img "team" [ref=e85]:
+            - img [ref=e86]
+          - generic [ref=e88]: 用户管理
+      - generic [ref=e89]:
+        - separator [ref=e90]
+        - text: 层级结构
+        - generic [ref=e93]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e94]:
+            - treeitem "caret-down home 默认客户 (0) plus" [ref=e98]:
+              - img "caret-down" [ref=e100] [cursor=pointer]:
+                - img [ref=e101]
+              - generic "默认客户" [ref=e103] [cursor=pointer]:
+                - img "home" [ref=e105]:
+                  - img [ref=e106]
+                - generic [ref=e109]:
+                  - generic [ref=e111]: 默认客户 (0)
+                  - button "plus" [ref=e113]:
+                    - img "plus" [ref=e115]:
+                      - img [ref=e116]
+  - generic [ref=e119]:
+    - banner [ref=e120]:
+      - img "menu-fold" [ref=e122] [cursor=pointer]:
+        - img [ref=e123]
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - img "user" [ref=e127]:
+            - img [ref=e128]
+          - text: 系统管理员
+        - img "logout" [ref=e130] [cursor=pointer]:
+          - img [ref=e131]
+    - main [ref=e133]:
+      - generic [ref=e373]:
+        - generic [ref=e374]:
+          - heading "分组管理" [level=1] [ref=e375]
+          - button "plus 新建分组" [ref=e376] [cursor=pointer]:
+            - img "plus" [ref=e378]:
+              - img [ref=e379]
+            - generic [ref=e382]: 新建分组
+        - table [ref=e391]:
+          - rowgroup [ref=e398]:
+            - row "ID 分组名称 所属分区 设备数量 操作" [ref=e399]:
+              - columnheader "ID" [ref=e400]
+              - columnheader "分组名称" [ref=e401]
+              - columnheader "所属分区" [ref=e402]
+              - columnheader "设备数量" [ref=e403]
+              - columnheader "操作" [ref=e404]
+          - rowgroup [ref=e405]:
+            - row "6 Updated_Group_Name 默认分区 0 edit 编辑 delete 删除" [ref=e406]:
+              - cell "6" [ref=e407]
+              - cell "Updated_Group_Name" [ref=e408]
+              - cell "默认分区" [ref=e409]
+              - cell "0" [ref=e410]:
+                - generic [ref=e411]: "0"
+              - cell "edit 编辑 delete 删除" [ref=e412]:
+                - generic [ref=e413]:
+                  - button "edit 编辑" [ref=e415] [cursor=pointer]:
+                    - img "edit" [ref=e417]:
+                      - img [ref=e418]
+                    - generic [ref=e420]: 编辑
+                  - button "delete 删除" [ref=e422] [cursor=pointer]:
+                    - img "delete" [ref=e424]:
+                      - img [ref=e425]
+                    - generic [ref=e427]: 删除
+            - row "5 Updated_Group_Name 默认分区 0 edit 编辑 delete 删除" [ref=e428]:
+              - cell "5" [ref=e429]
+              - cell "Updated_Group_Name" [ref=e430]
+              - cell "默认分区" [ref=e431]
+              - cell "0" [ref=e432]:
+                - generic [ref=e433]: "0"
+              - cell "edit 编辑 delete 删除" [ref=e434]:
+                - generic [ref=e435]:
+                  - button "edit 编辑" [ref=e437] [cursor=pointer]:
+                    - img "edit" [ref=e439]:
+                      - img [ref=e440]
+                    - generic [ref=e442]: 编辑
+                  - button "delete 删除" [ref=e444] [cursor=pointer]:
+                    - img "delete" [ref=e446]:
+                      - img [ref=e447]
+                    - generic [ref=e449]: 删除
+            - row "4 Updated_Group_Name 默认分区 0 edit 编辑 delete 删除" [ref=e450]:
+              - cell "4" [ref=e451]
+              - cell "Updated_Group_Name" [ref=e452]
+              - cell "默认分区" [ref=e453]
+              - cell "0" [ref=e454]:
+                - generic [ref=e455]: "0"
+              - cell "edit 编辑 delete 删除" [ref=e456]:
+                - generic [ref=e457]:
+                  - button "edit 编辑" [ref=e459] [cursor=pointer]:
+                    - img "edit" [ref=e461]:
+                      - img [ref=e462]
+                    - generic [ref=e464]: 编辑
+                  - button "delete 删除" [ref=e466] [cursor=pointer]:
+                    - img "delete" [ref=e468]:
+                      - img [ref=e469]
+                    - generic [ref=e471]: 删除
+            - row "3 Updated_Group_Name 默认分区 0 edit 编辑 delete 删除" [ref=e472]:
+              - cell "3" [ref=e473]
+              - cell "Updated_Group_Name" [ref=e474]
+              - cell "默认分区" [ref=e475]
+              - cell "0" [ref=e476]:
+                - generic [ref=e477]: "0"
+              - cell "edit 编辑 delete 删除" [ref=e478]:
+                - generic [ref=e479]:
+                  - button "edit 编辑" [ref=e481] [cursor=pointer]:
+                    - img "edit" [ref=e483]:
+                      - img [ref=e484]
+                    - generic [ref=e486]: 编辑
+                  - button "delete 删除" [ref=e488] [cursor=pointer]:
+                    - img "delete" [ref=e490]:
+                      - img [ref=e491]
+                    - generic [ref=e493]: 删除
+            - row "2 Updated_Group_Name 默认分区 0 edit 编辑 delete 删除" [ref=e494]:
+              - cell "2" [ref=e495]
+              - cell "Updated_Group_Name" [ref=e496]
+              - cell "默认分区" [ref=e497]
+              - cell "0" [ref=e498]:
+                - generic [ref=e499]: "0"
+              - cell "edit 编辑 delete 删除" [ref=e500]:
+                - generic [ref=e501]:
+                  - button "edit 编辑" [ref=e503] [cursor=pointer]:
+                    - img "edit" [ref=e505]:
+                      - img [ref=e506]
+                    - generic [ref=e508]: 编辑
+                  - button "delete 删除" [ref=e510] [cursor=pointer]:
+                    - img "delete" [ref=e512]:
+                      - img [ref=e513]
+                    - generic [ref=e515]: 删除
+            - row "999 Updated_Group_Name 默认分区 0 edit 编辑 delete 删除" [ref=e516]:
+              - cell "999" [ref=e517]
+              - cell "Updated_Group_Name" [ref=e518]
+              - cell "默认分区" [ref=e519]
+              - cell "0" [ref=e520]:
+                - generic [ref=e521]: "0"
+              - cell "edit 编辑 delete 删除" [ref=e522]:
+                - generic [ref=e523]:
+                  - button "edit 编辑" [ref=e525] [cursor=pointer]:
+                    - img "edit" [ref=e527]:
+                      - img [ref=e528]
+                    - generic [ref=e530]: 编辑
+                  - button "delete 删除" [ref=e532] [cursor=pointer]:
+                    - img "delete" [ref=e534]:
+                      - img [ref=e535]
+                    - generic [ref=e537]: 删除

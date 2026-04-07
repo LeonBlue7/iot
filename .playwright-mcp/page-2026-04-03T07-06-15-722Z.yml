@@ -1,0 +1,112 @@
+- generic [ref=e44]:
+  - complementary [ref=e45]:
+    - generic [ref=e46]:
+      - generic [ref=e47]: 物联网管理系统
+      - menu [ref=e48]:
+        - menuitem "dashboard 仪表盘" [ref=e49] [cursor=pointer]:
+          - img "dashboard" [ref=e50]:
+            - img [ref=e51]
+          - generic [ref=e53]: 仪表盘
+        - menuitem "home 客户管理" [active] [ref=e54] [cursor=pointer]:
+          - img "home" [ref=e55]:
+            - img [ref=e56]
+          - generic [ref=e58]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e59] [cursor=pointer]:
+          - img "appstore" [ref=e60]:
+            - img [ref=e61]
+          - generic [ref=e63]: 分区管理
+        - menuitem "folder 分组管理" [ref=e64] [cursor=pointer]:
+          - img "folder" [ref=e65]:
+            - img [ref=e66]
+          - generic [ref=e68]: 分组管理
+        - menuitem "mobile 设备管理" [ref=e69] [cursor=pointer]:
+          - img "mobile" [ref=e70]:
+            - img [ref=e71]
+          - generic [ref=e73]: 设备管理
+        - menuitem "warning 告警管理" [ref=e74] [cursor=pointer]:
+          - img "warning" [ref=e75]:
+            - img [ref=e76]
+          - generic [ref=e78]: 告警管理
+        - menuitem "bar-chart 统计分析" [ref=e79] [cursor=pointer]:
+          - img "bar-chart" [ref=e80]:
+            - img [ref=e81]
+          - generic [ref=e83]: 统计分析
+        - menuitem "team 用户管理" [ref=e84] [cursor=pointer]:
+          - img "team" [ref=e85]:
+            - img [ref=e86]
+          - generic [ref=e88]: 用户管理
+      - generic [ref=e89]:
+        - separator [ref=e90]
+        - text: 层级结构
+        - generic [ref=e93]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e94]:
+            - generic [ref=e97]:
+              - treeitem "caret-down home 默认客户 (0) plus" [expanded] [ref=e98]:
+                - img "caret-down" [ref=e100] [cursor=pointer]:
+                  - img [ref=e101]
+                - generic "默认客户" [ref=e103] [cursor=pointer]:
+                  - img "home" [ref=e105]:
+                    - img [ref=e106]
+                  - generic [ref=e109]:
+                    - generic [ref=e111]: 默认客户 (0)
+                    - button "plus" [ref=e113]:
+                      - img "plus" [ref=e115]:
+                        - img [ref=e116]
+              - treeitem "caret-down appstore 默认分区 (0) plus" [ref=e119]:
+                - img "caret-down" [ref=e122] [cursor=pointer]:
+                  - img [ref=e123]
+                - generic "默认分区" [ref=e125] [cursor=pointer]:
+                  - img "appstore" [ref=e127]:
+                    - img [ref=e128]
+                  - generic [ref=e131]:
+                    - generic [ref=e133]: 默认分区 (0)
+                    - button "plus" [ref=e135]:
+                      - img "plus" [ref=e137]:
+                        - img [ref=e138]
+  - generic [ref=e141]:
+    - banner [ref=e142]:
+      - img "menu-fold" [ref=e144] [cursor=pointer]:
+        - img [ref=e145]
+      - generic [ref=e147]:
+        - generic [ref=e148]:
+          - img "user" [ref=e149]:
+            - img [ref=e150]
+          - text: 系统管理员
+        - img "logout" [ref=e152] [cursor=pointer]:
+          - img [ref=e153]
+    - main [ref=e155]:
+      - generic [ref=e221]:
+        - generic [ref=e222]:
+          - heading "客户管理" [level=1] [ref=e223]
+          - button "plus 新建客户" [ref=e224] [cursor=pointer]:
+            - img "plus" [ref=e226]:
+              - img [ref=e227]
+            - generic [ref=e230]: 新建客户
+        - table [ref=e239]:
+          - rowgroup [ref=e246]:
+            - row "ID 客户名称 分区数量 创建时间 操作" [ref=e247]:
+              - columnheader "ID" [ref=e248]
+              - columnheader "客户名称" [ref=e249]
+              - columnheader "分区数量" [ref=e250]
+              - columnheader "创建时间" [ref=e251]
+              - columnheader "操作" [ref=e252]
+          - rowgroup [ref=e253]:
+            - row "1 默认客户 1 2026/4/3 09:58:59 edit 编辑 delete 删除" [ref=e254]:
+              - cell "1" [ref=e255]
+              - cell "默认客户" [ref=e256]
+              - cell "1" [ref=e257]:
+                - generic [ref=e258]: "1"
+              - cell "2026/4/3 09:58:59" [ref=e259]
+              - cell "edit 编辑 delete 删除" [ref=e260]:
+                - generic [ref=e261]:
+                  - button "edit 编辑" [ref=e263] [cursor=pointer]:
+                    - img "edit" [ref=e265]:
+                      - img [ref=e266]
+                    - generic [ref=e268]: 编辑
+                  - button "delete 删除" [disabled] [ref=e270]:
+                    - generic:
+                      - img "delete":
+                        - img
+                    - generic: 删除

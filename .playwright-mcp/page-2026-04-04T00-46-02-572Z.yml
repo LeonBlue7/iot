@@ -1,0 +1,104 @@
+- generic [ref=e1]:
+  - generic [ref=e44]:
+    - complementary [ref=e45]:
+      - generic [ref=e46]:
+        - generic [ref=e47]: 物联网管理系统
+        - menu [ref=e48]:
+          - menuitem "dashboard 仪表盘" [ref=e49] [cursor=pointer]:
+            - img "dashboard" [ref=e50]:
+              - img [ref=e51]
+            - generic [ref=e53]: 仪表盘
+          - menuitem "home 客户管理" [ref=e54] [cursor=pointer]:
+            - img "home" [ref=e55]:
+              - img [ref=e56]
+            - generic [ref=e58]: 客户管理
+          - menuitem "appstore 分区管理" [ref=e59] [cursor=pointer]:
+            - img "appstore" [ref=e60]:
+              - img [ref=e61]
+            - generic [ref=e63]: 分区管理
+          - menuitem "folder 分组管理" [ref=e64] [cursor=pointer]:
+            - img "folder" [ref=e65]:
+              - img [ref=e66]
+            - generic [ref=e68]: 分组管理
+          - menuitem "mobile 设备管理" [ref=e69] [cursor=pointer]:
+            - img "mobile" [ref=e70]:
+              - img [ref=e71]
+            - generic [ref=e73]: 设备管理
+          - menuitem "warning 告警管理" [ref=e74] [cursor=pointer]:
+            - img "warning" [ref=e75]:
+              - img [ref=e76]
+            - generic [ref=e78]: 告警管理
+          - menuitem "bar-chart 统计分析" [active] [ref=e79] [cursor=pointer]:
+            - img "bar-chart" [ref=e80]:
+              - img [ref=e81]
+            - generic [ref=e83]: 统计分析
+          - menuitem "team 用户管理" [ref=e84] [cursor=pointer]:
+            - img "team" [ref=e85]:
+              - img [ref=e86]
+            - generic [ref=e88]: 用户管理
+        - generic [ref=e89]:
+          - separator [ref=e90]
+          - text: 层级结构
+          - generic [ref=e93]:
+            - generic:
+              - textbox "for screen reader"
+            - tree [ref=e94]:
+              - treeitem "caret-down home 默认客户 (0) plus" [ref=e98]:
+                - img "caret-down" [ref=e100] [cursor=pointer]:
+                  - img [ref=e101]
+                - generic "默认客户" [ref=e103] [cursor=pointer]:
+                  - img "home" [ref=e105]:
+                    - img [ref=e106]
+                  - generic [ref=e109]:
+                    - generic [ref=e111]: 默认客户 (0)
+                    - button "plus" [ref=e113]:
+                      - img "plus" [ref=e115]:
+                        - img [ref=e116]
+    - generic [ref=e119]:
+      - banner [ref=e120]:
+        - img "menu-fold" [ref=e122] [cursor=pointer]:
+          - img [ref=e123]
+        - generic [ref=e125]:
+          - generic [ref=e126]:
+            - img "user" [ref=e127]:
+              - img [ref=e128]
+            - text: 系统管理员
+          - img "logout" [ref=e130] [cursor=pointer]:
+            - img [ref=e131]
+      - main [ref=e133]:
+        - generic [ref=e803]:
+          - heading "统计分析" [level=1] [ref=e804]
+          - generic [ref=e805]:
+            - generic [ref=e807]:
+              - generic [ref=e810]: 24 小时温度趋势
+              - generic [ref=e813]:
+                - img [ref=e814]:
+                  - generic [ref=e819]:
+                    - generic [ref=e821]: 00:00
+                    - generic [ref=e823]: 04:00
+                    - generic [ref=e825]: 08:00
+                    - generic [ref=e827]: 12:00
+                    - generic [ref=e829]: 16:00
+                    - generic [ref=e831]: 20:00
+                  - generic [ref=e833]:
+                    - generic [ref=e835]: "0"
+                    - generic [ref=e837]: "15"
+                    - generic [ref=e839]: "30"
+                    - generic [ref=e841]: "45"
+                    - generic [ref=e843]: "60"
+                - list [ref=e863]:
+                  - listitem [ref=e864]:
+                    - img [ref=e865]
+                    - text: 温度 (°C)
+                  - listitem [ref=e867]:
+                    - img [ref=e868]
+                    - text: 湿度 (%)
+            - generic [ref=e871]:
+              - generic [ref=e874]: 设备在线率
+              - alert [ref=e876]:
+                - img "check-circle" [ref=e877]:
+                  - img [ref=e878]
+                - generic [ref=e880]:
+                  - generic [ref=e881]: 设备在线率统计
+                  - generic [ref=e882]: 当前所有设备在线率为 100%，系统运行正常。
+  - generic [ref=e883]: "0"

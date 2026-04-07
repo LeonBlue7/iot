@@ -1,0 +1,117 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: 物联网管理系统
+      - menu [ref=e7]:
+        - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]:
+            - img [ref=e10]
+          - generic [ref=e12]: 仪表盘
+        - menuitem "home 客户管理" [ref=e13] [cursor=pointer]:
+          - img "home" [ref=e14]:
+            - img [ref=e15]
+          - generic [ref=e17]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e18] [cursor=pointer]:
+          - img "appstore" [ref=e19]:
+            - img [ref=e20]
+          - generic [ref=e22]: 分区管理
+        - menuitem "folder 分组管理" [active] [ref=e23] [cursor=pointer]:
+          - img "folder" [ref=e24]:
+            - img [ref=e25]
+          - generic [ref=e27]: 分组管理
+        - menuitem "mobile 设备管理" [ref=e28] [cursor=pointer]:
+          - img "mobile" [ref=e29]:
+            - img [ref=e30]
+          - generic [ref=e32]: 设备管理
+        - menuitem "warning 告警管理" [ref=e33] [cursor=pointer]:
+          - img "warning" [ref=e34]:
+            - img [ref=e35]
+          - generic [ref=e37]: 告警管理
+        - menuitem "bar-chart 统计分析" [ref=e38] [cursor=pointer]:
+          - img "bar-chart" [ref=e39]:
+            - img [ref=e40]
+          - generic [ref=e42]: 统计分析
+        - menuitem "team 用户管理" [ref=e43] [cursor=pointer]:
+          - img "team" [ref=e44]:
+            - img [ref=e45]
+          - generic [ref=e47]: 用户管理
+      - generic [ref=e48]:
+        - separator [ref=e49]
+        - text: 层级结构
+        - generic [ref=e158]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e159]:
+            - treeitem "caret-down home 景德镇电信 (144) plus" [ref=e163]:
+              - img "caret-down" [ref=e165] [cursor=pointer]:
+                - img [ref=e166]
+              - generic "景德镇电信" [ref=e168] [cursor=pointer]:
+                - img "home" [ref=e170]:
+                  - img [ref=e171]
+                - generic [ref=e174]:
+                  - generic [ref=e176]: 景德镇电信 (144)
+                  - button "plus" [ref=e178]:
+                    - img "plus" [ref=e180]:
+                      - img [ref=e181]
+  - generic [ref=e56]:
+    - banner [ref=e57]:
+      - img "menu-fold" [ref=e59] [cursor=pointer]:
+        - img [ref=e60]
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - img "user" [ref=e64]:
+            - img [ref=e65]
+          - text: 系统管理员
+        - img "logout" [ref=e67] [cursor=pointer]:
+          - img [ref=e68]
+    - main [ref=e70]:
+      - generic [ref=e2267]:
+        - generic [ref=e2268]:
+          - heading "分组管理" [level=1] [ref=e2269]
+          - button "plus 新建分组" [ref=e2270] [cursor=pointer]:
+            - img "plus" [ref=e2272]:
+              - img [ref=e2273]
+            - generic [ref=e2276]: 新建分组
+        - table [ref=e2285]:
+          - rowgroup [ref=e2292]:
+            - row "ID 分组名称 所属分区 设备数量 操作" [ref=e2293]:
+              - columnheader "ID" [ref=e2294]
+              - columnheader "分组名称" [ref=e2295]
+              - columnheader "所属分区" [ref=e2296]
+              - columnheader "设备数量" [ref=e2297]
+              - columnheader "操作" [ref=e2298]
+          - rowgroup [ref=e2299]:
+            - row "999 默认分组 电信大楼本部 94 edit 编辑 delete 删除" [ref=e2300]:
+              - cell "999" [ref=e2301]
+              - cell "默认分组" [ref=e2302]
+              - cell "电信大楼本部" [ref=e2303]
+              - cell "94" [ref=e2304]:
+                - generic [ref=e2305]: "94"
+              - cell "edit 编辑 delete 删除" [ref=e2306]:
+                - generic [ref=e2307]:
+                  - button "edit 编辑" [ref=e2309] [cursor=pointer]:
+                    - img "edit" [ref=e2311]:
+                      - img [ref=e2312]
+                    - generic [ref=e2314]: 编辑
+                  - button "delete 删除" [disabled] [ref=e2316]:
+                    - generic:
+                      - img "delete":
+                        - img
+                    - generic: 删除
+            - row "1 景德镇电信本部大楼 电信大楼本部 50 edit 编辑 delete 删除" [ref=e2317]:
+              - cell "1" [ref=e2318]
+              - cell "景德镇电信本部大楼" [ref=e2319]
+              - cell "电信大楼本部" [ref=e2320]
+              - cell "50" [ref=e2321]:
+                - generic [ref=e2322]: "50"
+              - cell "edit 编辑 delete 删除" [ref=e2323]:
+                - generic [ref=e2324]:
+                  - button "edit 编辑" [ref=e2326] [cursor=pointer]:
+                    - img "edit" [ref=e2328]:
+                      - img [ref=e2329]
+                    - generic [ref=e2331]: 编辑
+                  - button "delete 删除" [disabled] [ref=e2333]:
+                    - generic:
+                      - img "delete":
+                        - img
+                    - generic: 删除

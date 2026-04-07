@@ -1,0 +1,141 @@
+- generic [ref=e44]:
+  - complementary [ref=e45]:
+    - generic [ref=e46]:
+      - generic [ref=e47]: 物联网管理系统
+      - menu [ref=e48]:
+        - menuitem "dashboard 仪表盘" [ref=e49] [cursor=pointer]:
+          - img "dashboard" [ref=e50]:
+            - img [ref=e51]
+          - generic [ref=e53]: 仪表盘
+        - menuitem "home 客户管理" [ref=e54] [cursor=pointer]:
+          - img "home" [ref=e55]:
+            - img [ref=e56]
+          - generic [ref=e58]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e59] [cursor=pointer]:
+          - img "appstore" [ref=e60]:
+            - img [ref=e61]
+          - generic [ref=e63]: 分区管理
+        - menuitem "folder 分组管理" [ref=e64] [cursor=pointer]:
+          - img "folder" [ref=e65]:
+            - img [ref=e66]
+          - generic [ref=e68]: 分组管理
+        - menuitem "mobile 设备管理" [ref=e69] [cursor=pointer]:
+          - img "mobile" [ref=e70]:
+            - img [ref=e71]
+          - generic [ref=e73]: 设备管理
+        - menuitem "warning 告警管理" [ref=e74] [cursor=pointer]:
+          - img "warning" [ref=e75]:
+            - img [ref=e76]
+          - generic [ref=e78]: 告警管理
+        - menuitem "bar-chart 统计分析" [ref=e79] [cursor=pointer]:
+          - img "bar-chart" [ref=e80]:
+            - img [ref=e81]
+          - generic [ref=e83]: 统计分析
+        - menuitem "team 用户管理" [active] [ref=e84] [cursor=pointer]:
+          - img "team" [ref=e85]:
+            - img [ref=e86]
+          - generic [ref=e88]: 用户管理
+      - generic [ref=e89]:
+        - separator [ref=e90]
+        - text: 层级结构
+        - generic [ref=e93]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e94]:
+            - treeitem "caret-down home 默认客户 (0) plus" [ref=e98]:
+              - img "caret-down" [ref=e100] [cursor=pointer]:
+                - img [ref=e101]
+              - generic "默认客户" [ref=e103] [cursor=pointer]:
+                - img "home" [ref=e105]:
+                  - img [ref=e106]
+                - generic [ref=e109]:
+                  - generic [ref=e111]: 默认客户 (0)
+                  - button "plus" [ref=e113]:
+                    - img "plus" [ref=e115]:
+                      - img [ref=e116]
+  - generic [ref=e119]:
+    - banner [ref=e120]:
+      - img "menu-fold" [ref=e122] [cursor=pointer]:
+        - img [ref=e123]
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - img "user" [ref=e127]:
+            - img [ref=e128]
+          - text: 系统管理员
+        - img "logout" [ref=e130] [cursor=pointer]:
+          - img [ref=e131]
+    - main [ref=e133]:
+      - generic [ref=e650]:
+        - generic [ref=e652]:
+          - generic [ref=e654]:
+            - img "user" [ref=e656]:
+              - img [ref=e657]
+            - generic [ref=e659]: 用户管理
+          - button "plus 新建用户" [ref=e661] [cursor=pointer]:
+            - img "plus" [ref=e663]:
+              - img [ref=e664]
+            - generic [ref=e667]: 新建用户
+        - generic [ref=e671]:
+          - table [ref=e675]:
+            - rowgroup [ref=e685]:
+              - row "用户名 姓名 邮箱 所属客户 类型 状态 最后登录 操作" [ref=e686]:
+                - columnheader "用户名" [ref=e687]
+                - columnheader "姓名" [ref=e688]
+                - columnheader "邮箱" [ref=e689]
+                - columnheader "所属客户" [ref=e690]
+                - columnheader "类型" [ref=e691]
+                - columnheader "状态" [ref=e692]
+                - columnheader "最后登录" [ref=e693]
+                - columnheader "操作" [ref=e694]
+            - rowgroup [ref=e695]:
+              - row "bonner bonner 18970989088@189.cn - 超级管理员 启用 从未登录 edit 编辑 delete 删除" [ref=e696]:
+                - cell "bonner" [ref=e697]
+                - cell "bonner" [ref=e698]
+                - cell "18970989088@189.cn" [ref=e699]
+                - cell "-" [ref=e700]
+                - cell "超级管理员" [ref=e701]:
+                  - generic [ref=e702]: 超级管理员
+                - cell "启用" [ref=e703]:
+                  - generic [ref=e704]: 启用
+                - cell "从未登录" [ref=e705]
+                - cell "edit 编辑 delete 删除" [ref=e706]:
+                  - generic [ref=e707]:
+                    - button "edit 编辑" [ref=e709] [cursor=pointer]:
+                      - img "edit" [ref=e711]:
+                        - img [ref=e712]
+                      - generic [ref=e714]: 编辑
+                    - button "delete 删除" [ref=e716] [cursor=pointer]:
+                      - img "delete" [ref=e718]:
+                        - img [ref=e719]
+                      - generic [ref=e721]: 删除
+              - row "admin 系统管理员 admin@example.com - 超级管理员 启用 2026/4/4 08:41:23 edit 编辑 delete 删除" [ref=e722]:
+                - cell "admin" [ref=e723]
+                - cell "系统管理员" [ref=e724]
+                - cell "admin@example.com" [ref=e725]
+                - cell "-" [ref=e726]
+                - cell "超级管理员" [ref=e727]:
+                  - generic [ref=e728]: 超级管理员
+                - cell "启用" [ref=e729]:
+                  - generic [ref=e730]: 启用
+                - cell "2026/4/4 08:41:23" [ref=e731]
+                - cell "edit 编辑 delete 删除" [ref=e732]:
+                  - generic [ref=e733]:
+                    - button "edit 编辑" [ref=e735] [cursor=pointer]:
+                      - img "edit" [ref=e737]:
+                        - img [ref=e738]
+                      - generic [ref=e740]: 编辑
+                    - button "delete 删除" [ref=e742] [cursor=pointer]:
+                      - img "delete" [ref=e744]:
+                        - img [ref=e745]
+                      - generic [ref=e747]: 删除
+          - list [ref=e748]:
+            - listitem "上一页" [ref=e749]:
+              - button "left" [disabled] [ref=e750]:
+                - img "left" [ref=e751]:
+                  - img [ref=e752]
+            - listitem "1" [ref=e754] [cursor=pointer]:
+              - generic [ref=e755]: "1"
+            - listitem "下一页" [ref=e756]:
+              - button "right" [disabled] [ref=e757]:
+                - img "right" [ref=e758]:
+                  - img [ref=e759]

@@ -1,0 +1,22 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - heading "物联网管理系统" [level=2] [ref=e7]
+      - text: 管理后台登录
+    - generic [ref=e8]:
+      - generic [ref=e14]:
+        - img "user" [ref=e16]:
+          - img [ref=e17]
+        - textbox "用户名" [ref=e19]: admin
+      - generic [ref=e25]:
+        - img "lock" [ref=e27]:
+          - img [ref=e28]
+        - textbox "密码" [ref=e30]: Admin@2024
+        - img "eye-invisible" [ref=e32] [cursor=pointer]:
+          - img [ref=e33]
+      - button "登 录" [ref=e41] [cursor=pointer]:
+        - generic [ref=e42]: 登 录
+  - generic [ref=e44]:
+    - img "close-circle" [ref=e45]:
+      - img [ref=e46]
+    - generic [ref=e48]: Request failed with status code 401

@@ -1,0 +1,117 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e44]:
+    - complementary [ref=e45]:
+      - generic [ref=e46]:
+        - generic [ref=e47]: 物联网管理系统
+        - menu [ref=e48]:
+          - menuitem "dashboard 仪表盘" [ref=e49] [cursor=pointer]:
+            - img "dashboard" [ref=e50]:
+              - img [ref=e51]
+            - generic [ref=e53]: 仪表盘
+          - menuitem "home 客户管理" [ref=e54] [cursor=pointer]:
+            - img "home" [ref=e55]:
+              - img [ref=e56]
+            - generic [ref=e58]: 客户管理
+          - menuitem "appstore 分区管理" [ref=e59] [cursor=pointer]:
+            - img "appstore" [ref=e60]:
+              - img [ref=e61]
+            - generic [ref=e63]: 分区管理
+          - menuitem "folder 分组管理" [ref=e64] [cursor=pointer]:
+            - img "folder" [ref=e65]:
+              - img [ref=e66]
+            - generic [ref=e68]: 分组管理
+          - menuitem "mobile 设备管理" [ref=e69] [cursor=pointer]:
+            - img "mobile" [ref=e70]:
+              - img [ref=e71]
+            - generic [ref=e73]: 设备管理
+          - menuitem "warning 告警管理" [ref=e74] [cursor=pointer]:
+            - img "warning" [ref=e75]:
+              - img [ref=e76]
+            - generic [ref=e78]: 告警管理
+          - menuitem "bar-chart 统计分析" [ref=e79] [cursor=pointer]:
+            - img "bar-chart" [ref=e80]:
+              - img [ref=e81]
+            - generic [ref=e83]: 统计分析
+          - menuitem "team 用户管理" [ref=e84] [cursor=pointer]:
+            - img "team" [ref=e85]:
+              - img [ref=e86]
+            - generic [ref=e88]: 用户管理
+        - generic [ref=e89]:
+          - separator [ref=e90]
+          - text: 层级结构
+          - generic [ref=e93]:
+            - generic:
+              - textbox "for screen reader"
+            - tree [ref=e94]:
+              - generic [ref=e97]:
+                - treeitem "caret-down home 默认客户 (0) plus" [expanded] [ref=e98]:
+                  - img "caret-down" [ref=e100] [cursor=pointer]:
+                    - img [ref=e101]
+                  - generic "默认客户" [ref=e103] [cursor=pointer]:
+                    - img "home" [ref=e105]:
+                      - img [ref=e106]
+                    - generic [ref=e109]:
+                      - generic [ref=e111]: 默认客户 (0)
+                      - button "plus" [ref=e113]:
+                        - img "plus" [ref=e115]:
+                          - img [ref=e116]
+                - treeitem "caret-down appstore 默认分区 (0) plus" [ref=e119]:
+                  - img "caret-down" [ref=e122] [cursor=pointer]:
+                    - img [ref=e123]
+                  - generic "默认分区" [ref=e125] [cursor=pointer]:
+                    - img "appstore" [ref=e127]:
+                      - img [ref=e128]
+                    - generic [ref=e131]:
+                      - generic [ref=e133]: 默认分区 (0)
+                      - button "plus" [ref=e135]:
+                        - img "plus" [ref=e137]:
+                          - img [ref=e138]
+    - generic [ref=e141]:
+      - banner [ref=e142]:
+        - img "menu-fold" [ref=e144] [cursor=pointer]:
+          - img [ref=e145]
+        - generic [ref=e147]:
+          - generic [ref=e148]:
+            - img "user" [ref=e149]:
+              - img [ref=e150]
+            - text: 系统管理员
+          - img "logout" [ref=e152] [cursor=pointer]:
+            - img [ref=e153]
+      - main [ref=e155]:
+        - generic [ref=e156]:
+          - heading "仪表盘" [level=1] [ref=e157]
+          - generic [ref=e158]:
+            - generic [ref=e162]:
+              - generic [ref=e163]: 设备总数
+              - generic [ref=e164]:
+                - img "mobile" [ref=e166]:
+                  - img [ref=e167]
+                - generic [ref=e169]: "1"
+            - generic [ref=e173]:
+              - generic [ref=e174]: 在线设备
+              - generic [ref=e175]:
+                - img "check-circle" [ref=e177]:
+                  - img [ref=e178]
+                - generic [ref=e181]: "1"
+            - generic [ref=e185]:
+              - generic [ref=e186]: 离线设备
+              - generic [ref=e187]:
+                - img "close-circle" [ref=e189]:
+                  - img [ref=e190]
+                - generic [ref=e192]: "0"
+            - generic [ref=e196]:
+              - generic [ref=e197]: 未处理告警
+              - generic [ref=e198]:
+                - img "warning" [ref=e200]:
+                  - img [ref=e201]
+                - generic [ref=e203]: "0"
+          - generic [ref=e204]:
+            - generic [ref=e207]: 最近告警
+            - alert [ref=e209]:
+              - img "check-circle" [ref=e210]:
+                - img [ref=e211]
+              - generic [ref=e214]: 暂无告警记录
+  - generic [ref=e216]:
+    - img "check-circle" [ref=e217]:
+      - img [ref=e218]
+    - generic [ref=e220]: 登录成功

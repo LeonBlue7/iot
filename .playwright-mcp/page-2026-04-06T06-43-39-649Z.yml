@@ -1,0 +1,143 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: 物联网管理系统
+      - menu [ref=e7]:
+        - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]:
+            - img [ref=e10]
+          - generic [ref=e12]: 仪表盘
+        - menuitem "home 客户管理" [ref=e13] [cursor=pointer]:
+          - img "home" [ref=e14]:
+            - img [ref=e15]
+          - generic [ref=e17]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e18] [cursor=pointer]:
+          - img "appstore" [ref=e19]:
+            - img [ref=e20]
+          - generic [ref=e22]: 分区管理
+        - menuitem "folder 分组管理" [ref=e23] [cursor=pointer]:
+          - img "folder" [ref=e24]:
+            - img [ref=e25]
+          - generic [ref=e27]: 分组管理
+        - menuitem "mobile 设备管理" [ref=e28] [cursor=pointer]:
+          - img "mobile" [ref=e29]:
+            - img [ref=e30]
+          - generic [ref=e32]: 设备管理
+        - menuitem "warning 告警管理" [ref=e33] [cursor=pointer]:
+          - img "warning" [ref=e34]:
+            - img [ref=e35]
+          - generic [ref=e37]: 告警管理
+        - menuitem "bar-chart 统计分析" [active] [ref=e38] [cursor=pointer]:
+          - img "bar-chart" [ref=e39]:
+            - img [ref=e40]
+          - generic [ref=e42]: 统计分析
+        - menuitem "team 用户管理" [ref=e43] [cursor=pointer]:
+          - img "team" [ref=e44]:
+            - img [ref=e45]
+          - generic [ref=e47]: 用户管理
+      - generic [ref=e48]:
+        - separator [ref=e49]
+        - text: 层级结构
+        - generic [ref=e158]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e159]:
+            - treeitem "caret-down home 景德镇电信 (144) plus" [ref=e163]:
+              - img "caret-down" [ref=e165] [cursor=pointer]:
+                - img [ref=e166]
+              - generic "景德镇电信" [ref=e168] [cursor=pointer]:
+                - img "home" [ref=e170]:
+                  - img [ref=e171]
+                - generic [ref=e174]:
+                  - generic [ref=e176]: 景德镇电信 (144)
+                  - button "plus" [ref=e178]:
+                    - img "plus" [ref=e180]:
+                      - img [ref=e181]
+  - generic [ref=e56]:
+    - banner [ref=e57]:
+      - img "menu-fold" [ref=e59] [cursor=pointer]:
+        - img [ref=e60]
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - img "user" [ref=e64]:
+            - img [ref=e65]
+          - text: 系统管理员
+        - img "logout" [ref=e67] [cursor=pointer]:
+          - img [ref=e68]
+    - main [ref=e70]:
+      - generic [ref=e1982]:
+        - heading "统计分析" [level=1] [ref=e1983]
+        - generic [ref=e1986]:
+          - generic [ref=e1987]: 设备：
+          - generic [ref=e1989] [cursor=pointer]:
+            - generic [ref=e1991]:
+              - combobox [ref=e1993]
+              - generic "866965081752518" [ref=e1994]
+            - generic:
+              - img:
+                - img
+          - generic [ref=e1995]: 指标：
+          - generic [ref=e1997] [cursor=pointer]:
+            - generic [ref=e1999]:
+              - combobox [ref=e2001]
+              - generic "温度" [ref=e2002]
+            - generic:
+              - img:
+                - img
+          - generic [ref=e2003]: 时间范围：
+          - generic [ref=e2005]:
+            - textbox "开始日期" [ref=e2007]: 2026-04-05 14:43
+            - generic "to" [ref=e2009]:
+              - img "swap-right" [ref=e2010]:
+                - img [ref=e2011]
+            - textbox "结束日期" [ref=e2014]: 2026-04-06 14:43
+            - generic:
+              - img "calendar":
+                - img
+            - button "close-circle" [ref=e2015] [cursor=pointer]:
+              - img "close-circle" [ref=e2016]:
+                - img [ref=e2017]
+          - generic [ref=e2019]: 最近1小时
+          - generic [ref=e2020]: 最近6小时
+          - generic [ref=e2021]: 最近24小时
+          - generic [ref=e2022]: 最近7天
+        - generic [ref=e2023]:
+          - generic [ref=e2025]:
+            - generic [ref=e2028]: 温度趋势
+            - generic [ref=e2030]: 暂无数据
+          - generic [ref=e2032]:
+            - generic [ref=e2035]: 今日统计
+            - generic [ref=e2037]:
+              - generic [ref=e2039]:
+                - generic [ref=e2040]: 平均温度
+                - generic [ref=e2041]:
+                  - generic [ref=e2042]: "-"
+                  - generic [ref=e2043]: °C
+              - generic [ref=e2045]:
+                - generic [ref=e2046]: 平均湿度
+                - generic [ref=e2047]:
+                  - generic [ref=e2048]: "-"
+                  - generic [ref=e2049]: "%"
+              - generic [ref=e2051]:
+                - generic [ref=e2052]: 最高温度
+                - generic [ref=e2053]:
+                  - generic [ref=e2054]: "-"
+                  - generic [ref=e2055]: °C
+              - generic [ref=e2057]:
+                - generic [ref=e2058]: 最低温度
+                - generic [ref=e2059]:
+                  - generic [ref=e2060]: "-"
+                  - generic [ref=e2061]: °C
+              - generic [ref=e2063]:
+                - generic [ref=e2064]: 今日告警
+                - generic [ref=e2065]:
+                  - generic [ref=e2066]: "0"
+                  - generic [ref=e2067]: 次
+          - generic [ref=e2069]:
+            - generic [ref=e2072]: 多指标对比（需选择不同指标查看）
+            - alert [ref=e2074]:
+              - img "info-circle" [ref=e2075]:
+                - img [ref=e2076]
+              - generic [ref=e2078]:
+                - generic [ref=e2079]: 提示
+                - generic [ref=e2080]: 切换上方指标选择器可查看不同指标的趋势曲线。如需多指标同时展示，请联系开发人员。

@@ -1,0 +1,104 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: 物联网管理系统
+        - menu [ref=e7]:
+          - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+            - img "dashboard" [ref=e9]:
+              - img [ref=e10]
+            - generic [ref=e12]: 仪表盘
+          - menuitem "home 客户管理" [ref=e13] [cursor=pointer]:
+            - img "home" [ref=e14]:
+              - img [ref=e15]
+            - generic [ref=e17]: 客户管理
+          - menuitem "appstore 分区管理" [ref=e18] [cursor=pointer]:
+            - img "appstore" [ref=e19]:
+              - img [ref=e20]
+            - generic [ref=e22]: 分区管理
+          - menuitem "folder 分组管理" [ref=e23] [cursor=pointer]:
+            - img "folder" [ref=e24]:
+              - img [ref=e25]
+            - generic [ref=e27]: 分组管理
+          - menuitem "mobile 设备管理" [ref=e28] [cursor=pointer]:
+            - img "mobile" [ref=e29]:
+              - img [ref=e30]
+            - generic [ref=e32]: 设备管理
+          - menuitem "warning 告警管理" [ref=e33] [cursor=pointer]:
+            - img "warning" [ref=e34]:
+              - img [ref=e35]
+            - generic [ref=e37]: 告警管理
+          - menuitem "bar-chart 统计分析" [active] [ref=e38] [cursor=pointer]:
+            - img "bar-chart" [ref=e39]:
+              - img [ref=e40]
+            - generic [ref=e42]: 统计分析
+          - menuitem "team 用户管理" [ref=e43] [cursor=pointer]:
+            - img "team" [ref=e44]:
+              - img [ref=e45]
+            - generic [ref=e47]: 用户管理
+        - generic [ref=e48]:
+          - separator [ref=e49]
+          - text: 层级结构
+          - generic [ref=e80]:
+            - generic:
+              - textbox "for screen reader"
+            - tree [ref=e81]:
+              - treeitem "caret-down home 景德镇电信 (144) plus" [ref=e85]:
+                - img "caret-down" [ref=e87] [cursor=pointer]:
+                  - img [ref=e88]
+                - generic "景德镇电信" [ref=e90] [cursor=pointer]:
+                  - img "home" [ref=e92]:
+                    - img [ref=e93]
+                  - generic [ref=e96]:
+                    - generic [ref=e98]: 景德镇电信 (144)
+                    - button "plus" [ref=e100]:
+                      - img "plus" [ref=e102]:
+                        - img [ref=e103]
+    - generic [ref=e56]:
+      - banner [ref=e57]:
+        - img "menu-fold" [ref=e59] [cursor=pointer]:
+          - img [ref=e60]
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - img "user" [ref=e64]:
+              - img [ref=e65]
+            - text: 系统管理员
+          - img "logout" [ref=e67] [cursor=pointer]:
+            - img [ref=e68]
+      - main [ref=e70]:
+        - generic [ref=e165]:
+          - heading "统计分析" [level=1] [ref=e166]
+          - generic [ref=e167]:
+            - generic [ref=e169]:
+              - generic [ref=e172]: 24 小时温度趋势
+              - generic [ref=e175]:
+                - img [ref=e176]:
+                  - generic [ref=e181]:
+                    - generic [ref=e183]: 00:00
+                    - generic [ref=e185]: 04:00
+                    - generic [ref=e187]: 08:00
+                    - generic [ref=e189]: 12:00
+                    - generic [ref=e191]: 16:00
+                    - generic [ref=e193]: 20:00
+                  - generic [ref=e195]:
+                    - generic [ref=e197]: "0"
+                    - generic [ref=e199]: "15"
+                    - generic [ref=e201]: "30"
+                    - generic [ref=e203]: "45"
+                    - generic [ref=e205]: "60"
+                - list [ref=e211]:
+                  - listitem [ref=e212]:
+                    - img [ref=e213]
+                    - text: 温度 (°C)
+                  - listitem [ref=e215]:
+                    - img [ref=e216]
+                    - text: 湿度 (%)
+            - generic [ref=e219]:
+              - generic [ref=e222]: 设备在线率
+              - alert [ref=e224]:
+                - img "check-circle" [ref=e225]:
+                  - img [ref=e226]
+                - generic [ref=e228]:
+                  - generic [ref=e229]: 设备在线率统计
+                  - generic [ref=e230]: 当前所有设备在线率为 100%，系统运行正常。
+  - generic [ref=e231]: "0"

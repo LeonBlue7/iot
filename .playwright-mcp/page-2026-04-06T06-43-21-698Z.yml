@@ -1,0 +1,103 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: 物联网管理系统
+      - menu [ref=e7]:
+        - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]:
+            - img [ref=e10]
+          - generic [ref=e12]: 仪表盘
+        - menuitem "home 客户管理" [ref=e13] [cursor=pointer]:
+          - img "home" [ref=e14]:
+            - img [ref=e15]
+          - generic [ref=e17]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e18] [cursor=pointer]:
+          - img "appstore" [ref=e19]:
+            - img [ref=e20]
+          - generic [ref=e22]: 分区管理
+        - menuitem "folder 分组管理" [ref=e23] [cursor=pointer]:
+          - img "folder" [ref=e24]:
+            - img [ref=e25]
+          - generic [ref=e27]: 分组管理
+        - menuitem "mobile 设备管理" [ref=e28] [cursor=pointer]:
+          - img "mobile" [ref=e29]:
+            - img [ref=e30]
+          - generic [ref=e32]: 设备管理
+        - menuitem "warning 告警管理" [active] [ref=e33] [cursor=pointer]:
+          - img "warning" [ref=e34]:
+            - img [ref=e35]
+          - generic [ref=e37]: 告警管理
+        - menuitem "bar-chart 统计分析" [ref=e38] [cursor=pointer]:
+          - img "bar-chart" [ref=e39]:
+            - img [ref=e40]
+          - generic [ref=e42]: 统计分析
+        - menuitem "team 用户管理" [ref=e43] [cursor=pointer]:
+          - img "team" [ref=e44]:
+            - img [ref=e45]
+          - generic [ref=e47]: 用户管理
+      - generic [ref=e48]:
+        - separator [ref=e49]
+        - text: 层级结构
+        - generic [ref=e158]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e159]:
+            - treeitem "caret-down home 景德镇电信 (144) plus" [ref=e163]:
+              - img "caret-down" [ref=e165] [cursor=pointer]:
+                - img [ref=e166]
+              - generic "景德镇电信" [ref=e168] [cursor=pointer]:
+                - img "home" [ref=e170]:
+                  - img [ref=e171]
+                - generic [ref=e174]:
+                  - generic [ref=e176]: 景德镇电信 (144)
+                  - button "plus" [ref=e178]:
+                    - img "plus" [ref=e180]:
+                      - img [ref=e181]
+  - generic [ref=e56]:
+    - banner [ref=e57]:
+      - img "menu-fold" [ref=e59] [cursor=pointer]:
+        - img [ref=e60]
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - img "user" [ref=e64]:
+            - img [ref=e65]
+          - text: 系统管理员
+        - img "logout" [ref=e67] [cursor=pointer]:
+          - img [ref=e68]
+    - main [ref=e70]:
+      - generic [ref=e1919]:
+        - heading "告警管理" [level=1] [ref=e1920]
+        - generic [ref=e1923]:
+          - generic [ref=e1924]: 状态筛选：
+          - generic [ref=e1926] [cursor=pointer]:
+            - generic [ref=e1928]:
+              - combobox [ref=e1930]
+              - generic: 全部状态
+            - generic:
+              - img:
+                - img
+          - button "reload 刷新" [ref=e1932] [cursor=pointer]:
+            - img "reload" [ref=e1934]:
+              - img [ref=e1935]
+            - generic [ref=e1937]: 刷新
+        - table [ref=e1946]:
+          - rowgroup [ref=e1957]:
+            - row "Select all 告警ID 设备ID 告警类型 告警值 阈值 状态 时间 操作" [ref=e1958]:
+              - columnheader "Select all" [ref=e1959]:
+                - generic [ref=e1961]:
+                  - generic:
+                    - checkbox "Select all" [disabled]
+              - columnheader "告警ID" [ref=e1962]
+              - columnheader "设备ID" [ref=e1963]
+              - columnheader "告警类型" [ref=e1964]
+              - columnheader "告警值" [ref=e1965]
+              - columnheader "阈值" [ref=e1966]
+              - columnheader "状态" [ref=e1967]
+              - columnheader "时间" [ref=e1968]
+              - columnheader "操作" [ref=e1969]
+          - rowgroup [ref=e1970]:
+            - row "暂无数据 暂无数据" [ref=e1971]:
+              - cell "暂无数据 暂无数据" [ref=e1972]:
+                - generic [ref=e1973]:
+                  - img "暂无数据" [ref=e1975]
+                  - generic [ref=e1981]: 暂无数据

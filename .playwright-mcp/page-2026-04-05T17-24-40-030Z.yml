@@ -1,0 +1,297 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: 物联网管理系统
+      - menu [ref=e7]:
+        - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]:
+            - img [ref=e10]
+          - generic [ref=e12]: 仪表盘
+        - menuitem "home 客户管理" [ref=e13] [cursor=pointer]:
+          - img "home" [ref=e14]:
+            - img [ref=e15]
+          - generic [ref=e17]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e18] [cursor=pointer]:
+          - img "appstore" [ref=e19]:
+            - img [ref=e20]
+          - generic [ref=e22]: 分区管理
+        - menuitem "folder 分组管理" [ref=e23] [cursor=pointer]:
+          - img "folder" [ref=e24]:
+            - img [ref=e25]
+          - generic [ref=e27]: 分组管理
+        - menuitem "mobile 设备管理" [active] [ref=e28] [cursor=pointer]:
+          - img "mobile" [ref=e29]:
+            - img [ref=e30]
+          - generic [ref=e32]: 设备管理
+        - menuitem "warning 告警管理" [ref=e33] [cursor=pointer]:
+          - img "warning" [ref=e34]:
+            - img [ref=e35]
+          - generic [ref=e37]: 告警管理
+        - menuitem "bar-chart 统计分析" [ref=e38] [cursor=pointer]:
+          - img "bar-chart" [ref=e39]:
+            - img [ref=e40]
+          - generic [ref=e42]: 统计分析
+        - menuitem "team 用户管理" [ref=e43] [cursor=pointer]:
+          - img "team" [ref=e44]:
+            - img [ref=e45]
+          - generic [ref=e47]: 用户管理
+      - generic [ref=e48]:
+        - separator [ref=e49]
+        - text: 层级结构
+        - generic [ref=e80]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e81]:
+            - treeitem "caret-down home 景德镇电信 (144) plus" [ref=e85]:
+              - img "caret-down" [ref=e87] [cursor=pointer]:
+                - img [ref=e88]
+              - generic "景德镇电信" [ref=e90] [cursor=pointer]:
+                - img "home" [ref=e92]:
+                  - img [ref=e93]
+                - generic [ref=e96]:
+                  - generic [ref=e98]: 景德镇电信 (144)
+                  - button "plus" [ref=e100]:
+                    - img "plus" [ref=e102]:
+                      - img [ref=e103]
+  - generic [ref=e56]:
+    - banner [ref=e57]:
+      - img "menu-fold" [ref=e59] [cursor=pointer]:
+        - img [ref=e60]
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - img "user" [ref=e64]:
+            - img [ref=e65]
+          - text: 系统管理员
+        - img "logout" [ref=e67] [cursor=pointer]:
+          - img [ref=e68]
+    - main [ref=e70]:
+      - generic [ref=e165]:
+        - generic [ref=e166]:
+          - generic [ref=e167]:
+            - heading "设备管理" [level=1] [ref=e168]
+            - navigation [ref=e169]:
+              - list [ref=e170]:
+                - listitem [ref=e171]:
+                  - generic [ref=e172]:
+                    - img "home" [ref=e173]:
+                      - img [ref=e174]
+                    - text: 全部设备
+          - button "reload 刷新" [ref=e176] [cursor=pointer]:
+            - img "reload" [ref=e178]:
+              - img [ref=e179]
+            - generic [ref=e181]: 刷新
+        - generic [ref=e184]:
+          - textbox "搜索设备..." [ref=e186]
+          - generic [ref=e188] [cursor=pointer]:
+            - generic [ref=e190]:
+              - combobox [ref=e192]
+              - generic: 选择客户
+            - generic:
+              - img:
+                - img
+          - generic [ref=e194] [cursor=pointer]:
+            - generic [ref=e196]:
+              - combobox [ref=e198]
+              - generic: 选择分区
+            - generic:
+              - img:
+                - img
+          - generic [ref=e200] [cursor=pointer]:
+            - generic [ref=e202]:
+              - combobox [ref=e204]
+              - generic: 选择分组
+            - generic:
+              - img:
+                - img
+          - button "search 搜索" [ref=e206] [cursor=pointer]:
+            - img "search" [ref=e208]:
+              - img [ref=e209]
+            - generic [ref=e211]: 搜索
+          - button "reload 重置" [ref=e213] [cursor=pointer]:
+            - img "reload" [ref=e215]:
+              - img [ref=e216]
+            - generic [ref=e218]: 重置
+        - generic [ref=e220]:
+          - generic [ref=e222]: 已选中 0 项设备
+          - button "poweroff 开启" [disabled] [ref=e224]:
+            - generic:
+              - img "poweroff":
+                - img
+            - generic: 开启
+          - button "poweroff 关闭" [disabled] [ref=e226]:
+            - generic:
+              - img "poweroff":
+                - img
+            - generic: 关闭
+          - button "reload 重启" [disabled] [ref=e228]:
+            - generic:
+              - img "reload":
+                - img
+            - generic: 重启
+          - button "folder 移动分组" [disabled] [ref=e230]:
+            - generic:
+              - img "folder":
+                - img
+            - generic: 移动分组
+          - button "setting 设置参数" [disabled] [ref=e232]:
+            - generic:
+              - img "setting":
+                - img
+            - generic: 设置参数
+          - button "check-circle 启用" [disabled] [ref=e234]:
+            - generic:
+              - img "check-circle":
+                - img
+            - generic: 启用
+          - button "stop 禁用" [disabled] [ref=e236]:
+            - generic:
+              - img "stop":
+                - img
+            - generic: 禁用
+          - button "delete 删除" [disabled] [ref=e238]:
+            - generic:
+              - img "delete":
+                - img
+            - generic: 删除
+        - generic [ref=e243]:
+          - table [ref=e247]:
+            - rowgroup [ref=e251]:
+              - row "Select all 设备ID 名称 SIM卡号 状态 启用状态 最后在线" [ref=e252]:
+                - columnheader "Select all" [ref=e253]:
+                  - checkbox "Select all" [ref=e257] [cursor=pointer]
+                - columnheader "设备ID" [ref=e259]
+                - columnheader "名称" [ref=e260]
+                - columnheader "SIM卡号" [ref=e261]
+                - columnheader "状态" [ref=e262]
+                - columnheader "启用状态" [ref=e263]
+                - columnheader "最后在线" [ref=e264]
+            - rowgroup [ref=e265]:
+              - row "866965081752518 未命名 - 在线 已启用 2026/4/2 06:15:09" [ref=e266]:
+                - cell [ref=e267]:
+                  - checkbox [ref=e270] [cursor=pointer]
+                - cell "866965081752518" [ref=e272]
+                - cell "未命名" [ref=e273]
+                - cell "-" [ref=e274]
+                - cell "在线" [ref=e275]:
+                  - generic [ref=e276]: 在线
+                - cell "已启用" [ref=e277]:
+                  - generic [ref=e278]: 已启用
+                - cell "2026/4/2 06:15:09" [ref=e279]
+              - row "866965081717180 未命名 - 在线 已启用 2026/4/4 10:13:59" [ref=e280]:
+                - cell [ref=e281]:
+                  - checkbox [ref=e284] [cursor=pointer]
+                - cell "866965081717180" [ref=e286]
+                - cell "未命名" [ref=e287]
+                - cell "-" [ref=e288]
+                - cell "在线" [ref=e289]:
+                  - generic [ref=e290]: 在线
+                - cell "已启用" [ref=e291]:
+                  - generic [ref=e292]: 已启用
+                - cell "2026/4/4 10:13:59" [ref=e293]
+              - row "866965081723675 未命名 - 在线 已启用 2026/4/4 10:15:09" [ref=e294]:
+                - cell [ref=e295]:
+                  - checkbox [ref=e298] [cursor=pointer]
+                - cell "866965081723675" [ref=e300]
+                - cell "未命名" [ref=e301]
+                - cell "-" [ref=e302]
+                - cell "在线" [ref=e303]:
+                  - generic [ref=e304]: 在线
+                - cell "已启用" [ref=e305]:
+                  - generic [ref=e306]: 已启用
+                - cell "2026/4/4 10:15:09" [ref=e307]
+              - row "866965081725688 未命名 - 在线 已启用 2026/4/4 10:12:18" [ref=e308]:
+                - cell [ref=e309]:
+                  - checkbox [ref=e312] [cursor=pointer]
+                - cell "866965081725688" [ref=e314]
+                - cell "未命名" [ref=e315]
+                - cell "-" [ref=e316]
+                - cell "在线" [ref=e317]:
+                  - generic [ref=e318]: 在线
+                - cell "已启用" [ref=e319]:
+                  - generic [ref=e320]: 已启用
+                - cell "2026/4/4 10:12:18" [ref=e321]
+              - row "866965081724863 未命名 - 在线 已启用 2026/4/4 10:14:10" [ref=e322]:
+                - cell [ref=e323]:
+                  - checkbox [ref=e326] [cursor=pointer]
+                - cell "866965081724863" [ref=e328]
+                - cell "未命名" [ref=e329]
+                - cell "-" [ref=e330]
+                - cell "在线" [ref=e331]:
+                  - generic [ref=e332]: 在线
+                - cell "已启用" [ref=e333]:
+                  - generic [ref=e334]: 已启用
+                - cell "2026/4/4 10:14:10" [ref=e335]
+              - row "866965081752591 未命名 - 在线 已启用 2026/4/4 10:14:07" [ref=e336]:
+                - cell [ref=e337]:
+                  - checkbox [ref=e340] [cursor=pointer]
+                - cell "866965081752591" [ref=e342]
+                - cell "未命名" [ref=e343]
+                - cell "-" [ref=e344]
+                - cell "在线" [ref=e345]:
+                  - generic [ref=e346]: 在线
+                - cell "已启用" [ref=e347]:
+                  - generic [ref=e348]: 已启用
+                - cell "2026/4/4 10:14:07" [ref=e349]
+              - row "866965081742998 未命名 - 在线 已启用 2026/4/4 10:14:17" [ref=e350]:
+                - cell [ref=e351]:
+                  - checkbox [ref=e354] [cursor=pointer]
+                - cell "866965081742998" [ref=e356]
+                - cell "未命名" [ref=e357]
+                - cell "-" [ref=e358]
+                - cell "在线" [ref=e359]:
+                  - generic [ref=e360]: 在线
+                - cell "已启用" [ref=e361]:
+                  - generic [ref=e362]: 已启用
+                - cell "2026/4/4 10:14:17" [ref=e363]
+              - row "866965081748409 未命名 - 在线 已启用 2026/4/4 10:06:41" [ref=e364]:
+                - cell [ref=e365]:
+                  - checkbox [ref=e368] [cursor=pointer]
+                - cell "866965081748409" [ref=e370]
+                - cell "未命名" [ref=e371]
+                - cell "-" [ref=e372]
+                - cell "在线" [ref=e373]:
+                  - generic [ref=e374]: 在线
+                - cell "已启用" [ref=e375]:
+                  - generic [ref=e376]: 已启用
+                - cell "2026/4/4 10:06:41" [ref=e377]
+              - row "866965081752484 未命名 - 在线 已启用 2026/4/4 10:14:41" [ref=e378]:
+                - cell [ref=e379]:
+                  - checkbox [ref=e382] [cursor=pointer]
+                - cell "866965081752484" [ref=e384]
+                - cell "未命名" [ref=e385]
+                - cell "-" [ref=e386]
+                - cell "在线" [ref=e387]:
+                  - generic [ref=e388]: 在线
+                - cell "已启用" [ref=e389]:
+                  - generic [ref=e390]: 已启用
+                - cell "2026/4/4 10:14:41" [ref=e391]
+              - row "866965081725522 未命名 - 在线 已启用 2026/4/4 10:13:31" [ref=e392]:
+                - cell [ref=e393]:
+                  - checkbox [ref=e396] [cursor=pointer]
+                - cell "866965081725522" [ref=e398]
+                - cell "未命名" [ref=e399]
+                - cell "-" [ref=e400]
+                - cell "在线" [ref=e401]:
+                  - generic [ref=e402]: 在线
+                - cell "已启用" [ref=e403]:
+                  - generic [ref=e404]: 已启用
+                - cell "2026/4/4 10:13:31" [ref=e405]
+          - list [ref=e406]:
+            - listitem "上一页" [ref=e407]:
+              - button "left" [disabled] [ref=e408]:
+                - img "left" [ref=e409]:
+                  - img [ref=e410]
+            - listitem "1" [ref=e412] [cursor=pointer]:
+              - generic [ref=e413]: "1"
+            - listitem "2" [ref=e414] [cursor=pointer]:
+              - generic [ref=e415]: "2"
+            - listitem "3" [ref=e416] [cursor=pointer]:
+              - generic [ref=e417]: "3"
+            - listitem "4" [ref=e418] [cursor=pointer]:
+              - generic [ref=e419]: "4"
+            - listitem "5" [ref=e420] [cursor=pointer]:
+              - generic [ref=e421]: "5"
+            - listitem "下一页" [ref=e422] [cursor=pointer]:
+              - button "right" [ref=e423]:
+                - img "right" [ref=e424]:
+                  - img [ref=e425]

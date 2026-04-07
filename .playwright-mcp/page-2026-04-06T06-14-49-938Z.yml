@@ -1,0 +1,179 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: 物联网管理系统
+        - menu [ref=e7]:
+          - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+            - img "dashboard" [ref=e9]:
+              - img [ref=e10]
+            - generic [ref=e12]: 仪表盘
+          - menuitem "home 客户管理" [ref=e13] [cursor=pointer]:
+            - img "home" [ref=e14]:
+              - img [ref=e15]
+            - generic [ref=e17]: 客户管理
+          - menuitem "appstore 分区管理" [ref=e18] [cursor=pointer]:
+            - img "appstore" [ref=e19]:
+              - img [ref=e20]
+            - generic [ref=e22]: 分区管理
+          - menuitem "folder 分组管理" [ref=e23] [cursor=pointer]:
+            - img "folder" [ref=e24]:
+              - img [ref=e25]
+            - generic [ref=e27]: 分组管理
+          - menuitem "mobile 设备管理" [ref=e28] [cursor=pointer]:
+            - img "mobile" [ref=e29]:
+              - img [ref=e30]
+            - generic [ref=e32]: 设备管理
+          - menuitem "warning 告警管理" [ref=e33] [cursor=pointer]:
+            - img "warning" [ref=e34]:
+              - img [ref=e35]
+            - generic [ref=e37]: 告警管理
+          - menuitem "bar-chart 统计分析" [ref=e38] [cursor=pointer]:
+            - img "bar-chart" [ref=e39]:
+              - img [ref=e40]
+            - generic [ref=e42]: 统计分析
+          - menuitem "team 用户管理" [ref=e43] [cursor=pointer]:
+            - img "team" [ref=e44]:
+              - img [ref=e45]
+            - generic [ref=e47]: 用户管理
+        - generic [ref=e48]:
+          - separator [ref=e49]
+          - text: 层级结构
+          - generic [ref=e158]:
+            - generic:
+              - textbox "for screen reader"
+            - tree [ref=e159]:
+              - treeitem "caret-down home 景德镇电信 (144) plus" [ref=e163]:
+                - img "caret-down" [ref=e165] [cursor=pointer]:
+                  - img [ref=e166]
+                - generic "景德镇电信" [ref=e168] [cursor=pointer]:
+                  - img "home" [ref=e170]:
+                    - img [ref=e171]
+                  - generic [ref=e174]:
+                    - generic [ref=e176]: 景德镇电信 (144)
+                    - button "plus" [ref=e178]:
+                      - img "plus" [ref=e180]:
+                        - img [ref=e181]
+    - generic [ref=e56]:
+      - banner [ref=e57]:
+        - img "menu-fold" [ref=e59] [cursor=pointer]:
+          - img [ref=e60]
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - img "user" [ref=e64]:
+              - img [ref=e65]
+            - text: 系统管理员
+          - img "logout" [ref=e67] [cursor=pointer]:
+            - img [ref=e68]
+      - main [ref=e70]:
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - heading "设备管理" [level=1] [ref=e74]
+              - navigation [ref=e75]:
+                - list [ref=e76]:
+                  - listitem [ref=e77]:
+                    - generic [ref=e78]:
+                      - img "home" [ref=e79]:
+                        - img [ref=e80]
+                      - text: 全部设备
+            - button "reload 刷新" [active] [ref=e184] [cursor=pointer]:
+              - img "reload" [ref=e226]:
+                - img [ref=e227]
+              - generic [ref=e87]: 刷新
+          - generic [ref=e90]:
+            - textbox "搜索设备..." [ref=e92]
+            - generic [ref=e94] [cursor=pointer]:
+              - generic [ref=e96]:
+                - combobox [ref=e98]
+                - generic: 选择客户
+              - generic:
+                - img:
+                  - img
+            - generic [ref=e100] [cursor=pointer]:
+              - generic [ref=e102]:
+                - combobox [disabled] [ref=e104]
+                - generic: 选择分区
+              - generic:
+                - img:
+                  - img
+            - generic [ref=e106] [cursor=pointer]:
+              - generic [ref=e108]:
+                - combobox [disabled] [ref=e110]
+                - generic: 选择分组
+              - generic:
+                - img:
+                  - img
+            - button "search 搜索" [ref=e112] [cursor=pointer]:
+              - img "search" [ref=e114]:
+                - img [ref=e115]
+              - generic [ref=e117]: 搜索
+            - button "reload 重置" [ref=e119] [cursor=pointer]:
+              - img "reload" [ref=e121]:
+                - img [ref=e122]
+              - generic [ref=e124]: 重置
+          - generic [ref=e126]:
+            - generic [ref=e128]: 已选中 0 项设备
+            - button "poweroff 开启" [disabled] [ref=e130]:
+              - generic:
+                - img "poweroff":
+                  - img
+              - generic: 开启
+            - button "poweroff 关闭" [disabled] [ref=e132]:
+              - generic:
+                - img "poweroff":
+                  - img
+              - generic: 关闭
+            - button "reload 重启" [disabled] [ref=e134]:
+              - generic:
+                - img "reload":
+                  - img
+              - generic: 重启
+            - button "folder 移动分组" [disabled] [ref=e136]:
+              - generic:
+                - img "folder":
+                  - img
+              - generic: 移动分组
+            - button "setting 设置参数" [disabled] [ref=e138]:
+              - generic:
+                - img "setting":
+                  - img
+              - generic: 设置参数
+            - button "check-circle 启用" [disabled] [ref=e140]:
+              - generic:
+                - img "check-circle":
+                  - img
+              - generic: 启用
+            - button "stop 禁用" [disabled] [ref=e142]:
+              - generic:
+                - img "stop":
+                  - img
+              - generic: 禁用
+            - button "delete 删除" [disabled] [ref=e144]:
+              - generic:
+                - img "delete":
+                  - img
+              - generic: 删除
+          - table [ref=e193]:
+            - rowgroup [ref=e202]:
+              - row "Select all 设备ID 名称 温度 状态 启用状态 操作" [ref=e203]:
+                - columnheader "Select all" [ref=e204]:
+                  - generic [ref=e206]:
+                    - generic:
+                      - checkbox "Select all" [disabled]
+                - columnheader "设备ID" [ref=e207]
+                - columnheader "名称" [ref=e208]
+                - columnheader "温度" [ref=e209]
+                - columnheader "状态" [ref=e210]
+                - columnheader "启用状态" [ref=e211]
+                - columnheader "操作" [ref=e212]
+            - rowgroup [ref=e213]:
+              - row "暂无数据 暂无数据" [ref=e214]:
+                - cell "暂无数据 暂无数据" [ref=e215]:
+                  - generic [ref=e216]:
+                    - img "暂无数据" [ref=e218]
+                    - generic [ref=e224]: 暂无数据
+  - generic [ref=e230]:
+    - img "close-circle" [ref=e231]:
+      - img [ref=e232]
+    - generic [ref=e234]: 加载设备列表失败

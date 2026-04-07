@@ -1,0 +1,86 @@
+- generic [ref=e44]:
+  - complementary [ref=e45]:
+    - generic [ref=e46]:
+      - generic [ref=e47]: 物联网管理系统
+      - menu [ref=e48]:
+        - menuitem "dashboard 仪表盘" [ref=e49] [cursor=pointer]:
+          - img "dashboard" [ref=e50]:
+            - img [ref=e51]
+          - generic [ref=e53]: 仪表盘
+        - menuitem "home 客户管理" [ref=e54] [cursor=pointer]:
+          - img "home" [ref=e55]:
+            - img [ref=e56]
+          - generic [ref=e58]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e59] [cursor=pointer]:
+          - img "appstore" [ref=e60]:
+            - img [ref=e61]
+          - generic [ref=e63]: 分区管理
+        - menuitem "folder 分组管理" [ref=e64] [cursor=pointer]:
+          - img "folder" [ref=e65]:
+            - img [ref=e66]
+          - generic [ref=e68]: 分组管理
+        - menuitem "mobile 设备管理" [ref=e69] [cursor=pointer]:
+          - img "mobile" [ref=e70]:
+            - img [ref=e71]
+          - generic [ref=e73]: 设备管理
+        - menuitem "warning 告警管理" [active] [ref=e74] [cursor=pointer]:
+          - img "warning" [ref=e75]:
+            - img [ref=e76]
+          - generic [ref=e78]: 告警管理
+        - menuitem "bar-chart 统计分析" [ref=e79] [cursor=pointer]:
+          - img "bar-chart" [ref=e80]:
+            - img [ref=e81]
+          - generic [ref=e83]: 统计分析
+        - menuitem "team 用户管理" [ref=e84] [cursor=pointer]:
+          - img "team" [ref=e85]:
+            - img [ref=e86]
+          - generic [ref=e88]: 用户管理
+      - generic [ref=e89]:
+        - separator [ref=e90]
+        - text: 层级结构
+        - generic [ref=e93]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e94]:
+            - treeitem "caret-down home 默认客户 (0) plus" [ref=e98]:
+              - img "caret-down" [ref=e100] [cursor=pointer]:
+                - img [ref=e101]
+              - generic "默认客户" [ref=e103] [cursor=pointer]:
+                - img "home" [ref=e105]:
+                  - img [ref=e106]
+                - generic [ref=e109]:
+                  - generic [ref=e111]: 默认客户 (0)
+                  - button "plus" [ref=e113]:
+                    - img "plus" [ref=e115]:
+                      - img [ref=e116]
+  - generic [ref=e119]:
+    - banner [ref=e120]:
+      - img "menu-fold" [ref=e122] [cursor=pointer]:
+        - img [ref=e123]
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - img "user" [ref=e127]:
+            - img [ref=e128]
+          - text: 系统管理员
+        - img "logout" [ref=e130] [cursor=pointer]:
+          - img [ref=e131]
+    - main [ref=e133]:
+      - generic [ref=e761]:
+        - heading "告警管理" [level=1] [ref=e762]
+        - table [ref=e771]:
+          - rowgroup [ref=e781]:
+            - row "告警 ID 设备 ID 告警类型 告警值 阈值 状态 时间 操作" [ref=e782]:
+              - columnheader "告警 ID" [ref=e783]
+              - columnheader "设备 ID" [ref=e784]
+              - columnheader "告警类型" [ref=e785]
+              - columnheader "告警值" [ref=e786]
+              - columnheader "阈值" [ref=e787]
+              - columnheader "状态" [ref=e788]
+              - columnheader "时间" [ref=e789]
+              - columnheader "操作" [ref=e790]
+          - rowgroup [ref=e791]:
+            - row "暂无数据 暂无数据" [ref=e792]:
+              - cell "暂无数据 暂无数据" [ref=e793]:
+                - generic [ref=e794]:
+                  - img "暂无数据" [ref=e796]
+                  - generic [ref=e802]: 暂无数据

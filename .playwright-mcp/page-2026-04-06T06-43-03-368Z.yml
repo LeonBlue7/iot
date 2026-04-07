@@ -1,0 +1,140 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: 物联网管理系统
+      - menu [ref=e7]:
+        - menuitem "dashboard 仪表盘" [active] [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]:
+            - img [ref=e10]
+          - generic [ref=e12]: 仪表盘
+        - menuitem "home 客户管理" [ref=e13] [cursor=pointer]:
+          - img "home" [ref=e14]:
+            - img [ref=e15]
+          - generic [ref=e17]: 客户管理
+        - menuitem "appstore 分区管理" [ref=e18] [cursor=pointer]:
+          - img "appstore" [ref=e19]:
+            - img [ref=e20]
+          - generic [ref=e22]: 分区管理
+        - menuitem "folder 分组管理" [ref=e23] [cursor=pointer]:
+          - img "folder" [ref=e24]:
+            - img [ref=e25]
+          - generic [ref=e27]: 分组管理
+        - menuitem "mobile 设备管理" [ref=e28] [cursor=pointer]:
+          - img "mobile" [ref=e29]:
+            - img [ref=e30]
+          - generic [ref=e32]: 设备管理
+        - menuitem "warning 告警管理" [ref=e33] [cursor=pointer]:
+          - img "warning" [ref=e34]:
+            - img [ref=e35]
+          - generic [ref=e37]: 告警管理
+        - menuitem "bar-chart 统计分析" [ref=e38] [cursor=pointer]:
+          - img "bar-chart" [ref=e39]:
+            - img [ref=e40]
+          - generic [ref=e42]: 统计分析
+        - menuitem "team 用户管理" [ref=e43] [cursor=pointer]:
+          - img "team" [ref=e44]:
+            - img [ref=e45]
+          - generic [ref=e47]: 用户管理
+      - generic [ref=e48]:
+        - separator [ref=e49]
+        - text: 层级结构
+        - generic [ref=e158]:
+          - generic:
+            - textbox "for screen reader"
+          - tree [ref=e159]:
+            - treeitem "caret-down home 景德镇电信 (144) plus" [ref=e163]:
+              - img "caret-down" [ref=e165] [cursor=pointer]:
+                - img [ref=e166]
+              - generic "景德镇电信" [ref=e168] [cursor=pointer]:
+                - img "home" [ref=e170]:
+                  - img [ref=e171]
+                - generic [ref=e174]:
+                  - generic [ref=e176]: 景德镇电信 (144)
+                  - button "plus" [ref=e178]:
+                    - img "plus" [ref=e180]:
+                      - img [ref=e181]
+  - generic [ref=e56]:
+    - banner [ref=e57]:
+      - img "menu-fold" [ref=e59] [cursor=pointer]:
+        - img [ref=e60]
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - img "user" [ref=e64]:
+            - img [ref=e65]
+          - text: 系统管理员
+        - img "logout" [ref=e67] [cursor=pointer]:
+          - img [ref=e68]
+    - main [ref=e70]:
+      - generic [ref=e1792]:
+        - generic [ref=e1793]:
+          - heading "仪表盘" [level=1] [ref=e1794]
+          - button "reload 刷新" [ref=e1795] [cursor=pointer]:
+            - img "reload" [ref=e1797]:
+              - img [ref=e1798]
+            - generic [ref=e1800]: 刷新
+        - generic [ref=e1801]:
+          - generic [ref=e1805]:
+            - generic [ref=e1806]: 设备总数
+            - generic [ref=e1807]:
+              - img "mobile" [ref=e1809]:
+                - img [ref=e1810]
+              - generic [ref=e1812]: "144"
+          - generic [ref=e1816]:
+            - generic [ref=e1817]: 在线设备
+            - generic [ref=e1818]:
+              - img "check-circle" [ref=e1820]:
+                - img [ref=e1821]
+              - generic [ref=e1824]: "144"
+              - generic [ref=e1826]: / 144
+          - generic [ref=e1830]:
+            - generic [ref=e1831]: 离线设备
+            - generic [ref=e1832]:
+              - img "close-circle" [ref=e1834]:
+                - img [ref=e1835]
+              - generic [ref=e1837]: "0"
+          - generic [ref=e1841]:
+            - generic [ref=e1842]: 未处理告警
+            - generic [ref=e1843]:
+              - img "warning" [ref=e1845]:
+                - img [ref=e1846]
+              - generic [ref=e1848]: "0"
+        - generic [ref=e1849]:
+          - generic [ref=e1851]:
+            - generic [ref=e1854]: 系统状态
+            - generic [ref=e1856]:
+              - generic [ref=e1858]:
+                - generic [ref=e1859]: 在线率
+                - generic [ref=e1860]:
+                  - generic [ref=e1861]: "100.0"
+                  - generic [ref=e1862]: "%"
+              - generic [ref=e1864]:
+                - generic [ref=e1865]: 客户数量
+                - generic [ref=e1867]: "1"
+              - generic [ref=e1869]:
+                - generic [ref=e1870]: 告警总数
+                - generic [ref=e1872]: "0"
+          - generic [ref=e1874]:
+            - generic [ref=e1877]: 快捷操作
+            - generic [ref=e1879]:
+              - button "reload 刷新数据" [ref=e1881] [cursor=pointer]:
+                - img "reload" [ref=e1883]:
+                  - img [ref=e1884]
+                - generic [ref=e1886]: 刷新数据
+              - button "warning 告警管理" [ref=e1888] [cursor=pointer]:
+                - img "warning" [ref=e1890]:
+                  - img [ref=e1891]
+                - generic [ref=e1893]: 告警管理
+              - button "appstore 设备管理" [ref=e1895] [cursor=pointer]:
+                - img "appstore" [ref=e1897]:
+                  - img [ref=e1898]
+                - generic [ref=e1900]: 设备管理
+              - button "team 层级管理" [ref=e1902] [cursor=pointer]:
+                - img "team" [ref=e1904]:
+                  - img [ref=e1905]
+                - generic [ref=e1907]: 层级管理
+        - generic [ref=e1908]:
+          - generic [ref=e1911]: 最近告警
+          - alert [ref=e1913]:
+            - img "check-circle" [ref=e1914]:
+              - img [ref=e1915]
+            - generic [ref=e1918]: 暂无告警记录
