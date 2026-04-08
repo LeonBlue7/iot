@@ -60,7 +60,13 @@ export default function DeviceDetail() {
   }, [loadDevice, loadRealtimeData])
 
   const handleBack = () => {
-    navigate('/devices')
+    // 优先使用浏览器历史返回，保留列表页的分页参数
+    // 如果没有历史记录，则导航到设备列表
+    if (window.history.length > 1) {
+      navigate(-1)
+    } else {
+      navigate('/devices')
+    }
   }
 
   if (loading || !device) {

@@ -1,0 +1,149 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e43]:
+    - complementary [ref=e44]:
+      - generic [ref=e45]:
+        - generic [ref=e46]: 物联网管理系统
+        - menu [ref=e47]:
+          - menuitem "dashboard 仪表盘" [ref=e48] [cursor=pointer]:
+            - img "dashboard" [ref=e49]:
+              - img [ref=e50]
+            - generic [ref=e52]: 仪表盘
+          - menuitem "home 客户管理" [ref=e53] [cursor=pointer]:
+            - img "home" [ref=e54]:
+              - img [ref=e55]
+            - generic [ref=e57]: 客户管理
+          - menuitem "appstore 分区管理" [ref=e58] [cursor=pointer]:
+            - img "appstore" [ref=e59]:
+              - img [ref=e60]
+            - generic [ref=e62]: 分区管理
+          - menuitem "folder 分组管理" [ref=e63] [cursor=pointer]:
+            - img "folder" [ref=e64]:
+              - img [ref=e65]
+            - generic [ref=e67]: 分组管理
+          - menuitem "mobile 设备管理" [ref=e68] [cursor=pointer]:
+            - img "mobile" [ref=e69]:
+              - img [ref=e70]
+            - generic [ref=e72]: 设备管理
+          - menuitem "warning 告警管理" [ref=e73] [cursor=pointer]:
+            - img "warning" [ref=e74]:
+              - img [ref=e75]
+            - generic [ref=e77]: 告警管理
+          - menuitem "bar-chart 统计分析" [ref=e78] [cursor=pointer]:
+            - img "bar-chart" [ref=e79]:
+              - img [ref=e80]
+            - generic [ref=e82]: 统计分析
+          - menuitem "team 用户管理" [ref=e83] [cursor=pointer]:
+            - img "team" [ref=e84]:
+              - img [ref=e85]
+            - generic [ref=e87]: 用户管理
+        - generic [ref=e88]:
+          - separator [ref=e89]
+          - text: 层级结构
+          - generic [ref=e92]:
+            - generic:
+              - textbox "for screen reader"
+            - tree [ref=e93]:
+              - treeitem "caret-down home 景德镇电信 (144) plus" [ref=e97]:
+                - img "caret-down" [ref=e99] [cursor=pointer]:
+                  - img [ref=e100]
+                - generic "景德镇电信" [ref=e102] [cursor=pointer]:
+                  - img "home" [ref=e104]:
+                    - img [ref=e105]
+                  - generic [ref=e108]:
+                    - generic [ref=e110]: 景德镇电信 (144)
+                    - button "plus" [ref=e112]:
+                      - img "plus" [ref=e114]:
+                        - img [ref=e115]
+    - generic [ref=e118]:
+      - banner [ref=e119]:
+        - img "menu-fold" [ref=e121] [cursor=pointer]:
+          - img [ref=e122]
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - img "user" [ref=e126]:
+              - img [ref=e127]
+            - text: 系统管理员
+          - img "logout" [ref=e129] [cursor=pointer]:
+            - img [ref=e130]
+      - main [ref=e132]:
+        - generic [ref=e133]:
+          - generic [ref=e134]:
+            - heading "仪表盘" [level=1] [ref=e135]
+            - button "reload 刷新" [ref=e136] [cursor=pointer]:
+              - img "reload" [ref=e138]:
+                - img [ref=e139]
+              - generic [ref=e141]: 刷新
+          - generic [ref=e142]:
+            - generic [ref=e146]:
+              - generic [ref=e147]: 设备总数
+              - generic [ref=e148]:
+                - img "mobile" [ref=e150]:
+                  - img [ref=e151]
+                - generic [ref=e153]: "144"
+            - generic [ref=e157]:
+              - generic [ref=e158]: 在线设备
+              - generic [ref=e159]:
+                - img "check-circle" [ref=e161]:
+                  - img [ref=e162]
+                - generic [ref=e165]: "76"
+                - generic [ref=e167]: / 144
+            - generic [ref=e171]:
+              - generic [ref=e172]: 离线设备
+              - generic [ref=e173]:
+                - img "close-circle" [ref=e175]:
+                  - img [ref=e176]
+                - generic [ref=e178]: "68"
+            - generic [ref=e182]:
+              - generic [ref=e183]: 空调开机
+              - generic [ref=e184]:
+                - img "thunderbolt" [ref=e186]:
+                  - img [ref=e187]
+                - generic [ref=e189]: "1"
+                - generic [ref=e190]: 台
+          - generic [ref=e191]:
+            - generic [ref=e193]:
+              - generic [ref=e196]: 系统状态
+              - generic [ref=e198]:
+                - generic [ref=e200]:
+                  - generic [ref=e201]: 在线率
+                  - generic [ref=e202]:
+                    - generic [ref=e203]: "52.8"
+                    - generic [ref=e204]: "%"
+                - generic [ref=e206]:
+                  - generic [ref=e207]: 客户数量
+                  - generic [ref=e209]: "1"
+                - generic [ref=e211]:
+                  - generic [ref=e212]: 告警总数
+                  - generic [ref=e214]: "0"
+                - generic [ref=e216]:
+                  - generic [ref=e217]: 未处理告警
+                  - generic [ref=e219]: "0"
+            - generic [ref=e221]:
+              - generic [ref=e224]: 快捷操作
+              - generic [ref=e226]:
+                - button "reload 刷新数据" [ref=e228] [cursor=pointer]:
+                  - img "reload" [ref=e230]:
+                    - img [ref=e231]
+                  - generic [ref=e233]: 刷新数据
+                - button "warning 告警管理" [ref=e235] [cursor=pointer]:
+                  - img "warning" [ref=e237]:
+                    - img [ref=e238]
+                  - generic [ref=e240]: 告警管理
+                - button "appstore 设备管理" [ref=e242] [cursor=pointer]:
+                  - img "appstore" [ref=e244]:
+                    - img [ref=e245]
+                  - generic [ref=e247]: 设备管理
+                - button "team 层级管理" [ref=e249] [cursor=pointer]:
+                  - img "team" [ref=e251]:
+                    - img [ref=e252]
+                  - generic [ref=e254]: 层级管理
+          - generic [ref=e255]:
+            - generic [ref=e258]: 最近告警
+            - alert [ref=e260]:
+              - img "check-circle" [ref=e261]:
+                - img [ref=e262]
+              - generic [ref=e265]: 暂无告警记录
+  - generic [ref=e267]:
+    - img "check-circle" [ref=e268]:
+      - img [ref=e269]
+    - generic [ref=e271]: 登录成功

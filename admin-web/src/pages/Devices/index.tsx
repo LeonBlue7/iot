@@ -52,11 +52,27 @@ export default function Devices(): JSX.Element {
   // 当前搜索参数
   const [currentSearchParams, setCurrentSearchParams] = useState<DeviceSearchParams | null>(null)
 
-  // 分页配置 - 从URL参数初始化，保持状态持久化
+  // 分页配置 - 优先从URL参数读取，其次从sessionStorage，最后使用默认值
   const [pagination, setPagination] = useState(() => {
-    const page = parseInt(searchParams.get('page') || '1', 10)
-    const pageSize = parseInt(searchParams.get('pageSize') || '50', 10)
-    return { page, pageSize }
+    // 1. 首先检查URL参数
+    const urlPage = searchParams.get('page')
+    const urlPageSize = searchParams.get('pageSize')
+    if (urlPage && urlPageSize) {
+      return { page: parseInt(urlPage, 10), pageSize: parseInt(urlPageSize, 10) }
+    }
+
+    // 2. 其次检查sessionStorage
+    try {
+      const saved = sessionStorage.getItem('devices-pagination')
+      if (saved) {
+        return JSON.parse(saved)
+      }
+    } catch {
+      // 忽略解析错误
+    }
+
+    // 3. 默认值
+    return { page: 1, pageSize: 50 }
   })
   const [totalDevices, setTotalDevices] = useState(0)
 
@@ -506,13 +522,21 @@ export default function Devices(): JSX.Element {
             onChange: (page, newPageSize) => {
               const newPagination = { page, pageSize: newPageSize || pagination.pageSize }
               setPagination(newPagination)
-              // 更新URL参数，保持分页状态持久化
+
+              // 保存到URL参数
               setSearchParams((prev) => {
                 const params = new URLSearchParams(prev)
                 params.set('page', String(page))
                 params.set('pageSize', String(newPageSize || pagination.pageSize))
                 return params
               })
+
+              // 同时保存到sessionStorage，作为备份
+              try {
+                sessionStorage.setItem('devices-pagination', JSON.stringify(newPagination))
+              } catch {
+                // 忽略存储错误
+              }
             },
           }}
         />
