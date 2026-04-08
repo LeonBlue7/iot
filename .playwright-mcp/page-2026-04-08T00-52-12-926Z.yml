@@ -1,0 +1,1415 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: 物联网管理系统
+        - menu [ref=e7]:
+          - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+            - img "dashboard" [ref=e9]:
+              - img [ref=e10]
+            - generic [ref=e12]: 仪表盘
+          - menuitem "home 客户管理" [ref=e13] [cursor=pointer]:
+            - img "home" [ref=e14]:
+              - img [ref=e15]
+            - generic [ref=e17]: 客户管理
+          - menuitem "appstore 分区管理" [ref=e18] [cursor=pointer]:
+            - img "appstore" [ref=e19]:
+              - img [ref=e20]
+            - generic [ref=e22]: 分区管理
+          - menuitem "folder 分组管理" [ref=e23] [cursor=pointer]:
+            - img "folder" [ref=e24]:
+              - img [ref=e25]
+            - generic [ref=e27]: 分组管理
+          - menuitem "mobile 设备管理" [ref=e28] [cursor=pointer]:
+            - img "mobile" [ref=e29]:
+              - img [ref=e30]
+            - generic [ref=e32]: 设备管理
+          - menuitem "warning 告警管理" [ref=e33] [cursor=pointer]:
+            - img "warning" [ref=e34]:
+              - img [ref=e35]
+            - generic [ref=e37]: 告警管理
+          - menuitem "bar-chart 统计分析" [ref=e38] [cursor=pointer]:
+            - img "bar-chart" [ref=e39]:
+              - img [ref=e40]
+            - generic [ref=e42]: 统计分析
+          - menuitem "team 用户管理" [ref=e43] [cursor=pointer]:
+            - img "team" [ref=e44]:
+              - img [ref=e45]
+            - generic [ref=e47]: 用户管理
+        - generic [ref=e48]:
+          - separator [ref=e49]
+          - text: 层级结构
+          - generic [ref=e158]:
+            - generic:
+              - textbox "for screen reader"
+            - tree [ref=e159]:
+              - treeitem "caret-down home 景德镇电信 (144) plus" [ref=e163]:
+                - img "caret-down" [ref=e165] [cursor=pointer]:
+                  - img [ref=e166]
+                - generic "景德镇电信" [ref=e168] [cursor=pointer]:
+                  - img "home" [ref=e170]:
+                    - img [ref=e171]
+                  - generic [ref=e174]:
+                    - generic [ref=e176]: 景德镇电信 (144)
+                    - button "plus" [ref=e178]:
+                      - img "plus" [ref=e180]:
+                        - img [ref=e181]
+    - generic [ref=e56]:
+      - banner [ref=e57]:
+        - img "menu-fold" [ref=e59] [cursor=pointer]:
+          - img [ref=e60]
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - img "user" [ref=e64]:
+              - img [ref=e65]
+            - text: 系统管理员
+          - img "logout" [ref=e67] [cursor=pointer]:
+            - img [ref=e68]
+      - main [ref=e70]:
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - heading "设备管理" [level=1] [ref=e74]
+              - navigation [ref=e75]:
+                - list [ref=e76]:
+                  - listitem [ref=e77]:
+                    - generic [ref=e78]:
+                      - img "home" [ref=e79]:
+                        - img [ref=e80]
+                      - text: 全部设备
+            - button "reload 刷新" [ref=e184] [cursor=pointer]:
+              - img "reload" [ref=e186]:
+                - img [ref=e187]
+              - generic [ref=e87]: 刷新
+          - generic [ref=e90]:
+            - textbox "搜索设备..." [ref=e92]
+            - generic [ref=e94] [cursor=pointer]:
+              - generic [ref=e96]:
+                - combobox [ref=e98]
+                - generic: 选择客户
+              - generic:
+                - img:
+                  - img
+            - generic [ref=e100] [cursor=pointer]:
+              - generic [ref=e102]:
+                - combobox [disabled] [ref=e104]
+                - generic: 选择分区
+              - generic:
+                - img:
+                  - img
+            - generic [ref=e106] [cursor=pointer]:
+              - generic [ref=e108]:
+                - combobox [disabled] [ref=e110]
+                - generic: 选择分组
+              - generic:
+                - img:
+                  - img
+            - button "search 搜索" [ref=e112] [cursor=pointer]:
+              - img "search" [ref=e114]:
+                - img [ref=e115]
+              - generic [ref=e117]: 搜索
+            - button "reload 重置" [ref=e119] [cursor=pointer]:
+              - img "reload" [ref=e121]:
+                - img [ref=e122]
+              - generic [ref=e124]: 重置
+          - generic [ref=e126]:
+            - generic [ref=e128]: 已选中 0 项设备
+            - button "poweroff 开启" [disabled] [ref=e130]:
+              - generic:
+                - img "poweroff":
+                  - img
+              - generic: 开启
+            - button "poweroff 关闭" [disabled] [ref=e132]:
+              - generic:
+                - img "poweroff":
+                  - img
+              - generic: 关闭
+            - button "reload 重启" [disabled] [ref=e134]:
+              - generic:
+                - img "reload":
+                  - img
+              - generic: 重启
+            - button "folder 移动分组" [disabled] [ref=e136]:
+              - generic:
+                - img "folder":
+                  - img
+              - generic: 移动分组
+            - button "setting 设置参数" [disabled] [ref=e138]:
+              - generic:
+                - img "setting":
+                  - img
+              - generic: 设置参数
+            - button "check-circle 启用" [disabled] [ref=e140]:
+              - generic:
+                - img "check-circle":
+                  - img
+              - generic: 启用
+            - button "stop 禁用" [disabled] [ref=e142]:
+              - generic:
+                - img "stop":
+                  - img
+              - generic: 禁用
+            - button "delete 删除" [disabled] [ref=e144]:
+              - generic:
+                - img "delete":
+                  - img
+              - generic: 删除
+          - generic [ref=e189]:
+            - table [ref=e193]:
+              - rowgroup [ref=e203]:
+                - row "Select all 设备ID 名称 温度 空调状态 在线状态 启用状态 操作" [ref=e204]:
+                  - columnheader "Select all" [ref=e205]:
+                    - checkbox "Select all" [ref=e209] [cursor=pointer]
+                  - columnheader "设备ID" [ref=e211]
+                  - columnheader "名称" [ref=e212]
+                  - columnheader "温度" [ref=e213]
+                  - columnheader "空调状态" [ref=e214]
+                  - columnheader "在线状态" [ref=e215]
+                  - columnheader "启用状态" [ref=e216]
+                  - columnheader "操作" [ref=e217]
+              - rowgroup [ref=e218]:
+                - row "866965081752518 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e219]:
+                  - cell [ref=e220]:
+                    - checkbox [ref=e223] [cursor=pointer]
+                  - cell "866965081752518" [ref=e225]
+                  - cell "未命名" [ref=e226]
+                  - cell "-" [ref=e227]
+                  - cell "未知" [ref=e228]:
+                    - generic [ref=e229]: 未知
+                  - cell "在线" [ref=e230]:
+                    - generic [ref=e231]: 在线
+                  - cell "已启用" [ref=e232]:
+                    - generic [ref=e233]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e234]:
+                    - generic [ref=e235]:
+                      - button "eye 详情" [ref=e237] [cursor=pointer]:
+                        - img "eye" [ref=e239]:
+                          - img [ref=e240]
+                        - generic [ref=e242]: 详情
+                      - button "开 启" [ref=e244] [cursor=pointer]:
+                        - generic [ref=e245]: 开 启
+                      - button "关 闭" [ref=e247] [cursor=pointer]:
+                        - generic [ref=e248]: 关 闭
+                      - button "重 启" [ref=e250] [cursor=pointer]:
+                        - generic [ref=e251]: 重 启
+                - row "866965081717180 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e252]:
+                  - cell [ref=e253]:
+                    - checkbox [ref=e256] [cursor=pointer]
+                  - cell "866965081717180" [ref=e258]
+                  - cell "未命名" [ref=e259]
+                  - cell "-" [ref=e260]
+                  - cell "未知" [ref=e261]:
+                    - generic [ref=e262]: 未知
+                  - cell "在线" [ref=e263]:
+                    - generic [ref=e264]: 在线
+                  - cell "已启用" [ref=e265]:
+                    - generic [ref=e266]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e267]:
+                    - generic [ref=e268]:
+                      - button "eye 详情" [ref=e270] [cursor=pointer]:
+                        - img "eye" [ref=e272]:
+                          - img [ref=e273]
+                        - generic [ref=e275]: 详情
+                      - button "开 启" [ref=e277] [cursor=pointer]:
+                        - generic [ref=e278]: 开 启
+                      - button "关 闭" [ref=e280] [cursor=pointer]:
+                        - generic [ref=e281]: 关 闭
+                      - button "重 启" [ref=e283] [cursor=pointer]:
+                        - generic [ref=e284]: 重 启
+                - row "866965081723675 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e285]:
+                  - cell [ref=e286]:
+                    - checkbox [ref=e289] [cursor=pointer]
+                  - cell "866965081723675" [ref=e291]
+                  - cell "未命名" [ref=e292]
+                  - cell "-" [ref=e293]
+                  - cell "未知" [ref=e294]:
+                    - generic [ref=e295]: 未知
+                  - cell "在线" [ref=e296]:
+                    - generic [ref=e297]: 在线
+                  - cell "已启用" [ref=e298]:
+                    - generic [ref=e299]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e300]:
+                    - generic [ref=e301]:
+                      - button "eye 详情" [ref=e303] [cursor=pointer]:
+                        - img "eye" [ref=e305]:
+                          - img [ref=e306]
+                        - generic [ref=e308]: 详情
+                      - button "开 启" [ref=e310] [cursor=pointer]:
+                        - generic [ref=e311]: 开 启
+                      - button "关 闭" [ref=e313] [cursor=pointer]:
+                        - generic [ref=e314]: 关 闭
+                      - button "重 启" [ref=e316] [cursor=pointer]:
+                        - generic [ref=e317]: 重 启
+                - row "866965081725688 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e318]:
+                  - cell [ref=e319]:
+                    - checkbox [ref=e322] [cursor=pointer]
+                  - cell "866965081725688" [ref=e324]
+                  - cell "未命名" [ref=e325]
+                  - cell "-" [ref=e326]
+                  - cell "未知" [ref=e327]:
+                    - generic [ref=e328]: 未知
+                  - cell "在线" [ref=e329]:
+                    - generic [ref=e330]: 在线
+                  - cell "已启用" [ref=e331]:
+                    - generic [ref=e332]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e333]:
+                    - generic [ref=e334]:
+                      - button "eye 详情" [ref=e336] [cursor=pointer]:
+                        - img "eye" [ref=e338]:
+                          - img [ref=e339]
+                        - generic [ref=e341]: 详情
+                      - button "开 启" [ref=e343] [cursor=pointer]:
+                        - generic [ref=e344]: 开 启
+                      - button "关 闭" [ref=e346] [cursor=pointer]:
+                        - generic [ref=e347]: 关 闭
+                      - button "重 启" [ref=e349] [cursor=pointer]:
+                        - generic [ref=e350]: 重 启
+                - row "866965081724863 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e351]:
+                  - cell [ref=e352]:
+                    - checkbox [ref=e355] [cursor=pointer]
+                  - cell "866965081724863" [ref=e357]
+                  - cell "未命名" [ref=e358]
+                  - cell "-" [ref=e359]
+                  - cell "未知" [ref=e360]:
+                    - generic [ref=e361]: 未知
+                  - cell "在线" [ref=e362]:
+                    - generic [ref=e363]: 在线
+                  - cell "已启用" [ref=e364]:
+                    - generic [ref=e365]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e366]:
+                    - generic [ref=e367]:
+                      - button "eye 详情" [ref=e369] [cursor=pointer]:
+                        - img "eye" [ref=e371]:
+                          - img [ref=e372]
+                        - generic [ref=e374]: 详情
+                      - button "开 启" [ref=e376] [cursor=pointer]:
+                        - generic [ref=e377]: 开 启
+                      - button "关 闭" [ref=e379] [cursor=pointer]:
+                        - generic [ref=e380]: 关 闭
+                      - button "重 启" [ref=e382] [cursor=pointer]:
+                        - generic [ref=e383]: 重 启
+                - row "866965081752591 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e384]:
+                  - cell [ref=e385]:
+                    - checkbox [ref=e388] [cursor=pointer]
+                  - cell "866965081752591" [ref=e390]
+                  - cell "未命名" [ref=e391]
+                  - cell "-" [ref=e392]
+                  - cell "未知" [ref=e393]:
+                    - generic [ref=e394]: 未知
+                  - cell "在线" [ref=e395]:
+                    - generic [ref=e396]: 在线
+                  - cell "已启用" [ref=e397]:
+                    - generic [ref=e398]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e399]:
+                    - generic [ref=e400]:
+                      - button "eye 详情" [ref=e402] [cursor=pointer]:
+                        - img "eye" [ref=e404]:
+                          - img [ref=e405]
+                        - generic [ref=e407]: 详情
+                      - button "开 启" [ref=e409] [cursor=pointer]:
+                        - generic [ref=e410]: 开 启
+                      - button "关 闭" [ref=e412] [cursor=pointer]:
+                        - generic [ref=e413]: 关 闭
+                      - button "重 启" [ref=e415] [cursor=pointer]:
+                        - generic [ref=e416]: 重 启
+                - row "866965081742998 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e417]:
+                  - cell [ref=e418]:
+                    - checkbox [ref=e421] [cursor=pointer]
+                  - cell "866965081742998" [ref=e423]
+                  - cell "未命名" [ref=e424]
+                  - cell "-" [ref=e425]
+                  - cell "未知" [ref=e426]:
+                    - generic [ref=e427]: 未知
+                  - cell "在线" [ref=e428]:
+                    - generic [ref=e429]: 在线
+                  - cell "已启用" [ref=e430]:
+                    - generic [ref=e431]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e432]:
+                    - generic [ref=e433]:
+                      - button "eye 详情" [ref=e435] [cursor=pointer]:
+                        - img "eye" [ref=e437]:
+                          - img [ref=e438]
+                        - generic [ref=e440]: 详情
+                      - button "开 启" [ref=e442] [cursor=pointer]:
+                        - generic [ref=e443]: 开 启
+                      - button "关 闭" [ref=e445] [cursor=pointer]:
+                        - generic [ref=e446]: 关 闭
+                      - button "重 启" [ref=e448] [cursor=pointer]:
+                        - generic [ref=e449]: 重 启
+                - row "866965081748409 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e450]:
+                  - cell [ref=e451]:
+                    - checkbox [ref=e454] [cursor=pointer]
+                  - cell "866965081748409" [ref=e456]
+                  - cell "未命名" [ref=e457]
+                  - cell "-" [ref=e458]
+                  - cell "未知" [ref=e459]:
+                    - generic [ref=e460]: 未知
+                  - cell "在线" [ref=e461]:
+                    - generic [ref=e462]: 在线
+                  - cell "已启用" [ref=e463]:
+                    - generic [ref=e464]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e465]:
+                    - generic [ref=e466]:
+                      - button "eye 详情" [ref=e468] [cursor=pointer]:
+                        - img "eye" [ref=e470]:
+                          - img [ref=e471]
+                        - generic [ref=e473]: 详情
+                      - button "开 启" [ref=e475] [cursor=pointer]:
+                        - generic [ref=e476]: 开 启
+                      - button "关 闭" [ref=e478] [cursor=pointer]:
+                        - generic [ref=e479]: 关 闭
+                      - button "重 启" [ref=e481] [cursor=pointer]:
+                        - generic [ref=e482]: 重 启
+                - row "866965081752484 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e483]:
+                  - cell [ref=e484]:
+                    - checkbox [ref=e487] [cursor=pointer]
+                  - cell "866965081752484" [ref=e489]
+                  - cell "未命名" [ref=e490]
+                  - cell "-" [ref=e491]
+                  - cell "未知" [ref=e492]:
+                    - generic [ref=e493]: 未知
+                  - cell "在线" [ref=e494]:
+                    - generic [ref=e495]: 在线
+                  - cell "已启用" [ref=e496]:
+                    - generic [ref=e497]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e498]:
+                    - generic [ref=e499]:
+                      - button "eye 详情" [ref=e501] [cursor=pointer]:
+                        - img "eye" [ref=e503]:
+                          - img [ref=e504]
+                        - generic [ref=e506]: 详情
+                      - button "开 启" [ref=e508] [cursor=pointer]:
+                        - generic [ref=e509]: 开 启
+                      - button "关 闭" [ref=e511] [cursor=pointer]:
+                        - generic [ref=e512]: 关 闭
+                      - button "重 启" [ref=e514] [cursor=pointer]:
+                        - generic [ref=e515]: 重 启
+                - row "866965081725522 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e516]:
+                  - cell [ref=e517]:
+                    - checkbox [ref=e520] [cursor=pointer]
+                  - cell "866965081725522" [ref=e522]
+                  - cell "未命名" [ref=e523]
+                  - cell "-" [ref=e524]
+                  - cell "未知" [ref=e525]:
+                    - generic [ref=e526]: 未知
+                  - cell "在线" [ref=e527]:
+                    - generic [ref=e528]: 在线
+                  - cell "已启用" [ref=e529]:
+                    - generic [ref=e530]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e531]:
+                    - generic [ref=e532]:
+                      - button "eye 详情" [ref=e534] [cursor=pointer]:
+                        - img "eye" [ref=e536]:
+                          - img [ref=e537]
+                        - generic [ref=e539]: 详情
+                      - button "开 启" [ref=e541] [cursor=pointer]:
+                        - generic [ref=e542]: 开 启
+                      - button "关 闭" [ref=e544] [cursor=pointer]:
+                        - generic [ref=e545]: 关 闭
+                      - button "重 启" [ref=e547] [cursor=pointer]:
+                        - generic [ref=e548]: 重 启
+                - row "866965081753193 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e549]:
+                  - cell [ref=e550]:
+                    - checkbox [ref=e553] [cursor=pointer]
+                  - cell "866965081753193" [ref=e555]
+                  - cell "未命名" [ref=e556]
+                  - cell "-" [ref=e557]
+                  - cell "未知" [ref=e558]:
+                    - generic [ref=e559]: 未知
+                  - cell "在线" [ref=e560]:
+                    - generic [ref=e561]: 在线
+                  - cell "已启用" [ref=e562]:
+                    - generic [ref=e563]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e564]:
+                    - generic [ref=e565]:
+                      - button "eye 详情" [ref=e567] [cursor=pointer]:
+                        - img "eye" [ref=e569]:
+                          - img [ref=e570]
+                        - generic [ref=e572]: 详情
+                      - button "开 启" [ref=e574] [cursor=pointer]:
+                        - generic [ref=e575]: 开 启
+                      - button "关 闭" [ref=e577] [cursor=pointer]:
+                        - generic [ref=e578]: 关 闭
+                      - button "重 启" [ref=e580] [cursor=pointer]:
+                        - generic [ref=e581]: 重 启
+                - row "866965081752633 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e582]:
+                  - cell [ref=e583]:
+                    - checkbox [ref=e586] [cursor=pointer]
+                  - cell "866965081752633" [ref=e588]
+                  - cell "未命名" [ref=e589]
+                  - cell "-" [ref=e590]
+                  - cell "未知" [ref=e591]:
+                    - generic [ref=e592]: 未知
+                  - cell "在线" [ref=e593]:
+                    - generic [ref=e594]: 在线
+                  - cell "已启用" [ref=e595]:
+                    - generic [ref=e596]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e597]:
+                    - generic [ref=e598]:
+                      - button "eye 详情" [ref=e600] [cursor=pointer]:
+                        - img "eye" [ref=e602]:
+                          - img [ref=e603]
+                        - generic [ref=e605]: 详情
+                      - button "开 启" [ref=e607] [cursor=pointer]:
+                        - generic [ref=e608]: 开 启
+                      - button "关 闭" [ref=e610] [cursor=pointer]:
+                        - generic [ref=e611]: 关 闭
+                      - button "重 启" [ref=e613] [cursor=pointer]:
+                        - generic [ref=e614]: 重 启
+                - row "866965081753268 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e615]:
+                  - cell [ref=e616]:
+                    - checkbox [ref=e619] [cursor=pointer]
+                  - cell "866965081753268" [ref=e621]
+                  - cell "未命名" [ref=e622]
+                  - cell "-" [ref=e623]
+                  - cell "未知" [ref=e624]:
+                    - generic [ref=e625]: 未知
+                  - cell "在线" [ref=e626]:
+                    - generic [ref=e627]: 在线
+                  - cell "已启用" [ref=e628]:
+                    - generic [ref=e629]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e630]:
+                    - generic [ref=e631]:
+                      - button "eye 详情" [ref=e633] [cursor=pointer]:
+                        - img "eye" [ref=e635]:
+                          - img [ref=e636]
+                        - generic [ref=e638]: 详情
+                      - button "开 启" [ref=e640] [cursor=pointer]:
+                        - generic [ref=e641]: 开 启
+                      - button "关 闭" [ref=e643] [cursor=pointer]:
+                        - generic [ref=e644]: 关 闭
+                      - button "重 启" [ref=e646] [cursor=pointer]:
+                        - generic [ref=e647]: 重 启
+                - row "866965081717909 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e648]:
+                  - cell [ref=e649]:
+                    - checkbox [ref=e652] [cursor=pointer]
+                  - cell "866965081717909" [ref=e654]
+                  - cell "未命名" [ref=e655]
+                  - cell "-" [ref=e656]
+                  - cell "未知" [ref=e657]:
+                    - generic [ref=e658]: 未知
+                  - cell "在线" [ref=e659]:
+                    - generic [ref=e660]: 在线
+                  - cell "已启用" [ref=e661]:
+                    - generic [ref=e662]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e663]:
+                    - generic [ref=e664]:
+                      - button "eye 详情" [ref=e666] [cursor=pointer]:
+                        - img "eye" [ref=e668]:
+                          - img [ref=e669]
+                        - generic [ref=e671]: 详情
+                      - button "开 启" [ref=e673] [cursor=pointer]:
+                        - generic [ref=e674]: 开 启
+                      - button "关 闭" [ref=e676] [cursor=pointer]:
+                        - generic [ref=e677]: 关 闭
+                      - button "重 启" [ref=e679] [cursor=pointer]:
+                        - generic [ref=e680]: 重 启
+                - row "866965081733617 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e681]:
+                  - cell [ref=e682]:
+                    - checkbox [ref=e685] [cursor=pointer]
+                  - cell "866965081733617" [ref=e687]
+                  - cell "未命名" [ref=e688]
+                  - cell "-" [ref=e689]
+                  - cell "未知" [ref=e690]:
+                    - generic [ref=e691]: 未知
+                  - cell "在线" [ref=e692]:
+                    - generic [ref=e693]: 在线
+                  - cell "已启用" [ref=e694]:
+                    - generic [ref=e695]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e696]:
+                    - generic [ref=e697]:
+                      - button "eye 详情" [ref=e699] [cursor=pointer]:
+                        - img "eye" [ref=e701]:
+                          - img [ref=e702]
+                        - generic [ref=e704]: 详情
+                      - button "开 启" [ref=e706] [cursor=pointer]:
+                        - generic [ref=e707]: 开 启
+                      - button "关 闭" [ref=e709] [cursor=pointer]:
+                        - generic [ref=e710]: 关 闭
+                      - button "重 启" [ref=e712] [cursor=pointer]:
+                        - generic [ref=e713]: 重 启
+                - row "866965081754621 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e714]:
+                  - cell [ref=e715]:
+                    - checkbox [ref=e718] [cursor=pointer]
+                  - cell "866965081754621" [ref=e720]
+                  - cell "未命名" [ref=e721]
+                  - cell "-" [ref=e722]
+                  - cell "未知" [ref=e723]:
+                    - generic [ref=e724]: 未知
+                  - cell "在线" [ref=e725]:
+                    - generic [ref=e726]: 在线
+                  - cell "已启用" [ref=e727]:
+                    - generic [ref=e728]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e729]:
+                    - generic [ref=e730]:
+                      - button "eye 详情" [ref=e732] [cursor=pointer]:
+                        - img "eye" [ref=e734]:
+                          - img [ref=e735]
+                        - generic [ref=e737]: 详情
+                      - button "开 启" [ref=e739] [cursor=pointer]:
+                        - generic [ref=e740]: 开 启
+                      - button "关 闭" [ref=e742] [cursor=pointer]:
+                        - generic [ref=e743]: 关 闭
+                      - button "重 启" [ref=e745] [cursor=pointer]:
+                        - generic [ref=e746]: 重 启
+                - row "866965081752773 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e747]:
+                  - cell [ref=e748]:
+                    - checkbox [ref=e751] [cursor=pointer]
+                  - cell "866965081752773" [ref=e753]
+                  - cell "未命名" [ref=e754]
+                  - cell "-" [ref=e755]
+                  - cell "未知" [ref=e756]:
+                    - generic [ref=e757]: 未知
+                  - cell "在线" [ref=e758]:
+                    - generic [ref=e759]: 在线
+                  - cell "已启用" [ref=e760]:
+                    - generic [ref=e761]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e762]:
+                    - generic [ref=e763]:
+                      - button "eye 详情" [ref=e765] [cursor=pointer]:
+                        - img "eye" [ref=e767]:
+                          - img [ref=e768]
+                        - generic [ref=e770]: 详情
+                      - button "开 启" [ref=e772] [cursor=pointer]:
+                        - generic [ref=e773]: 开 启
+                      - button "关 闭" [ref=e775] [cursor=pointer]:
+                        - generic [ref=e776]: 关 闭
+                      - button "重 启" [ref=e778] [cursor=pointer]:
+                        - generic [ref=e779]: 重 启
+                - row "866965081744572 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e780]:
+                  - cell [ref=e781]:
+                    - checkbox [ref=e784] [cursor=pointer]
+                  - cell "866965081744572" [ref=e786]
+                  - cell "未命名" [ref=e787]
+                  - cell "-" [ref=e788]
+                  - cell "未知" [ref=e789]:
+                    - generic [ref=e790]: 未知
+                  - cell "在线" [ref=e791]:
+                    - generic [ref=e792]: 在线
+                  - cell "已启用" [ref=e793]:
+                    - generic [ref=e794]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e795]:
+                    - generic [ref=e796]:
+                      - button "eye 详情" [ref=e798] [cursor=pointer]:
+                        - img "eye" [ref=e800]:
+                          - img [ref=e801]
+                        - generic [ref=e803]: 详情
+                      - button "开 启" [ref=e805] [cursor=pointer]:
+                        - generic [ref=e806]: 开 启
+                      - button "关 闭" [ref=e808] [cursor=pointer]:
+                        - generic [ref=e809]: 关 闭
+                      - button "重 启" [ref=e811] [cursor=pointer]:
+                        - generic [ref=e812]: 重 启
+                - row "866965081719822 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e813]:
+                  - cell [ref=e814]:
+                    - checkbox [ref=e817] [cursor=pointer]
+                  - cell "866965081719822" [ref=e819]
+                  - cell "未命名" [ref=e820]
+                  - cell "-" [ref=e821]
+                  - cell "未知" [ref=e822]:
+                    - generic [ref=e823]: 未知
+                  - cell "在线" [ref=e824]:
+                    - generic [ref=e825]: 在线
+                  - cell "已启用" [ref=e826]:
+                    - generic [ref=e827]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e828]:
+                    - generic [ref=e829]:
+                      - button "eye 详情" [ref=e831] [cursor=pointer]:
+                        - img "eye" [ref=e833]:
+                          - img [ref=e834]
+                        - generic [ref=e836]: 详情
+                      - button "开 启" [ref=e838] [cursor=pointer]:
+                        - generic [ref=e839]: 开 启
+                      - button "关 闭" [ref=e841] [cursor=pointer]:
+                        - generic [ref=e842]: 关 闭
+                      - button "重 启" [ref=e844] [cursor=pointer]:
+                        - generic [ref=e845]: 重 启
+                - row "866965081753334 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e846]:
+                  - cell [ref=e847]:
+                    - checkbox [ref=e850] [cursor=pointer]
+                  - cell "866965081753334" [ref=e852]
+                  - cell "未命名" [ref=e853]
+                  - cell "-" [ref=e854]
+                  - cell "未知" [ref=e855]:
+                    - generic [ref=e856]: 未知
+                  - cell "在线" [ref=e857]:
+                    - generic [ref=e858]: 在线
+                  - cell "已启用" [ref=e859]:
+                    - generic [ref=e860]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e861]:
+                    - generic [ref=e862]:
+                      - button "eye 详情" [ref=e864] [cursor=pointer]:
+                        - img "eye" [ref=e866]:
+                          - img [ref=e867]
+                        - generic [ref=e869]: 详情
+                      - button "开 启" [ref=e871] [cursor=pointer]:
+                        - generic [ref=e872]: 开 启
+                      - button "关 闭" [ref=e874] [cursor=pointer]:
+                        - generic [ref=e875]: 关 闭
+                      - button "重 启" [ref=e877] [cursor=pointer]:
+                        - generic [ref=e878]: 重 启
+                - row "866965081725365 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e879]:
+                  - cell [ref=e880]:
+                    - checkbox [ref=e883] [cursor=pointer]
+                  - cell "866965081725365" [ref=e885]
+                  - cell "未命名" [ref=e886]
+                  - cell "-" [ref=e887]
+                  - cell "未知" [ref=e888]:
+                    - generic [ref=e889]: 未知
+                  - cell "在线" [ref=e890]:
+                    - generic [ref=e891]: 在线
+                  - cell "已启用" [ref=e892]:
+                    - generic [ref=e893]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e894]:
+                    - generic [ref=e895]:
+                      - button "eye 详情" [ref=e897] [cursor=pointer]:
+                        - img "eye" [ref=e899]:
+                          - img [ref=e900]
+                        - generic [ref=e902]: 详情
+                      - button "开 启" [ref=e904] [cursor=pointer]:
+                        - generic [ref=e905]: 开 启
+                      - button "关 闭" [ref=e907] [cursor=pointer]:
+                        - generic [ref=e908]: 关 闭
+                      - button "重 启" [ref=e910] [cursor=pointer]:
+                        - generic [ref=e911]: 重 启
+                - row "866965081718980 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e912]:
+                  - cell [ref=e913]:
+                    - checkbox [ref=e916] [cursor=pointer]
+                  - cell "866965081718980" [ref=e918]
+                  - cell "未命名" [ref=e919]
+                  - cell "-" [ref=e920]
+                  - cell "未知" [ref=e921]:
+                    - generic [ref=e922]: 未知
+                  - cell "在线" [ref=e923]:
+                    - generic [ref=e924]: 在线
+                  - cell "已启用" [ref=e925]:
+                    - generic [ref=e926]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e927]:
+                    - generic [ref=e928]:
+                      - button "eye 详情" [ref=e930] [cursor=pointer]:
+                        - img "eye" [ref=e932]:
+                          - img [ref=e933]
+                        - generic [ref=e935]: 详情
+                      - button "开 启" [ref=e937] [cursor=pointer]:
+                        - generic [ref=e938]: 开 启
+                      - button "关 闭" [ref=e940] [cursor=pointer]:
+                        - generic [ref=e941]: 关 闭
+                      - button "重 启" [ref=e943] [cursor=pointer]:
+                        - generic [ref=e944]: 重 启
+                - row "866965081753375 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e945]:
+                  - cell [ref=e946]:
+                    - checkbox [ref=e949] [cursor=pointer]
+                  - cell "866965081753375" [ref=e951]
+                  - cell "未命名" [ref=e952]
+                  - cell "-" [ref=e953]
+                  - cell "未知" [ref=e954]:
+                    - generic [ref=e955]: 未知
+                  - cell "在线" [ref=e956]:
+                    - generic [ref=e957]: 在线
+                  - cell "已启用" [ref=e958]:
+                    - generic [ref=e959]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e960]:
+                    - generic [ref=e961]:
+                      - button "eye 详情" [ref=e963] [cursor=pointer]:
+                        - img "eye" [ref=e965]:
+                          - img [ref=e966]
+                        - generic [ref=e968]: 详情
+                      - button "开 启" [ref=e970] [cursor=pointer]:
+                        - generic [ref=e971]: 开 启
+                      - button "关 闭" [ref=e973] [cursor=pointer]:
+                        - generic [ref=e974]: 关 闭
+                      - button "重 启" [ref=e976] [cursor=pointer]:
+                        - generic [ref=e977]: 重 启
+                - row "866965081748623 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e978]:
+                  - cell [ref=e979]:
+                    - checkbox [ref=e982] [cursor=pointer]
+                  - cell "866965081748623" [ref=e984]
+                  - cell "未命名" [ref=e985]
+                  - cell "-" [ref=e986]
+                  - cell "未知" [ref=e987]:
+                    - generic [ref=e988]: 未知
+                  - cell "在线" [ref=e989]:
+                    - generic [ref=e990]: 在线
+                  - cell "已启用" [ref=e991]:
+                    - generic [ref=e992]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e993]:
+                    - generic [ref=e994]:
+                      - button "eye 详情" [ref=e996] [cursor=pointer]:
+                        - img "eye" [ref=e998]:
+                          - img [ref=e999]
+                        - generic [ref=e1001]: 详情
+                      - button "开 启" [ref=e1003] [cursor=pointer]:
+                        - generic [ref=e1004]: 开 启
+                      - button "关 闭" [ref=e1006] [cursor=pointer]:
+                        - generic [ref=e1007]: 关 闭
+                      - button "重 启" [ref=e1009] [cursor=pointer]:
+                        - generic [ref=e1010]: 重 启
+                - row "866965081752559 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1011]:
+                  - cell [ref=e1012]:
+                    - checkbox [ref=e1015] [cursor=pointer]
+                  - cell "866965081752559" [ref=e1017]
+                  - cell "未命名" [ref=e1018]
+                  - cell "-" [ref=e1019]
+                  - cell "未知" [ref=e1020]:
+                    - generic [ref=e1021]: 未知
+                  - cell "在线" [ref=e1022]:
+                    - generic [ref=e1023]: 在线
+                  - cell "已启用" [ref=e1024]:
+                    - generic [ref=e1025]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1026]:
+                    - generic [ref=e1027]:
+                      - button "eye 详情" [ref=e1029] [cursor=pointer]:
+                        - img "eye" [ref=e1031]:
+                          - img [ref=e1032]
+                        - generic [ref=e1034]: 详情
+                      - button "开 启" [ref=e1036] [cursor=pointer]:
+                        - generic [ref=e1037]: 开 启
+                      - button "关 闭" [ref=e1039] [cursor=pointer]:
+                        - generic [ref=e1040]: 关 闭
+                      - button "重 启" [ref=e1042] [cursor=pointer]:
+                        - generic [ref=e1043]: 重 启
+                - row "866965081719327 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1044]:
+                  - cell [ref=e1045]:
+                    - checkbox [ref=e1048] [cursor=pointer]
+                  - cell "866965081719327" [ref=e1050]
+                  - cell "未命名" [ref=e1051]
+                  - cell "-" [ref=e1052]
+                  - cell "未知" [ref=e1053]:
+                    - generic [ref=e1054]: 未知
+                  - cell "在线" [ref=e1055]:
+                    - generic [ref=e1056]: 在线
+                  - cell "已启用" [ref=e1057]:
+                    - generic [ref=e1058]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1059]:
+                    - generic [ref=e1060]:
+                      - button "eye 详情" [ref=e1062] [cursor=pointer]:
+                        - img "eye" [ref=e1064]:
+                          - img [ref=e1065]
+                        - generic [ref=e1067]: 详情
+                      - button "开 启" [ref=e1069] [cursor=pointer]:
+                        - generic [ref=e1070]: 开 启
+                      - button "关 闭" [ref=e1072] [cursor=pointer]:
+                        - generic [ref=e1073]: 关 闭
+                      - button "重 启" [ref=e1075] [cursor=pointer]:
+                        - generic [ref=e1076]: 重 启
+                - row "866965081722107 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1077]:
+                  - cell [ref=e1078]:
+                    - checkbox [ref=e1081] [cursor=pointer]
+                  - cell "866965081722107" [ref=e1083]
+                  - cell "未命名" [ref=e1084]
+                  - cell "-" [ref=e1085]
+                  - cell "未知" [ref=e1086]:
+                    - generic [ref=e1087]: 未知
+                  - cell "在线" [ref=e1088]:
+                    - generic [ref=e1089]: 在线
+                  - cell "已启用" [ref=e1090]:
+                    - generic [ref=e1091]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1092]:
+                    - generic [ref=e1093]:
+                      - button "eye 详情" [ref=e1095] [cursor=pointer]:
+                        - img "eye" [ref=e1097]:
+                          - img [ref=e1098]
+                        - generic [ref=e1100]: 详情
+                      - button "开 启" [ref=e1102] [cursor=pointer]:
+                        - generic [ref=e1103]: 开 启
+                      - button "关 闭" [ref=e1105] [cursor=pointer]:
+                        - generic [ref=e1106]: 关 闭
+                      - button "重 启" [ref=e1108] [cursor=pointer]:
+                        - generic [ref=e1109]: 重 启
+                - row "866965081729185 未命名 20.3 开启 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1110]:
+                  - cell [ref=e1111]:
+                    - checkbox [ref=e1114] [cursor=pointer]
+                  - cell "866965081729185" [ref=e1116]
+                  - cell "未命名" [ref=e1117]
+                  - cell "20.3" [ref=e1118]
+                  - cell "开启" [ref=e1119]:
+                    - generic [ref=e1120]: 开启
+                  - cell "在线" [ref=e1121]:
+                    - generic [ref=e1122]: 在线
+                  - cell "已启用" [ref=e1123]:
+                    - generic [ref=e1124]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1125]:
+                    - generic [ref=e1126]:
+                      - button "eye 详情" [ref=e1128] [cursor=pointer]:
+                        - img "eye" [ref=e1130]:
+                          - img [ref=e1131]
+                        - generic [ref=e1133]: 详情
+                      - button "开 启" [ref=e1135] [cursor=pointer]:
+                        - generic [ref=e1136]: 开 启
+                      - button "关 闭" [ref=e1138] [cursor=pointer]:
+                        - generic [ref=e1139]: 关 闭
+                      - button "重 启" [ref=e1141] [cursor=pointer]:
+                        - generic [ref=e1142]: 重 启
+                - row "866965081745702 未命名 21.0 关闭 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1143]:
+                  - cell [ref=e1144]:
+                    - checkbox [ref=e1147] [cursor=pointer]
+                  - cell "866965081745702" [ref=e1149]
+                  - cell "未命名" [ref=e1150]
+                  - cell "21.0" [ref=e1151]
+                  - cell "关闭" [ref=e1152]:
+                    - generic [ref=e1153]: 关闭
+                  - cell "在线" [ref=e1154]:
+                    - generic [ref=e1155]: 在线
+                  - cell "已启用" [ref=e1156]:
+                    - generic [ref=e1157]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1158]:
+                    - generic [ref=e1159]:
+                      - button "eye 详情" [ref=e1161] [cursor=pointer]:
+                        - img "eye" [ref=e1163]:
+                          - img [ref=e1164]
+                        - generic [ref=e1166]: 详情
+                      - button "开 启" [ref=e1168] [cursor=pointer]:
+                        - generic [ref=e1169]: 开 启
+                      - button "关 闭" [ref=e1171] [cursor=pointer]:
+                        - generic [ref=e1172]: 关 闭
+                      - button "重 启" [ref=e1174] [cursor=pointer]:
+                        - generic [ref=e1175]: 重 启
+                - row "866965081717438 未命名 24.2 关闭 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1176]:
+                  - cell [ref=e1177]:
+                    - checkbox [ref=e1180] [cursor=pointer]
+                  - cell "866965081717438" [ref=e1182]
+                  - cell "未命名" [ref=e1183]
+                  - cell "24.2" [ref=e1184]
+                  - cell "关闭" [ref=e1185]:
+                    - generic [ref=e1186]: 关闭
+                  - cell "在线" [ref=e1187]:
+                    - generic [ref=e1188]: 在线
+                  - cell "已启用" [ref=e1189]:
+                    - generic [ref=e1190]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1191]:
+                    - generic [ref=e1192]:
+                      - button "eye 详情" [ref=e1194] [cursor=pointer]:
+                        - img "eye" [ref=e1196]:
+                          - img [ref=e1197]
+                        - generic [ref=e1199]: 详情
+                      - button "开 启" [ref=e1201] [cursor=pointer]:
+                        - generic [ref=e1202]: 开 启
+                      - button "关 闭" [ref=e1204] [cursor=pointer]:
+                        - generic [ref=e1205]: 关 闭
+                      - button "重 启" [ref=e1207] [cursor=pointer]:
+                        - generic [ref=e1208]: 重 启
+                - row "866965081725100 未命名 20.2 关闭 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1209]:
+                  - cell [ref=e1210]:
+                    - checkbox [ref=e1213] [cursor=pointer]
+                  - cell "866965081725100" [ref=e1215]
+                  - cell "未命名" [ref=e1216]
+                  - cell "20.2" [ref=e1217]
+                  - cell "关闭" [ref=e1218]:
+                    - generic [ref=e1219]: 关闭
+                  - cell "在线" [ref=e1220]:
+                    - generic [ref=e1221]: 在线
+                  - cell "已启用" [ref=e1222]:
+                    - generic [ref=e1223]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1224]:
+                    - generic [ref=e1225]:
+                      - button "eye 详情" [ref=e1227] [cursor=pointer]:
+                        - img "eye" [ref=e1229]:
+                          - img [ref=e1230]
+                        - generic [ref=e1232]: 详情
+                      - button "开 启" [ref=e1234] [cursor=pointer]:
+                        - generic [ref=e1235]: 开 启
+                      - button "关 闭" [ref=e1237] [cursor=pointer]:
+                        - generic [ref=e1238]: 关 闭
+                      - button "重 启" [ref=e1240] [cursor=pointer]:
+                        - generic [ref=e1241]: 重 启
+                - row "866965081713924 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1242]:
+                  - cell [ref=e1243]:
+                    - checkbox [ref=e1246] [cursor=pointer]
+                  - cell "866965081713924" [ref=e1248]
+                  - cell "未命名" [ref=e1249]
+                  - cell "-" [ref=e1250]
+                  - cell "未知" [ref=e1251]:
+                    - generic [ref=e1252]: 未知
+                  - cell "在线" [ref=e1253]:
+                    - generic [ref=e1254]: 在线
+                  - cell "已启用" [ref=e1255]:
+                    - generic [ref=e1256]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1257]:
+                    - generic [ref=e1258]:
+                      - button "eye 详情" [ref=e1260] [cursor=pointer]:
+                        - img "eye" [ref=e1262]:
+                          - img [ref=e1263]
+                        - generic [ref=e1265]: 详情
+                      - button "开 启" [ref=e1267] [cursor=pointer]:
+                        - generic [ref=e1268]: 开 启
+                      - button "关 闭" [ref=e1270] [cursor=pointer]:
+                        - generic [ref=e1271]: 关 闭
+                      - button "重 启" [ref=e1273] [cursor=pointer]:
+                        - generic [ref=e1274]: 重 启
+                - row "866965081743053 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1275]:
+                  - cell [ref=e1276]:
+                    - checkbox [ref=e1279] [cursor=pointer]
+                  - cell "866965081743053" [ref=e1281]
+                  - cell "未命名" [ref=e1282]
+                  - cell "-" [ref=e1283]
+                  - cell "未知" [ref=e1284]:
+                    - generic [ref=e1285]: 未知
+                  - cell "在线" [ref=e1286]:
+                    - generic [ref=e1287]: 在线
+                  - cell "已启用" [ref=e1288]:
+                    - generic [ref=e1289]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1290]:
+                    - generic [ref=e1291]:
+                      - button "eye 详情" [ref=e1293] [cursor=pointer]:
+                        - img "eye" [ref=e1295]:
+                          - img [ref=e1296]
+                        - generic [ref=e1298]: 详情
+                      - button "开 启" [ref=e1300] [cursor=pointer]:
+                        - generic [ref=e1301]: 开 启
+                      - button "关 闭" [ref=e1303] [cursor=pointer]:
+                        - generic [ref=e1304]: 关 闭
+                      - button "重 启" [ref=e1306] [cursor=pointer]:
+                        - generic [ref=e1307]: 重 启
+                - row "866965081752740 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1308]:
+                  - cell [ref=e1309]:
+                    - checkbox [ref=e1312] [cursor=pointer]
+                  - cell "866965081752740" [ref=e1314]
+                  - cell "未命名" [ref=e1315]
+                  - cell "-" [ref=e1316]
+                  - cell "未知" [ref=e1317]:
+                    - generic [ref=e1318]: 未知
+                  - cell "在线" [ref=e1319]:
+                    - generic [ref=e1320]: 在线
+                  - cell "已启用" [ref=e1321]:
+                    - generic [ref=e1322]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1323]:
+                    - generic [ref=e1324]:
+                      - button "eye 详情" [ref=e1326] [cursor=pointer]:
+                        - img "eye" [ref=e1328]:
+                          - img [ref=e1329]
+                        - generic [ref=e1331]: 详情
+                      - button "开 启" [ref=e1333] [cursor=pointer]:
+                        - generic [ref=e1334]: 开 启
+                      - button "关 闭" [ref=e1336] [cursor=pointer]:
+                        - generic [ref=e1337]: 关 闭
+                      - button "重 启" [ref=e1339] [cursor=pointer]:
+                        - generic [ref=e1340]: 重 启
+                - row "866965081748359 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1341]:
+                  - cell [ref=e1342]:
+                    - checkbox [ref=e1345] [cursor=pointer]
+                  - cell "866965081748359" [ref=e1347]
+                  - cell "未命名" [ref=e1348]
+                  - cell "-" [ref=e1349]
+                  - cell "未知" [ref=e1350]:
+                    - generic [ref=e1351]: 未知
+                  - cell "在线" [ref=e1352]:
+                    - generic [ref=e1353]: 在线
+                  - cell "已启用" [ref=e1354]:
+                    - generic [ref=e1355]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1356]:
+                    - generic [ref=e1357]:
+                      - button "eye 详情" [ref=e1359] [cursor=pointer]:
+                        - img "eye" [ref=e1361]:
+                          - img [ref=e1362]
+                        - generic [ref=e1364]: 详情
+                      - button "开 启" [ref=e1366] [cursor=pointer]:
+                        - generic [ref=e1367]: 开 启
+                      - button "关 闭" [ref=e1369] [cursor=pointer]:
+                        - generic [ref=e1370]: 关 闭
+                      - button "重 启" [ref=e1372] [cursor=pointer]:
+                        - generic [ref=e1373]: 重 启
+                - row "866965081752690 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1374]:
+                  - cell [ref=e1375]:
+                    - checkbox [ref=e1378] [cursor=pointer]
+                  - cell "866965081752690" [ref=e1380]
+                  - cell "未命名" [ref=e1381]
+                  - cell "-" [ref=e1382]
+                  - cell "未知" [ref=e1383]:
+                    - generic [ref=e1384]: 未知
+                  - cell "在线" [ref=e1385]:
+                    - generic [ref=e1386]: 在线
+                  - cell "已启用" [ref=e1387]:
+                    - generic [ref=e1388]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1389]:
+                    - generic [ref=e1390]:
+                      - button "eye 详情" [ref=e1392] [cursor=pointer]:
+                        - img "eye" [ref=e1394]:
+                          - img [ref=e1395]
+                        - generic [ref=e1397]: 详情
+                      - button "开 启" [ref=e1399] [cursor=pointer]:
+                        - generic [ref=e1400]: 开 启
+                      - button "关 闭" [ref=e1402] [cursor=pointer]:
+                        - generic [ref=e1403]: 关 闭
+                      - button "重 启" [ref=e1405] [cursor=pointer]:
+                        - generic [ref=e1406]: 重 启
+                - row "866965081722057 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1407]:
+                  - cell [ref=e1408]:
+                    - checkbox [ref=e1411] [cursor=pointer]
+                  - cell "866965081722057" [ref=e1413]
+                  - cell "未命名" [ref=e1414]
+                  - cell "-" [ref=e1415]
+                  - cell "未知" [ref=e1416]:
+                    - generic [ref=e1417]: 未知
+                  - cell "在线" [ref=e1418]:
+                    - generic [ref=e1419]: 在线
+                  - cell "已启用" [ref=e1420]:
+                    - generic [ref=e1421]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1422]:
+                    - generic [ref=e1423]:
+                      - button "eye 详情" [ref=e1425] [cursor=pointer]:
+                        - img "eye" [ref=e1427]:
+                          - img [ref=e1428]
+                        - generic [ref=e1430]: 详情
+                      - button "开 启" [ref=e1432] [cursor=pointer]:
+                        - generic [ref=e1433]: 开 启
+                      - button "关 闭" [ref=e1435] [cursor=pointer]:
+                        - generic [ref=e1436]: 关 闭
+                      - button "重 启" [ref=e1438] [cursor=pointer]:
+                        - generic [ref=e1439]: 重 启
+                - row "866965081718634 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1440]:
+                  - cell [ref=e1441]:
+                    - checkbox [ref=e1444] [cursor=pointer]
+                  - cell "866965081718634" [ref=e1446]
+                  - cell "未命名" [ref=e1447]
+                  - cell "-" [ref=e1448]
+                  - cell "未知" [ref=e1449]:
+                    - generic [ref=e1450]: 未知
+                  - cell "在线" [ref=e1451]:
+                    - generic [ref=e1452]: 在线
+                  - cell "已启用" [ref=e1453]:
+                    - generic [ref=e1454]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1455]:
+                    - generic [ref=e1456]:
+                      - button "eye 详情" [ref=e1458] [cursor=pointer]:
+                        - img "eye" [ref=e1460]:
+                          - img [ref=e1461]
+                        - generic [ref=e1463]: 详情
+                      - button "开 启" [ref=e1465] [cursor=pointer]:
+                        - generic [ref=e1466]: 开 启
+                      - button "关 闭" [ref=e1468] [cursor=pointer]:
+                        - generic [ref=e1469]: 关 闭
+                      - button "重 启" [ref=e1471] [cursor=pointer]:
+                        - generic [ref=e1472]: 重 启
+                - row "866965081748425 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1473]:
+                  - cell [ref=e1474]:
+                    - checkbox [ref=e1477] [cursor=pointer]
+                  - cell "866965081748425" [ref=e1479]
+                  - cell "未命名" [ref=e1480]
+                  - cell "-" [ref=e1481]
+                  - cell "未知" [ref=e1482]:
+                    - generic [ref=e1483]: 未知
+                  - cell "在线" [ref=e1484]:
+                    - generic [ref=e1485]: 在线
+                  - cell "已启用" [ref=e1486]:
+                    - generic [ref=e1487]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1488]:
+                    - generic [ref=e1489]:
+                      - button "eye 详情" [ref=e1491] [cursor=pointer]:
+                        - img "eye" [ref=e1493]:
+                          - img [ref=e1494]
+                        - generic [ref=e1496]: 详情
+                      - button "开 启" [ref=e1498] [cursor=pointer]:
+                        - generic [ref=e1499]: 开 启
+                      - button "关 闭" [ref=e1501] [cursor=pointer]:
+                        - generic [ref=e1502]: 关 闭
+                      - button "重 启" [ref=e1504] [cursor=pointer]:
+                        - generic [ref=e1505]: 重 启
+                - row "866965081752898 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1506]:
+                  - cell [ref=e1507]:
+                    - checkbox [ref=e1510] [cursor=pointer]
+                  - cell "866965081752898" [ref=e1512]
+                  - cell "未命名" [ref=e1513]
+                  - cell "-" [ref=e1514]
+                  - cell "未知" [ref=e1515]:
+                    - generic [ref=e1516]: 未知
+                  - cell "在线" [ref=e1517]:
+                    - generic [ref=e1518]: 在线
+                  - cell "已启用" [ref=e1519]:
+                    - generic [ref=e1520]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1521]:
+                    - generic [ref=e1522]:
+                      - button "eye 详情" [ref=e1524] [cursor=pointer]:
+                        - img "eye" [ref=e1526]:
+                          - img [ref=e1527]
+                        - generic [ref=e1529]: 详情
+                      - button "开 启" [ref=e1531] [cursor=pointer]:
+                        - generic [ref=e1532]: 开 启
+                      - button "关 闭" [ref=e1534] [cursor=pointer]:
+                        - generic [ref=e1535]: 关 闭
+                      - button "重 启" [ref=e1537] [cursor=pointer]:
+                        - generic [ref=e1538]: 重 启
+                - row "866965081732361 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1539]:
+                  - cell [ref=e1540]:
+                    - checkbox [ref=e1543] [cursor=pointer]
+                  - cell "866965081732361" [ref=e1545]
+                  - cell "未命名" [ref=e1546]
+                  - cell "-" [ref=e1547]
+                  - cell "未知" [ref=e1548]:
+                    - generic [ref=e1549]: 未知
+                  - cell "在线" [ref=e1550]:
+                    - generic [ref=e1551]: 在线
+                  - cell "已启用" [ref=e1552]:
+                    - generic [ref=e1553]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1554]:
+                    - generic [ref=e1555]:
+                      - button "eye 详情" [ref=e1557] [cursor=pointer]:
+                        - img "eye" [ref=e1559]:
+                          - img [ref=e1560]
+                        - generic [ref=e1562]: 详情
+                      - button "开 启" [ref=e1564] [cursor=pointer]:
+                        - generic [ref=e1565]: 开 启
+                      - button "关 闭" [ref=e1567] [cursor=pointer]:
+                        - generic [ref=e1568]: 关 闭
+                      - button "重 启" [ref=e1570] [cursor=pointer]:
+                        - generic [ref=e1571]: 重 启
+                - row "866965081739028 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1572]:
+                  - cell [ref=e1573]:
+                    - checkbox [ref=e1576] [cursor=pointer]
+                  - cell "866965081739028" [ref=e1578]
+                  - cell "未命名" [ref=e1579]
+                  - cell "-" [ref=e1580]
+                  - cell "未知" [ref=e1581]:
+                    - generic [ref=e1582]: 未知
+                  - cell "在线" [ref=e1583]:
+                    - generic [ref=e1584]: 在线
+                  - cell "已启用" [ref=e1585]:
+                    - generic [ref=e1586]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1587]:
+                    - generic [ref=e1588]:
+                      - button "eye 详情" [ref=e1590] [cursor=pointer]:
+                        - img "eye" [ref=e1592]:
+                          - img [ref=e1593]
+                        - generic [ref=e1595]: 详情
+                      - button "开 启" [ref=e1597] [cursor=pointer]:
+                        - generic [ref=e1598]: 开 启
+                      - button "关 闭" [ref=e1600] [cursor=pointer]:
+                        - generic [ref=e1601]: 关 闭
+                      - button "重 启" [ref=e1603] [cursor=pointer]:
+                        - generic [ref=e1604]: 重 启
+                - row "866965081726892 未命名 22.5 关闭 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1605]:
+                  - cell [ref=e1606]:
+                    - checkbox [ref=e1609] [cursor=pointer]
+                  - cell "866965081726892" [ref=e1611]
+                  - cell "未命名" [ref=e1612]
+                  - cell "22.5" [ref=e1613]
+                  - cell "关闭" [ref=e1614]:
+                    - generic [ref=e1615]: 关闭
+                  - cell "在线" [ref=e1616]:
+                    - generic [ref=e1617]: 在线
+                  - cell "已启用" [ref=e1618]:
+                    - generic [ref=e1619]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1620]:
+                    - generic [ref=e1621]:
+                      - button "eye 详情" [ref=e1623] [cursor=pointer]:
+                        - img "eye" [ref=e1625]:
+                          - img [ref=e1626]
+                        - generic [ref=e1628]: 详情
+                      - button "开 启" [ref=e1630] [cursor=pointer]:
+                        - generic [ref=e1631]: 开 启
+                      - button "关 闭" [ref=e1633] [cursor=pointer]:
+                        - generic [ref=e1634]: 关 闭
+                      - button "重 启" [ref=e1636] [cursor=pointer]:
+                        - generic [ref=e1637]: 重 启
+                - row "866965081744705 未命名 22.1 关闭 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1638]:
+                  - cell [ref=e1639]:
+                    - checkbox [ref=e1642] [cursor=pointer]
+                  - cell "866965081744705" [ref=e1644]
+                  - cell "未命名" [ref=e1645]
+                  - cell "22.1" [ref=e1646]
+                  - cell "关闭" [ref=e1647]:
+                    - generic [ref=e1648]: 关闭
+                  - cell "在线" [ref=e1649]:
+                    - generic [ref=e1650]: 在线
+                  - cell "已启用" [ref=e1651]:
+                    - generic [ref=e1652]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1653]:
+                    - generic [ref=e1654]:
+                      - button "eye 详情" [ref=e1656] [cursor=pointer]:
+                        - img "eye" [ref=e1658]:
+                          - img [ref=e1659]
+                        - generic [ref=e1661]: 详情
+                      - button "开 启" [ref=e1663] [cursor=pointer]:
+                        - generic [ref=e1664]: 开 启
+                      - button "关 闭" [ref=e1666] [cursor=pointer]:
+                        - generic [ref=e1667]: 关 闭
+                      - button "重 启" [ref=e1669] [cursor=pointer]:
+                        - generic [ref=e1670]: 重 启
+                - row "866965081752757 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1671]:
+                  - cell [ref=e1672]:
+                    - checkbox [ref=e1675] [cursor=pointer]
+                  - cell "866965081752757" [ref=e1677]
+                  - cell "未命名" [ref=e1678]
+                  - cell "-" [ref=e1679]
+                  - cell "未知" [ref=e1680]:
+                    - generic [ref=e1681]: 未知
+                  - cell "在线" [ref=e1682]:
+                    - generic [ref=e1683]: 在线
+                  - cell "已启用" [ref=e1684]:
+                    - generic [ref=e1685]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1686]:
+                    - generic [ref=e1687]:
+                      - button "eye 详情" [ref=e1689] [cursor=pointer]:
+                        - img "eye" [ref=e1691]:
+                          - img [ref=e1692]
+                        - generic [ref=e1694]: 详情
+                      - button "开 启" [ref=e1696] [cursor=pointer]:
+                        - generic [ref=e1697]: 开 启
+                      - button "关 闭" [ref=e1699] [cursor=pointer]:
+                        - generic [ref=e1700]: 关 闭
+                      - button "重 启" [ref=e1702] [cursor=pointer]:
+                        - generic [ref=e1703]: 重 启
+                - row "866965081733740 未命名 24.0 关闭 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1704]:
+                  - cell [ref=e1705]:
+                    - checkbox [ref=e1708] [cursor=pointer]
+                  - cell "866965081733740" [ref=e1710]
+                  - cell "未命名" [ref=e1711]
+                  - cell "24.0" [ref=e1712]
+                  - cell "关闭" [ref=e1713]:
+                    - generic [ref=e1714]: 关闭
+                  - cell "在线" [ref=e1715]:
+                    - generic [ref=e1716]: 在线
+                  - cell "已启用" [ref=e1717]:
+                    - generic [ref=e1718]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1719]:
+                    - generic [ref=e1720]:
+                      - button "eye 详情" [ref=e1722] [cursor=pointer]:
+                        - img "eye" [ref=e1724]:
+                          - img [ref=e1725]
+                        - generic [ref=e1727]: 详情
+                      - button "开 启" [ref=e1729] [cursor=pointer]:
+                        - generic [ref=e1730]: 开 启
+                      - button "关 闭" [ref=e1732] [cursor=pointer]:
+                        - generic [ref=e1733]: 关 闭
+                      - button "重 启" [ref=e1735] [cursor=pointer]:
+                        - generic [ref=e1736]: 重 启
+                - row "866965081753185 未命名 - 未知 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1737]:
+                  - cell [ref=e1738]:
+                    - checkbox [ref=e1741] [cursor=pointer]
+                  - cell "866965081753185" [ref=e1743]
+                  - cell "未命名" [ref=e1744]
+                  - cell "-" [ref=e1745]
+                  - cell "未知" [ref=e1746]:
+                    - generic [ref=e1747]: 未知
+                  - cell "在线" [ref=e1748]:
+                    - generic [ref=e1749]: 在线
+                  - cell "已启用" [ref=e1750]:
+                    - generic [ref=e1751]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1752]:
+                    - generic [ref=e1753]:
+                      - button "eye 详情" [ref=e1755] [cursor=pointer]:
+                        - img "eye" [ref=e1757]:
+                          - img [ref=e1758]
+                        - generic [ref=e1760]: 详情
+                      - button "开 启" [ref=e1762] [cursor=pointer]:
+                        - generic [ref=e1763]: 开 启
+                      - button "关 闭" [ref=e1765] [cursor=pointer]:
+                        - generic [ref=e1766]: 关 闭
+                      - button "重 启" [ref=e1768] [cursor=pointer]:
+                        - generic [ref=e1769]: 重 启
+                - row "866965081733682 未命名 23.2 关闭 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1770]:
+                  - cell [ref=e1771]:
+                    - checkbox [ref=e1774] [cursor=pointer]
+                  - cell "866965081733682" [ref=e1776]
+                  - cell "未命名" [ref=e1777]
+                  - cell "23.2" [ref=e1778]
+                  - cell "关闭" [ref=e1779]:
+                    - generic [ref=e1780]: 关闭
+                  - cell "在线" [ref=e1781]:
+                    - generic [ref=e1782]: 在线
+                  - cell "已启用" [ref=e1783]:
+                    - generic [ref=e1784]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1785]:
+                    - generic [ref=e1786]:
+                      - button "eye 详情" [ref=e1788] [cursor=pointer]:
+                        - img "eye" [ref=e1790]:
+                          - img [ref=e1791]
+                        - generic [ref=e1793]: 详情
+                      - button "开 启" [ref=e1795] [cursor=pointer]:
+                        - generic [ref=e1796]: 开 启
+                      - button "关 闭" [ref=e1798] [cursor=pointer]:
+                        - generic [ref=e1799]: 关 闭
+                      - button "重 启" [ref=e1801] [cursor=pointer]:
+                        - generic [ref=e1802]: 重 启
+                - row "866965081729813 未命名 23.7 关闭 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1803]:
+                  - cell [ref=e1804]:
+                    - checkbox [ref=e1807] [cursor=pointer]
+                  - cell "866965081729813" [ref=e1809]
+                  - cell "未命名" [ref=e1810]
+                  - cell "23.7" [ref=e1811]
+                  - cell "关闭" [ref=e1812]:
+                    - generic [ref=e1813]: 关闭
+                  - cell "在线" [ref=e1814]:
+                    - generic [ref=e1815]: 在线
+                  - cell "已启用" [ref=e1816]:
+                    - generic [ref=e1817]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1818]:
+                    - generic [ref=e1819]:
+                      - button "eye 详情" [ref=e1821] [cursor=pointer]:
+                        - img "eye" [ref=e1823]:
+                          - img [ref=e1824]
+                        - generic [ref=e1826]: 详情
+                      - button "开 启" [ref=e1828] [cursor=pointer]:
+                        - generic [ref=e1829]: 开 启
+                      - button "关 闭" [ref=e1831] [cursor=pointer]:
+                        - generic [ref=e1832]: 关 闭
+                      - button "重 启" [ref=e1834] [cursor=pointer]:
+                        - generic [ref=e1835]: 重 启
+                - row "866965081747195 未命名 23.0 关闭 在线 已启用 eye 详情 开 启 关 闭 重 启" [ref=e1836]:
+                  - cell [ref=e1837]:
+                    - checkbox [ref=e1840] [cursor=pointer]
+                  - cell "866965081747195" [ref=e1842]
+                  - cell "未命名" [ref=e1843]
+                  - cell "23.0" [ref=e1844]
+                  - cell "关闭" [ref=e1845]:
+                    - generic [ref=e1846]: 关闭
+                  - cell "在线" [ref=e1847]:
+                    - generic [ref=e1848]: 在线
+                  - cell "已启用" [ref=e1849]:
+                    - generic [ref=e1850]: 已启用
+                  - cell "eye 详情 开 启 关 闭 重 启" [ref=e1851]:
+                    - generic [ref=e1852]:
+                      - button "eye 详情" [ref=e1854] [cursor=pointer]:
+                        - img "eye" [ref=e1856]:
+                          - img [ref=e1857]
+                        - generic [ref=e1859]: 详情
+                      - button "开 启" [ref=e1861] [cursor=pointer]:
+                        - generic [ref=e1862]: 开 启
+                      - button "关 闭" [ref=e1864] [cursor=pointer]:
+                        - generic [ref=e1865]: 关 闭
+                      - button "重 启" [ref=e1867] [cursor=pointer]:
+                        - generic [ref=e1868]: 重 启
+            - list [ref=e1869]:
+              - listitem [ref=e1870]: 共 144 条
+              - listitem "上一页" [ref=e1871]:
+                - button "left" [disabled] [ref=e1872]:
+                  - img "left" [ref=e1873]:
+                    - img [ref=e1874]
+              - listitem "1" [ref=e1876] [cursor=pointer]:
+                - generic [ref=e1877]: "1"
+              - listitem "2" [ref=e1878] [cursor=pointer]:
+                - generic [ref=e1879]: "2"
+              - listitem "3" [ref=e1880] [cursor=pointer]:
+                - generic [ref=e1881]: "3"
+              - listitem "下一页" [ref=e1882] [cursor=pointer]:
+                - button "right" [ref=e1883]:
+                  - img "right" [ref=e1884]:
+                    - img [ref=e1885]
+              - listitem [ref=e1887]:
+                - generic "页码" [ref=e1888] [cursor=pointer]:
+                  - generic [ref=e1890]:
+                    - combobox "页码" [ref=e1892]
+                    - generic "50 条/页" [ref=e1893]
+                  - generic:
+                    - img:
+                      - img
+                - generic [ref=e1894]:
+                  - text: 跳至
+                  - textbox "页" [ref=e1895]
+                  - text: 页
+  - generic [ref=e1896]:
+    - dialog "在 \"景德镇电信\" 下创建分区":
+      - generic [ref=e1897]:
+        - button "Close" [ref=e1898] [cursor=pointer]:
+          - generic "关闭" [ref=e1899]:
+            - img "close" [ref=e1900]:
+              - img [ref=e1901]
+        - generic [ref=e1904]: 在 "景德镇电信" 下创建分区
+        - generic [ref=e1908]:
+          - generic "分区名称" [ref=e1910]: "* 分区名称"
+          - textbox "* 分区名称" [ref=e1914]:
+            - /placeholder: 请输入分区名称
+        - generic [ref=e1915]:
+          - button "取 消" [ref=e1916] [cursor=pointer]:
+            - generic [ref=e1917]: 取 消
+          - button "确 定" [ref=e1918] [cursor=pointer]:
+            - generic [ref=e1919]: 确 定

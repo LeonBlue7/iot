@@ -1,6 +1,6 @@
 // admin-web/src/pages/Devices/index.tsx
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Card, Table, Breadcrumb, Tag, Button, Modal, Select, message, Space } from 'antd'
 import type { ColumnsType, TableProps } from 'antd/es/table'
 import { HomeOutlined, ReloadOutlined, EyeOutlined } from '@ant-design/icons'
@@ -24,6 +24,8 @@ interface DeviceWithExtras extends Device {
 
 export default function Devices(): JSX.Element {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+
   // 从store获取层级选择状态
   const selectedNode = useHierarchyStore((state) => state.selectedNode)
 
@@ -41,17 +43,21 @@ export default function Devices(): JSX.Element {
   const [availableGroups, setAvailableGroups] = useState<DeviceGroup[]>([])
 
   // 搜索筛选器状态
-  const [searchFilters, setSearchFilters] = useState<{
+  const [filterOptions, setFilterOptions] = useState<{
     customers: Customer[]
     zones: Zone[]
     groups: DeviceGroup[]
   }>({ customers: [], zones: [], groups: [] })
 
   // 当前搜索参数
-  const [searchParams, setSearchParams] = useState<DeviceSearchParams | null>(null)
+  const [currentSearchParams, setCurrentSearchParams] = useState<DeviceSearchParams | null>(null)
 
-  // 分页配置
-  const [pagination, setPagination] = useState({ page: 1, pageSize: 50 })
+  // 分页配置 - 从URL参数初始化，保持状态持久化
+  const [pagination, setPagination] = useState(() => {
+    const page = parseInt(searchParams.get('page') || '1', 10)
+    const pageSize = parseInt(searchParams.get('pageSize') || '50', 10)
+    return { page, pageSize }
+  })
   const [totalDevices, setTotalDevices] = useState(0)
 
   // 加载搜索筛选器
@@ -59,7 +65,7 @@ export default function Devices(): JSX.Element {
     const loadFilters = async (): Promise<void> => {
       try {
         const customers = await customerApi.getList()
-        setSearchFilters((prev) => ({ ...prev, customers }))
+        setFilterOptions((prev) => ({ ...prev, customers }))
       } catch (error) {
         // 忽略筛选器加载错误
       }
@@ -98,8 +104,8 @@ export default function Devices(): JSX.Element {
       }
 
       // 合并手动搜索参数
-      if (searchParams?.keyword) {
-        params.keyword = searchParams.keyword
+      if (currentSearchParams?.keyword) {
+        params.keyword = currentSearchParams.keyword
       }
 
       let deviceList: DeviceWithExtras[]
@@ -140,7 +146,7 @@ export default function Devices(): JSX.Element {
     } finally {
       setLoading(false)
     }
-  }, [selectedNode, searchParams, pagination.page, pagination.pageSize, loadAlarmStatus])
+  }, [selectedNode, currentSearchParams, pagination.page, pagination.pageSize, loadAlarmStatus])
 
   // 组件挂载和层级/搜索变化时加载设备
   useEffect(() => {
@@ -151,12 +157,12 @@ export default function Devices(): JSX.Element {
 
   // 处理搜索
   const handleSearch = useCallback((params: DeviceSearchParams) => {
-    setSearchParams(params)
+    setCurrentSearchParams(params)
   }, [])
 
   // 处理搜索重置
   const handleSearchReset = useCallback(() => {
-    setSearchParams(null)
+    setCurrentSearchParams(null)
   }, [])
 
   // 处理批量控制
@@ -465,7 +471,7 @@ export default function Devices(): JSX.Element {
         <DeviceSearchPanel
           onSearch={handleSearch}
           onReset={handleSearchReset}
-          filters={searchFilters}
+          filters={filterOptions}
         />
       </Card>
 
@@ -498,7 +504,15 @@ export default function Devices(): JSX.Element {
             pageSizeOptions: ['10', '20', '50', '100'],
             showTotal: (total) => `共 ${total} 条`,
             onChange: (page, newPageSize) => {
-              setPagination({ page, pageSize: newPageSize })
+              const newPagination = { page, pageSize: newPageSize || pagination.pageSize }
+              setPagination(newPagination)
+              // 更新URL参数，保持分页状态持久化
+              setSearchParams((prev) => {
+                const params = new URLSearchParams(prev)
+                params.set('page', String(page))
+                params.set('pageSize', String(newPageSize || pagination.pageSize))
+                return params
+              })
             },
           }}
         />

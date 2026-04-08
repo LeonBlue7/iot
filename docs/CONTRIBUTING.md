@@ -3,7 +3,7 @@
 欢迎参与物联网管理系统的开发！本文档提供开发环境设置、代码规范和提交流程的详细说明。
 
 > **重要**: 本文档适用于本地开发环境。生产环境配置请参考 [部署指南](./DEPLOYMENT.md)。
-> **最后更新**: 2026-04-03（四层层级管理功能）
+> **最后更新**: 2026-04-08（命令参考表同步）
 
 ---
 
@@ -253,24 +253,41 @@ export const login = asyncHandler(async (req, res) => {
 
 <!-- AUTO-GENERATED: 测试命令 -->
 
-#### 后端测试
+#### 后端测试 (backend/package.json)
 
 ```bash
-cd backend
-npm run test                # 运行所有测试
-npm run test:watch          # 监听模式
-npm run test:coverage       # 带覆盖率报告
+# 在容器内执行
+docker compose exec backend npm run test                # 运行所有测试
+docker compose exec backend npm run test:watch          # 监听模式
+docker compose exec backend npm run test:coverage       # 带覆盖率报告
+docker compose exec backend npm run lint                # ESLint 检查
+docker compose exec backend npm run lint:fix            # 自动修复 ESLint 问题
+docker compose exec backend npm run format              # Prettier 格式化
 ```
 
-#### 前端测试
+#### 前端测试 (admin-web/package.json)
 
 ```bash
+# 在容器内执行
+docker compose exec admin-web npm run test              # 运行单元测试 (Vitest)
+docker compose exec admin-web npm run test:coverage     # 带覆盖率报告
+docker compose exec admin-web npm run lint              # ESLint 检查
+
+# E2E 测试（本地执行，连接 Docker 服务）
 cd admin-web
-npm run test                # 运行单元测试
-npm run test:coverage       # 带覆盖率报告
-npm run test:e2e            # 运行 E2E 测试
-npm run test:e2e:ui         # E2E 测试 UI 模式
-npm run test:e2e:headed     # 有界面 E2E 测试
+npm run test:e2e                                       # 运行 E2E 测试 (Playwright)
+npm run test:e2e:ui                                    # E2E 测试 UI 模式
+npm run test:e2e:headed                                # 有界面 E2E 测试
+```
+
+#### 数据库命令 (backend/package.json)
+
+```bash
+# 在容器内执行
+docker compose exec backend npx prisma generate         # 生成 Prisma Client
+docker compose exec backend npx prisma migrate dev      # 开发环境迁移
+docker compose exec backend npx prisma studio           # 打开 Prisma Studio
+docker compose exec backend npm run prisma:seed         # 运行种子数据
 ```
 
 #### 部署脚本测试
@@ -308,10 +325,13 @@ admin-web/e2e/             # E2E 测试
 
 ```
 scripts/
-├── deploy.sh      # 一键部署脚本
-├── backup.sh      # 数据库备份脚本
-├── restore.sh     # 数据恢复脚本
-└── logs.sh        # 日志管理脚本
+├── deploy.sh              # 一键部署脚本（主脚本）
+├── deploy-production.sh   # 生产环境部署快捷脚本
+├── quick-deploy.sh        # 快速部署脚本
+├── backup.sh              # 数据库备份脚本
+├── restore.sh             # 数据恢复脚本
+├── logs.sh                # 日志管理脚本
+└── fix-mqtt-auth.sh       # MQTT 认证修复脚本
 ```
 
 #### 部署脚本用法

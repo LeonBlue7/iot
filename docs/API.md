@@ -4,7 +4,7 @@
 
 **Base URL**: `https://www.jxbonner.cloud/api`
 
-> **最后更新**: 2026-04-06（添加批量操作API、Token刷新端点）
+> **最后更新**: 2026-04-08（添加 request-data/request-params 端点）
 
 ## 系统架构
 
@@ -430,6 +430,44 @@ PUT /api/devices/:id
     "online": true,
     "lastSeenAt": "2026-03-21T10:30:00Z"
   }
+}
+```
+
+---
+
+### 请求设备上报传感器数据
+
+```http
+POST /api/devices/:id/request-data
+```
+
+发送 MQTT 指令请求设备立即上报传感器数据（温度、湿度、电流等）。
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "message": "数据请求已发送"
+}
+```
+
+---
+
+### 请求设备上报配置参数
+
+```http
+POST /api/devices/:id/request-params
+```
+
+发送 MQTT 指令请求设备立即上报配置参数。
+
+**响应示例**:
+
+```json
+{
+  "success": true,
+  "message": "参数请求已发送"
 }
 ```
 
